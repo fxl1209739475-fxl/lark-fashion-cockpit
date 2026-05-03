@@ -110,43 +110,47 @@ lark-cli base +record-list \
 
 #### Step 4: 批量建飞书原生任务
 
+> **⚠️ 关键坑（实测踩过）：** `task +create` 的 `--assignee` 参数会被静默忽略，**不会真分配**。必须分两步：先 `+create` 拿 task_guid，再用 `+assign` 真分配。
+
 对模板里每一行，循环：
 
 ```bash
-DUE_TS=$(date -d "+7 days" +%s)000  # 转毫秒（macOS 用 gdate）
-
-lark-cli task +create \
+# 用 --due 支持相对时间，比传 ms 时间戳省事
+TASK_GUID=$(lark-cli task +create \
   --summary "2. 设计稿出图 — 5 款" \
   --description "波段：2026Q2 早春第一波\n关联款：DRS-0429-FL, SHT-0420-SP, ..." \
-  --due "$DUE_TS" \
-  --priority "high" \
-  --jq '.data.task.guid'  # 记录返回的 task_guid
+  --due "+7d" \
+  --jq '.data.task.guid')
+
+echo "Created task_guid: $TASK_GUID"
 ```
 
 #### Step 5: 解析角色对应负责人
 
-如果用户配置了"角色→人"映射（比如在 wiki 或自定义配置中），读出来。否则提示用户补全：
-
 ```bash
-# 解析姓名到 open_id
-lark-cli contact +resolve --query "张三" --jq '.data.users[0].open_id'
+# 用 +search-user 按姓名找 open_id（必须 has_chatted 才能找跨租户用户）
+OPEN_ID=$(lark-cli contact +search-user \
+  --query "张三" --has-chatted \
+  --jq '.data.users[0].open_id')
 ```
 
-#### Step 6: 分配 + 设提醒
+#### Step 6: 分配 + 设提醒（**关键**：用 +assign 而不是 --assignee）
 
 ```bash
-# 分配
+# ✅ 正确：用 +assign 真分配（实测验证过）
 lark-cli task +assign \
-  --task-guid "$TASK_GUID" \
-  --user-id "ou_xxxx" \
-  --user-id-type open_id
+  --task-id "$TASK_GUID" \
+  --add "$OPEN_ID"
 
-# 截止前 1 天提醒（毫秒时间戳，截止时间 - 86400000）
-REMIND_TS=$((DUE_TS - 86400000))
+# ❌ 错误：task +create --assignee 不生效，会被静默忽略
+
+# 截止前 1 天提醒
 lark-cli task +reminder \
-  --task-guid "$TASK_GUID" \
-  --relative-fire-minute 1440  # 截止前 24 小时
+  --task-id "$TASK_GUID" \
+  --relative-fire-minute 1440
 ```
+
+**验证分配是否真生效：** 调用 `task tasks get` 后看返回的 `members` 数组是否含目标 open_id 且 `role=assignee`。如果 `members` 为空，说明分配没成功，必须重新调 `+assign`。
 
 #### Step 7: 同步多维表（关键！）
 
