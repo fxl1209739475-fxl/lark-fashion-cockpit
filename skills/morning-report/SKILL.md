@@ -179,6 +179,79 @@ lark-cli im chats messages create \
 
 ---
 
+## ⭐ 三半、晨报 → 派工闭环（核心交互模式）
+
+> **这是 lark-fashion-cockpit 最贴近老板娘办公习惯的设计：看完晨报立刻一句话派工。**
+
+### 工作流（agent 主动询问 + 自然语言批量派）
+
+```
+晨报跑完 → 不结束 → agent 主动问：
+
+  🌅 晨报已生成。我从今日 P0/P1 提取了 N 个推荐任务：
+  1. <任务标题> → @<推断的负责人>
+  2. ...
+  
+  要批量派吗？回复：
+  - "全派"        → 把没派的全部建
+  - "派 1,3,5"    → 选编号派
+  - "不派"        → 跳过
+
+用户回复 → agent 解析 → 批量调 task-collaboration
+```
+
+### Step 1: 在晨报报告里识别可派任务
+
+每条「今日推荐行动」需要含：
+- 任务标题（动词开头）
+- 优先级（P0/P1/P2）
+- 推断的负责人（基于 team-config.json 的角色映射）
+  - "工厂 / 生产 / 打样" → 生产主管
+  - "客服 / 退货" → 客服
+  - "拍摄 / 视频" → 摄影师 / 内容编辑
+  - "审批" → 老板自己
+  - "投流 / 详情页" → 运营
+
+### Step 2: agent 拼成确认卡片
+
+```bash
+# 群里发 interactive 卡片，含编号 + 建议负责人
+# 老板回复"全派" / "派 1,3" / "不派"
+```
+
+### Step 3: 解析回复 → 批量派任务
+
+```bash
+for task in <选中的>; do
+  # 调 task-collaboration 子 skill 的标准流程
+  TASK_GUID=$(lark-cli task +create --summary "$title" --description "来自 X 月 X 日晨报" --due "+Nd" --jq '.data.task.guid')
+  lark-cli task +assign --task-id $TASK_GUID --add $owner_oid
+  lark-cli task +followers --task-id $TASK_GUID --add $boss_oid
+done
+
+# 群里发派工汇报卡片
+```
+
+### 实测效果（参考 examples/00-end-to-end-demo.md）
+
+```
+21:25 老板："跑下经营晨报"
+21:25 agent → 飞书文档 + 绿色晨报卡片
+21:30 老板："能不能直接派工"
+21:30 agent → 4 个推荐任务批量建 + 派给 3 个朋友 + 群里弹派工汇报卡片
+21:30 朋友们手机响
+
+老板从看晨报到派工完成总耗时：< 1 分钟
+```
+
+### ⚠️ 关键约束
+
+1. **agent 不要"自动派"** — 必须等老板确认（避免误派）
+2. 推断负责人时如果置信度低（<70%）→ 标记"待确认"，不自动建任务
+3. 派工后 5 秒内推送汇报卡片（老板能立刻知道派给谁）
+
+---
+
 ## 四、典型对话示例
 
 ```
