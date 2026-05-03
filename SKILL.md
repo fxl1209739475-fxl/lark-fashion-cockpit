@@ -1,7 +1,7 @@
 ---
 name: lark-fashion-cockpit
-version: 0.1.0
-description: "女装电商运营驾驶舱 — 给电商品牌主的飞书 CLI 数字化方案。包含 19 大能力（经营/商品/销售/供应链/管理 5 大板块）+ 4 大杀手锏（套娃远程指挥/AI 产品分析/产品关系图/多 CLI 编排）。当用户提到女装/服装/电商运营/上新/库存/选品/竞品/复盘/经营驾驶舱/品牌运营等场景时使用。"
+version: 1.0.0
+description: "女装电商运营驾驶舱 — 给电商品牌主的飞书 CLI 数字化方案。包含 19 大能力（经营/商品/销售/供应链/管理 5 大板块）+ 4 大杀手锏（套娃远程指挥/AI 产品分析/产品关系图/多 CLI 编排）。当用户提到女装/服装/电商运营/上新/库存/选品/竞品/复盘/经营驾驶舱/品牌运营/初始化系统/搭建数据中枢/装这个 Skill 等场景时使用。"
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -13,6 +13,8 @@ metadata:
 > **🎯 核心定位：** 给做女装的人用的（适用所有服装电商品类，化妆品/家居/食品改改字段也能跑）
 >
 > **📦 集成深度：** 飞书 CLI 23 个原生 skill 中调用 13 个 + 多 CLI 套娃编排（飞书 CLI + douyin-monitor Python CLI）
+>
+> **🚀 一键搭建：** 用户首次说「初始化 / 帮我搭建系统 / 装这个 Skill」时，跳到下方 [初始化流程](#-初始化流程一键搭建整套数据中枢) 章节。
 
 ## 🚦 路由总览（用户意图 → 子 skill）
 
@@ -127,6 +129,211 @@ metadata:
 ```bash
 git clone https://github.com/fxl1209739475-fxl/lark-fashion-cockpit.git
 # 复制到 ~/.claude/skills/ 或 ~/.codex/skills/
+```
+
+## 🚀 初始化流程（一键搭建整套数据中枢）
+
+> **当用户首次说「初始化 / 帮我搭建系统 / 装这个 Skill」时，按本章 9 步执行。**
+> 完成后用户飞书账号下会有：1 个多维表 App / 16 张表 / 118 字段 / 4 视图 / 1 仪表盘 8 图表 / 1 个独人通知群 / 1 份团队配置。
+
+### Step 0：检查授权 scope
+
+执行任何动作前确认用户已授权：
+
+```bash
+lark-cli auth login --scope "base:app:create base:table:create base:table:delete base:field:create base:record:create base:record:read base:dashboard:create base:view:read im:chat:create_by_user im:message.send_as_user task:task:write task:task:read contact:user:search docs:document:write_only"
+```
+
+如果有 missing_scope 错误，让用户跑上面命令补授权。
+
+### Step 1：建多维表 App
+
+```bash
+lark-cli base +base-create \
+  --name "lark-fashion-cockpit 数据中枢" \
+  --time-zone "Asia/Shanghai" \
+  --jq '.data.base.base_token'
+```
+
+记录返回的 `base_token`（后续每个命令都要用），写入用户 `~/.lark-fashion-cockpit/config.json`：
+
+```json
+{"base_token": "xxxxx", "init_at": "2026-05-XX"}
+```
+
+### Step 2：批量建 16 张表
+
+按以下顺序循环 `base +table-create --base-token <token> --name <name>`：
+
+```
+01_产品库 / 02_4平台销售 / 03_库存预警 / 04_上新波段 / 05_任务清单 / 06_选题池 / 07_文案库 / 08_直播排期 / 09_生产档案 / 10_客户分层 / 11_退货反馈 / 12_竞品博主库 / 13_OKR / 14_审批记录 / 15_市场内容监控 / 16_竞品产品监控
+```
+
+每张表保存返回的 `table_id` 到 config.json 的 `tables` 字典里。
+
+> ⚠️ 飞书有限流：每分钟约 60 次创建。建议每个 table 后 `sleep 0.5` 秒。
+
+### Step 3：删除默认占位表
+
+`base +base-create` 会自动建一张默认表「数据表」。需手动删除：
+
+```bash
+lark-cli base +table-list --base-token <token>  # 找 name="数据表" 的 id
+lark-cli base +table-delete --base-token <token> --table-id <默认表id> --yes
+```
+
+### Step 4：批量建 118 字段
+
+读 `lib/base-schema/fields/*.json`（69 个普通字段 + 11 个主字段 + 7 个 link 字段，文件名前缀为表序号）：
+
+```bash
+for json_file in lib/base-schema/fields/*.json; do
+  table_name=$(basename "$json_file" | cut -d'-' -f1)  # 如 "01"
+  table_id=$(jq -r ".tables[\"$table_name\"]" config.json)
+  
+  lark-cli base +field-create \
+    --base-token "$base_token" \
+    --table-id "$table_id" \
+    --json "@$json_file"
+  sleep 0.4
+done
+```
+
+> ⚠️ **关键坑（实测踩过）：**
+> 1. JSON 文件**必须是 UTF-8 无 BOM**（PowerShell 默认带 BOM 会报错 `invalid character 'ï'`）
+> 2. select 字段的 hue 只能用枚举值：`Red / Orange / Yellow / Lime / Green / Turquoise / Wathet / Blue / Carmine / Purple / Gray`（不要用 Cyan / Pink，会报错）
+> 3. link 字段不能传 `multiple` 字段，会报 `Unrecognized key 'multiple'`
+
+### Step 5：建 link 双向关联（关键）
+
+最重要的一条：05_任务清单.所属OKR ↔ 13_OKR.拆解任务 双向关联
+
+```json
+{
+  "name": "所属OKR",
+  "type": "link",
+  "link_table": "<13_OKR table_id>",
+  "bidirectional": true,
+  "bidirectional_link_field_name": "拆解任务"
+}
+```
+
+这一步建好后，OKR 表里会自动出现"拆解任务"反向字段，13 个 OKR 跟踪靠它。
+
+### Step 6：建任务清单 4 个视图
+
+```bash
+for view in "本月团队总览" "我的待办" "按状态看板" "截止日历"; do
+  lark-cli base +view-create \
+    --base-token "$base_token" \
+    --table-id "<05_任务清单 id>" \
+    --json "{\"name\":\"$view\",\"type\":\"grid\"}"
+done
+```
+
+> 视图的筛选/分组/排序需要单独调 `+view-set-filter` / `+view-set-sort` 等。本 Skill 推荐用户在飞书 GUI 直接配置（5 分钟搞定，比 API 简单）。
+
+### Step 7：建经营总览仪表盘
+
+```bash
+DASH_ID=$(lark-cli base +dashboard-create \
+  --base-token "$base_token" \
+  --name "🎯 经营总览" \
+  --jq '.data.dashboard.dashboard_id')
+```
+
+然后批量建 8 个 block（4 指标卡 + 1 饼图 + 1 环形 + 2 柱状）：
+
+读 `lib/base-schema/dashboard/block-*.json`，循环：
+```bash
+lark-cli base +dashboard-block-create \
+  --base-token "$base_token" \
+  --dashboard-id "$DASH_ID" \
+  --type "<type>" \
+  --name "<name>" \
+  --data-config "@<block 文件>"
+```
+
+最后自动布局：
+```bash
+lark-cli base +dashboard-arrange --base-token "$base_token" --dashboard-id "$DASH_ID"
+```
+
+### Step 8：建独人通知群（解决 P2P self 无推送的坑）
+
+```bash
+NOTIFY_CHAT_ID=$(lark-cli im +chat-create \
+  --as user --type private \
+  --name "🚀 lark-fashion-cockpit 助手" \
+  --description "lark-fashion-cockpit Skill 自动通知：上新/库存/AI分析/晨报" \
+  --jq '.data.chat_id')
+```
+
+> ⚠️ **关键坑（实测踩过）：**
+> 1. 给 user-id 自己发消息 API 返回 ok 但飞书 UI 不弹推送
+> 2. 跨租户外部联系人不能拉到群（错 232033），所以独人群只能含本人
+> 3. 解决方案：建独人群后所有通知发到群里，飞书会原生推送（小红点+角标+锁屏）
+
+### Step 9：写入团队配置
+
+```json
+// ~/.lark-fashion-cockpit/team-config.json
+{
+  "boss": {"name": "<姓名>", "open_id": "<self open_id>"},
+  "notification_chat": {"chat_id": "<step 8 返回>"},
+  "team_members": {
+    "设计师": {"name": "", "open_id": ""},
+    "打版师": {"name": "", "open_id": ""},
+    "生产主管": {"name": "", "open_id": ""},
+    "摄影师": {"name": "", "open_id": ""},
+    "模特": {"name": "", "open_id": ""},
+    "运营": {"name": "", "open_id": ""},
+    "内容编辑": {"name": "", "open_id": ""},
+    "主播": {"name": "", "open_id": ""},
+    "客服": {"name": "", "open_id": ""}
+  },
+  "tables": {/* 16 张表 id 字典 */},
+  "dashboard_id": "<step 7 返回>"
+}
+```
+
+引导用户：
+```
+你的 9 个团队角色对应谁？需要的话告诉我每个角色的姓名，
+我用 contact +search-user 找到 open_id 自动填进配置。
+未配置的角色，分配任务时会提示用户补全。
+```
+
+### Step 10：跑一次「初始化校验」
+
+```bash
+# 1. 列所有表确认 16 张
+lark-cli base +table-list --base-token "$base_token"
+
+# 2. 试发一条 IM 卡片到通知群
+lark-cli im +messages-send --as user --chat-id "$NOTIFY_CHAT_ID" \
+  --markdown "🎉 lark-fashion-cockpit 初始化完成！16 张表 + 1 仪表盘 + 1 通知群已就位。"
+```
+
+老板在飞书群收到这条消息 = **初始化成功**。
+
+---
+
+## 🎬 初始化完成后的 6 个推荐首次操作
+
+让 agent 引导用户：
+
+```
+✅ 初始化完成！现在你可以试这些（都是自然语言一句话）：
+
+1. "新增第一款产品 [款名]" → 启动产品库
+2. "录入今天 4 平台销售数据" → 录销售
+3. "企划 Q3 早秋第一波，5 款" → 启动上新流程
+4. "找出某条件的产品" → AI 产品分析
+5. "看下哪些款要补货" → 库存预警
+6. "今天店里怎么样" → 经营晨报
+
+对应的子 skill 见上方「路由总览」。
 ```
 
 ## 💡 设计哲学
