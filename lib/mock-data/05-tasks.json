@@ -1,0 +1,17 @@
+{
+  "fields": ["任务标题","角色","优先级","状态","关联款","所属波段","所属OKR"],
+  "rows": [
+    ["1. 选款评审会 — 早春第一波 5 款定稿","运营","P0","已完成",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"},{"id":"recviy1mBYpaOM"},{"id":"recviy1mBYyLHy"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["2. 5 款设计稿出图","设计师","P1","已完成",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["3. 打版 5 款 — 含尺码网格调整","打版师","P1","已完成",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYpaOM"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["4. 5 款打样确认 — 工厂样衣审核","生产主管","P0","已完成",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYpaOM"},{"id":"recviy1mBYyLHy"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["5. 大货生产投单 — 计划出货 2400 件","生产主管","P0","进行中",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"},{"id":"recviy1mBYpaOM"},{"id":"recviy1mBYyLHy"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["6. 主图 + 模特图拍摄 — 5 款 200 张","摄影师","P1","进行中",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"},{"id":"recviy1mBYpaOM"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["7. 详情页设计 — 4 平台版本","运营","P1","待启动",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["8. 抖音种草视频拍摄 — 5 条","内容编辑","P1","待启动",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtoNai"}]],
+    ["9. 小红书图文 — 10 条","内容编辑","P2","待启动",[{"id":"recviy1mBYpaOM"},{"id":"recviy1mBYyLHy"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtoNai"}]],
+    ["10. 直播预热脚本 + 排期 — 4 场","主播","P1","待启动",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYyLHy"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtoNai"}]],
+    ["11. 上架淘宝 + 抖音 + 小红书 + 视频号","运营","P0","待启动",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"},{"id":"recviy1mBYpaOM"},{"id":"recviy1mBYyLHy"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]],
+    ["12. 客服话术更新 + 团队培训","客服","P2","待启动",[{"id":"recviy1mBYLLnB"},{"id":"recviy1mBYY4EL"}],[{"id":"recviy1Hxcy7iJ"}],[{"id":"recviy1vrtPjP5"}]]
+  ]
+}
