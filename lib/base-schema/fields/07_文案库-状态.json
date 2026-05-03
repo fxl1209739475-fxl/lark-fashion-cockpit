@@ -1,0 +1,1 @@
+{"name":"状态","options":[{"name":"草稿","hue":"Gray","lightness":"Lighter"},{"name":"审核中","hue":"Yellow","lightness":"Lighter"},{"name":"已发布","hue":"Green","lightness":"Light"},{"name":"已废弃","hue":"Red","lightness":"Lighter"}],"type":"select","multiple":false}

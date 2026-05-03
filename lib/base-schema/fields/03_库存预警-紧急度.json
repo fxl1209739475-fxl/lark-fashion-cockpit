@@ -1,0 +1,1 @@
+{"name":"紧急度","options":[{"name":"紧急","hue":"Red","lightness":"Light"},{"name":"中","hue":"Orange","lightness":"Lighter"},{"name":"低","hue":"Gray","lightness":"Lighter"}],"type":"select","multiple":false}

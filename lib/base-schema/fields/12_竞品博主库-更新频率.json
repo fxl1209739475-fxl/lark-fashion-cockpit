@@ -1,0 +1,1 @@
+{"name":"更新频率","options":[{"name":"日更","hue":"Red","lightness":"Light"},{"name":"周更","hue":"Orange","lightness":"Lighter"},{"name":"月更","hue":"Yellow","lightness":"Lighter"},{"name":"不定期","hue":"Gray","lightness":"Lighter"}],"type":"select","multiple":false}

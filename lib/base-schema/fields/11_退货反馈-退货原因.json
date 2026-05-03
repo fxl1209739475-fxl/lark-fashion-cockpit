@@ -1,0 +1,1 @@
+{"name":"退货原因","options":[{"name":"尺码不合","hue":"Orange","lightness":"Lighter"},{"name":"面料","hue":"Yellow","lightness":"Lighter"},{"name":"色差","hue":"Carmine","lightness":"Lighter"},{"name":"版型","hue":"Blue","lightness":"Lighter"},{"name":"物流","hue":"Gray","lightness":"Lighter"},{"name":"其他","hue":"Gray","lightness":"Lighter"}],"type":"select","multiple":false}

@@ -1,0 +1,1 @@
+{"name":"处理状态","options":[{"name":"待处理","hue":"Yellow","lightness":"Lighter"},{"name":"协商中","hue":"Blue","lightness":"Lighter"},{"name":"已退款","hue":"Green","lightness":"Light"},{"name":"已换货","hue":"Purple","lightness":"Light"}],"type":"select","multiple":false}

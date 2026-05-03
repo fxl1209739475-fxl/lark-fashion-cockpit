@@ -1,0 +1,1 @@
+{"name":"监控状态","options":[{"name":"监控中","hue":"Green","lightness":"Lighter"},{"name":"暂停","hue":"Gray","lightness":"Lighter"},{"name":"已删除","hue":"Red","lightness":"Lighter"}],"type":"select","multiple":false}

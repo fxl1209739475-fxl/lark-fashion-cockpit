@@ -1,0 +1,1 @@
+{"name":"阶段","options":[{"name":"待启动","hue":"Gray","lightness":"Lighter"},{"name":"脚本","hue":"Blue","lightness":"Lighter"},{"name":"拍摄","hue":"Yellow","lightness":"Lighter"},{"name":"剪辑","hue":"Orange","lightness":"Lighter"},{"name":"已发布","hue":"Green","lightness":"Light"}],"type":"select","multiple":false}

@@ -1,0 +1,1 @@
+{"name":"进度","options":[{"name":"打样","hue":"Gray","lightness":"Lighter"},{"name":"在做","hue":"Blue","lightness":"Lighter"},{"name":"质检","hue":"Yellow","lightness":"Lighter"},{"name":"入仓","hue":"Orange","lightness":"Lighter"},{"name":"已交付","hue":"Green","lightness":"Light"}],"type":"select","multiple":false}

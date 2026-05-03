@@ -1,0 +1,1 @@
+{"name":"状态","options":[{"name":"待审批","hue":"Yellow","lightness":"Lighter"},{"name":"已通过","hue":"Green","lightness":"Light"},{"name":"已驳回","hue":"Red","lightness":"Light"},{"name":"已撤回","hue":"Gray","lightness":"Lighter"}],"type":"select","multiple":false}
