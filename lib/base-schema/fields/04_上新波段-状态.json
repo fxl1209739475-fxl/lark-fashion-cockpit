@@ -1,0 +1,1 @@
+{"name":"状态","options":[{"name":"企划中","hue":"Gray","lightness":"Lighter"},{"name":"打样中","hue":"Yellow","lightness":"Lighter"},{"name":"拍摄中","hue":"Blue","lightness":"Lighter"},{"name":"上架中","hue":"Orange","lightness":"Lighter"},{"name":"已完成","hue":"Green","lightness":"Light"}],"type":"select","multiple":false}

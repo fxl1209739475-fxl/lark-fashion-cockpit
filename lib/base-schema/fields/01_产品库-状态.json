@@ -1,0 +1,1 @@
+{"name":"状态","options":[{"name":"在售","hue":"Green","lightness":"Light"},{"name":"售罄","hue":"Red","lightness":"Light"},{"name":"历史款","hue":"Gray","lightness":"Lighter"},{"name":"开发中","hue":"Blue","lightness":"Lighter"}],"type":"select","multiple":false}

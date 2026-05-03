@@ -1,0 +1,1 @@
+{"name":"状态","options":[{"name":"待启动","hue":"Gray","lightness":"Lighter"},{"name":"进行中","hue":"Blue","lightness":"Lighter"},{"name":"已完成","hue":"Green","lightness":"Light"},{"name":"已取消","hue":"Red","lightness":"Lighter"},{"name":"已逾期","hue":"Red","lightness":"Light"}],"type":"select","multiple":false}

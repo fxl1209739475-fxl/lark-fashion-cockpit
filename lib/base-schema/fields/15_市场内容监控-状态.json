@@ -1,0 +1,1 @@
+{"name":"状态","options":[{"name":"待处理","hue":"Yellow","lightness":"Lighter"},{"name":"已加入选题池","hue":"Green","lightness":"Light"},{"name":"已忽略","hue":"Gray","lightness":"Lighter"}],"type":"select","multiple":false}
