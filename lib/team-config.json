@@ -1,0 +1,41 @@
+{
+  "_doc": "lark-fashion-cockpit 团队配置 — agent 读这个文件知道任务分配给谁、通知发到哪",
+  "boss": {
+    "name": "冯兴龙",
+    "open_id": "ou_85c9148d13c562728e60d456b60d9afc",
+    "_note": "Skill 完成关键动作后会通过 IM 卡片通知老板"
+  },
+  "notification_chat": {
+    "chat_id": "oc_45e0995a007db9d7f1859fa17b6566f6",
+    "name": "🚀 lark-fashion-cockpit 助手",
+    "type": "private_solo",
+    "_note": "独人群（仅老板自己），Skill 所有通知都发这里。比 P2P 给自己发消息强：飞书会原生推送（小红点+角标+锁屏）。新用户安装本 Skill 时 agent 应主动建一个同名独人群代替 P2P-self。"
+  },
+  "team_members": {
+    "设计师": {
+      "name": "马萍蔓",
+      "open_id": "ou_0ba02adab44ecb14a6c99e869823312b",
+      "is_cross_tenant": true
+    },
+    "生产主管": {
+      "name": "申丽媛",
+      "open_id": "ou_5cd0eb47d312bbbf9011b5ecdae01e07",
+      "is_cross_tenant": true
+    },
+    "内容编辑": {
+      "name": "朱健豪",
+      "open_id": "ou_32f38bc03a052fb36120de2610f616a3",
+      "is_cross_tenant": true
+    }
+  },
+  "_role_template": {
+    "_note": "完整 9 角色模板，用户首次安装 Skill 时由 agent 引导填充",
+    "roles": ["设计师", "打版师", "生产主管", "摄影师", "模特", "运营", "内容编辑", "主播", "客服"]
+  },
+  "_lessons_from_real_test": {
+    "cross_tenant_p2p_im_forbid": "跨租户 P2P IM 返回 230038，需走飞书原生任务/审批/日历通知",
+    "cross_tenant_chat_invite_forbid": "跨租户用户不能拉到统一群（错 232033），同租户团队才能群通知",
+    "task_create_assignee_silently_ignored": "task +create 的 --assignee 和 --follower 参数被静默忽略，必须分两步：先 +create 拿 guid，再 +assign --add / +followers --add",
+    "p2p_self_no_push": "给自己 user-id 发 IM API 返回 ok 但飞书 UI 不弹推送，应改用独人群"
+  }
+}
