@@ -1,0 +1,142 @@
+{
+  "base_app_name": "lark-fashion-cockpit 数据中枢",
+  "base_token": "LWsdbVtIaa2MaDsANm3cNdYgn1j",
+  "url": "https://my.feishu.cn/base/LWsdbVtIaa2MaDsANm3cNdYgn1j",
+  "time_zone": "Asia/Shanghai",
+  "_note": "本文件存放真实 token 仅供本仓库引用；用户使用本 Skill 时由 SKILL.md 引导 agent 在用户自己的飞书账号下创建多维表 App。",
+  "tables": [
+    {
+      "id": "tblrKzymnPPQ98ZX",
+      "name": "01_产品库",
+      "purpose": "产品 + SKU 颜色尺码库存的核心实体表",
+      "key_field": "款号",
+      "serves_capabilities": [5, 7, 14],
+      "key_fields_planned": ["款号", "名称", "SKU", "颜色", "尺码", "库存", "做货数", "已实销", "状态", "季节", "品类", "售价"]
+    },
+    {
+      "id": "tbll7UHbL6kDxZua",
+      "name": "02_4平台销售",
+      "purpose": "淘宝/抖音/小红书/视频号 日维度销售汇总",
+      "key_field": "记录",
+      "serves_capabilities": [1, 2, 10],
+      "key_fields_planned": ["日期", "平台", "GMV", "订单数", "UV", "转化率", "关联款"]
+    },
+    {
+      "id": "tblq2jhCQiRFeDXh",
+      "name": "03_库存预警",
+      "purpose": "低库存 SKU 巡检 + 平台库存分配",
+      "key_field": "SKU",
+      "serves_capabilities": [7],
+      "key_fields_planned": ["SKU", "当前库存", "安全线", "平台分配", "建议补货量", "紧急度", "更新日期"]
+    },
+    {
+      "id": "tblnXnsxZN0H0z3P",
+      "name": "04_上新波段",
+      "purpose": "上新批次规划与跟踪（企划→打样→拍摄→上架）",
+      "key_field": "波段名",
+      "serves_capabilities": [4, 6],
+      "key_fields_planned": ["波段名", "启动日期", "状态", "SKU列表", "负责人", "预计上架日"]
+    },
+    {
+      "id": "tblRnB14n1xW1vou",
+      "name": "05_任务清单",
+      "purpose": "跨部门任务管理（飞书任务的镜像 + 业务关联）",
+      "key_field": "任务",
+      "serves_capabilities": [4, 6, 11, 14],
+      "key_fields_planned": ["任务标题", "角色", "负责人", "截止日期", "优先级", "状态", "关联款", "所属波段", "飞书任务ID"]
+    },
+    {
+      "id": "tblTlCI2hQ7o1kr8",
+      "name": "06_选题池",
+      "purpose": "AI 评分后的高分选题",
+      "key_field": "选题",
+      "serves_capabilities": [9, 11],
+      "key_fields_planned": ["选题标题", "来源博主", "AI分数", "关联款", "阶段", "负责人", "创建日期"]
+    },
+    {
+      "id": "tblBAJCOKKnMgUrQ",
+      "name": "07_文案库",
+      "purpose": "AI 生成的多平台文案",
+      "key_field": "标题",
+      "serves_capabilities": [11],
+      "key_fields_planned": ["标题", "选题ID", "平台", "钩子", "正文", "状态", "创建日期"]
+    },
+    {
+      "id": "tblAuzO7UsdjlXyL",
+      "name": "08_直播排期",
+      "purpose": "直播日程与主推产品",
+      "key_field": "排期",
+      "serves_capabilities": [12],
+      "key_fields_planned": ["日期", "主播", "主推款", "预估GMV", "实际GMV", "直播间链接"]
+    },
+    {
+      "id": "tblePNIIcpUvTPLp",
+      "name": "09_生产档案",
+      "purpose": "工厂生产进度与供应商档案",
+      "key_field": "生产单",
+      "serves_capabilities": [14],
+      "key_fields_planned": ["生产单号", "工厂", "在做款", "进度", "交期", "数量", "成品率", "状态"]
+    },
+    {
+      "id": "tblMTkWGlIlnTcMA",
+      "name": "10_客户分层",
+      "purpose": "私域客户运营",
+      "key_field": "客户",
+      "serves_capabilities": [13],
+      "key_fields_planned": ["客户ID", "层级", "来源平台", "复购次数", "客单", "总贡献", "运营动作"]
+    },
+    {
+      "id": "tblCwJGr0HTMFtXD",
+      "name": "11_退货反馈",
+      "purpose": "退货原因与商品反馈",
+      "key_field": "订单号",
+      "serves_capabilities": [8],
+      "key_fields_planned": ["订单号", "退货原因", "SKU", "客户原话", "处理状态", "退货日期"]
+    },
+    {
+      "id": "tblAhs8thFobg1dx",
+      "name": "12_竞品库",
+      "purpose": "竞品博主监控与爆款追踪",
+      "key_field": "博主名",
+      "serves_capabilities": [9],
+      "key_fields_planned": ["博主名", "平台", "粉丝数", "爆款链接", "价格", "卖点", "上新速度"]
+    },
+    {
+      "id": "tbl0tdusQ2fw98wZ",
+      "name": "13_OKR",
+      "purpose": "公司/部门/个人 OKR 目标拆解",
+      "key_field": "OKR标题",
+      "serves_capabilities": [18],
+      "key_fields_planned": ["OKR标题", "周期", "Objective", "KR列表", "进度", "负责人", "部门"]
+    },
+    {
+      "id": "tblAxWcmHnFl0qUE",
+      "name": "14_审批记录",
+      "purpose": "审批流程记录",
+      "key_field": "审批标题",
+      "serves_capabilities": [19],
+      "key_fields_planned": ["审批标题", "类型", "金额", "申请人", "审批人", "状态", "创建日期", "完成日期"]
+    }
+  ],
+  "_capability_id_map": {
+    "1": "经营晨报",
+    "2": "目标进度追踪",
+    "3": "利润财务分析",
+    "4": "跨部门任务协同",
+    "5": "产品库+8维详情",
+    "6": "商品企划上新波段",
+    "7": "库存补货决策",
+    "8": "评价退货分析",
+    "9": "竞品+趋势监控",
+    "10": "多平台数据分析",
+    "11": "内容创作5阶段流转",
+    "12": "营销直播管理",
+    "13": "私域+服务体验",
+    "14": "生产+供应商管理",
+    "15": "订单履约+物流",
+    "16": "公司知识库",
+    "17": "经营复盘会工作流",
+    "18": "OKR目标拆解",
+    "19": "审批流程自动化"
+  }
+}
