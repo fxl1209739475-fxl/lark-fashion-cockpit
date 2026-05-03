@@ -1,0 +1,1 @@
+{"table_name":"05_任务清单","filter":{"conditions":[{"operator":"is","field_name":"状态","value":"进行中"}],"conjunction":"and"},"count_all":true}

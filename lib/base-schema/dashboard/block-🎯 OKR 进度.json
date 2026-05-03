@@ -1,0 +1,1 @@
+{"table_name":"13_OKR","group_by":[{"field_name":"OKR标题","sort":{"type":"value","order":"desc"},"mode":"integrated"}],"series":[{"field_name":"进度","rollup":"AVERAGE"}]}
