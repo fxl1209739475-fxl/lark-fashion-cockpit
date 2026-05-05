@@ -23,6 +23,13 @@ import pygetwindow as gw
 import pyautogui
 from openai import OpenAI
 
+try:
+    from dotenv import load_dotenv
+    _env_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", ".env")
+    load_dotenv(_env_path)
+except ImportError:
+    pass
+
 
 DOUBAO_API_KEY = os.environ.get("DOUBAO_API_KEY", "")
 DOUBAO_MODEL = os.environ.get("DOUBAO_MODEL", "doubao-1-5-vision-pro-32k-250115")
@@ -134,20 +141,17 @@ def post_lark_card(result: dict):
                        "template": color},
             "elements": elements}
 
-    fd, path = tempfile.mkstemp(suffix=".json")
-    os.close(fd)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(card, f, ensure_ascii=False)
-
+    content_json = json.dumps(card, ensure_ascii=False)
     r = subprocess.run(
-        [LARK_CLI, "im", "+message-send",
-         "--receive-id-type", "chat_id",
-         "--receive-id", BOSS_CHAT,
+        [LARK_CLI, "im", "+messages-send",
+         "--as", "user",
+         "--chat-id", BOSS_CHAT,
          "--msg-type", "interactive",
-         "--content", "@" + path],
+         "--content", content_json],
         capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15,
     )
-    os.remove(path)
+    if r.returncode != 0:
+        print(f"      lark-cli stderr: {(r.stderr or r.stdout or '')[:300]}")
     return r.returncode == 0
 
 
