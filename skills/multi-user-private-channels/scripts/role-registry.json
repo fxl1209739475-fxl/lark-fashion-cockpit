@@ -1,0 +1,102 @@
+{
+  "_comment": "员工 → 角色 → 可用 skill 映射。team-config.json 的扩展版，支持权限",
+  "_version": "1.0.0",
+  "_updated_at": "2026-05-05",
+
+  "roles": {
+    "owner": {
+      "name": "老板/老板娘",
+      "allowed_skills": ["*"],
+      "_note": "全部 36 个 skill 都可用"
+    },
+    "designer": {
+      "name": "设计师",
+      "allowed_skills": [
+        "task-tracker", "task-collaboration", "task-lifecycle",
+        "product-library", "product-matching", "product-graph",
+        "doc-iterator", "knowledge-base",
+        "natural-language-router", "lingo-fashion-glossary"
+      ]
+    },
+    "production": {
+      "name": "生产主管/工厂",
+      "allowed_skills": [
+        "task-tracker", "task-collaboration", "task-lifecycle",
+        "production-supplier", "order-fulfillment",
+        "stock-replenishment", "feedback-returns",
+        "natural-language-router", "lingo-fashion-glossary",
+        "knowledge-base"
+      ]
+    },
+    "anchor": {
+      "name": "主播",
+      "allowed_skills": [
+        "live-streaming", "stock-replenishment",
+        "product-matching", "product-library",
+        "natural-language-router", "lingo-fashion-glossary"
+      ]
+    },
+    "service": {
+      "name": "客服",
+      "allowed_skills": [
+        "feedback-returns", "private-domain",
+        "helpdesk-customer-tickets", "lingo-fashion-glossary",
+        "natural-language-router", "knowledge-base"
+      ]
+    },
+    "content": {
+      "name": "内容编辑",
+      "allowed_skills": [
+        "content-pipeline", "video-script-parser", "blogger-monitor",
+        "competitor-monitor", "doc-iterator",
+        "natural-language-router", "lingo-fashion-glossary"
+      ]
+    },
+    "ops": {
+      "name": "运营",
+      "allowed_skills": [
+        "platform-analytics", "morning-report", "target-tracking",
+        "task-collaboration", "task-tracker",
+        "live-streaming", "competitor-monitor",
+        "product-library", "product-matching",
+        "natural-language-router", "knowledge-base", "lingo-fashion-glossary"
+      ]
+    },
+    "guest": {
+      "name": "未注册访客",
+      "allowed_skills": [
+        "natural-language-router", "knowledge-base", "lingo-fashion-glossary"
+      ],
+      "_note": "新员工默认权限，等老板娘批准后升级到对应 role"
+    }
+  },
+
+  "users": {
+    "ou_85c9148d13c562728e60d456b60d9afc": {
+      "name": "老板娘",
+      "role": "owner"
+    },
+    "ou_0ba02adab44ecb14a6c99e869823312b": {
+      "name": "马萍蔓",
+      "role": "designer",
+      "_cross_tenant": true
+    },
+    "ou_5cd0eb47d312bbbf9011b5ecdae01e07": {
+      "name": "申丽媛",
+      "role": "production",
+      "_cross_tenant": true
+    },
+    "ou_32f38bc03a052fb36120de2610f616a3": {
+      "name": "朱健豪",
+      "role": "content",
+      "_cross_tenant": true
+    }
+  },
+
+  "audit": {
+    "log_to": "logs/trigger-log.jsonl",
+    "fields": ["timestamp", "user_open_id", "user_name", "role", "skill", "params", "chat_type"],
+    "boss_can_query": true,
+    "_note": "老板娘看不到员工对话内容，但能看每次触发的元数据（who/what/when）做审计"
+  }
+}

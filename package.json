@@ -1,0 +1,62 @@
+{
+  "name": "lark-fashion-cockpit",
+  "version": "1.0.0",
+  "description": "女装运营驾驶舱 — 飞书 CLI 创作者大赛参赛作品。一个大 skill 包含 32 个独立 sub-skill，覆盖商品/直播/选款/客服/团队/AI 数字员工全链路。基于 lark-cli + 多模态 AI（豆包/DeepSeek）+ 飞书 OpenAPI",
+  "keywords": [
+    "lark-cli",
+    "feishu",
+    "fashion",
+    "ecommerce",
+    "ai-agent",
+    "skill",
+    "cockpit",
+    "douyin",
+    "运营驾驶舱",
+    "女装",
+    "电商",
+    "AI数字员工"
+  ],
+  "author": "fxl1209739475 (女装运营 / lark-cli 创作者大赛)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fxl1209739475-fxl/lark-fashion-cockpit.git"
+  },
+  "homepage": "https://github.com/fxl1209739475-fxl/lark-fashion-cockpit",
+  "bugs": {
+    "url": "https://github.com/fxl1209739475-fxl/lark-fashion-cockpit/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "skills/",
+    "docs/",
+    "README.md",
+    "LICENSE",
+    ".env.example"
+  ],
+  "scripts": {
+    "init-cockpit": "node scripts/init-cockpit.js",
+    "list-skills": "ls skills/"
+  },
+  "peerDependencies": {
+    "@larksuite/cli": ">=1.0.20"
+  },
+  "skills": {
+    "directory": "skills/",
+    "count": 35,
+    "categories": {
+      "公司经营": ["morning-report", "target-tracking", "profit-analysis", "task-collaboration"],
+      "商品中心": ["product-library", "new-launch-planning", "stock-replenishment", "feedback-returns", "competitor-monitor", "product-matching", "product-graph", "launch-decision", "base-extension-product-matcher"],
+      "销售增长": ["platform-analytics", "content-pipeline", "live-streaming", "private-domain"],
+      "供应链履约": ["production-supplier", "order-fulfillment"],
+      "公司管理": ["knowledge-base", "meeting-workflow", "okr-cascade", "approval-flow", "doc-iterator"],
+      "工作流": ["task-lifecycle", "event-router", "meeting-broadcaster", "meeting-clip-extractor", "skill-recommender"],
+      "AI 数字员工": ["boss-clone-aily", "lingo-fashion-glossary", "helpdesk-customer-tickets"],
+      "可视化扩展": ["workplace-block-cockpit"],
+      "视频拆解工具": ["video-script-parser", "blogger-monitor"],
+      "开源生态雷达": ["opensource-radar"]
+    }
+  }
+}

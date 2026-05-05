@@ -1,8 +1,25 @@
-# 敏感配置
+# 敏感配置（凭证 / 真实业务数据）
 config.local.json
 *.local.json
 .env
 .env.*
+!.env.example
+team-config.local.json
+
+# 个人隐私数据（不能公开）
+personas/boss-persona.md
+personas/*-persona.md
+!personas/.gitkeep
+
+# 飞书会议妙记（含真实会议内容，整个目录都不上传）
+minutes/
+
+# 视频分析输出（含真实抓取的抖音视频内容）
+out/
+video-analysis/
+
+# 真实灌入的 mock 数据快照（避免上传业务数据）
+lib/mock-data/*-real-*.json
 
 # 临时文件
 *.tmp
@@ -16,7 +33,7 @@ Thumbs.db
 .idea/
 *.code-workspace
 
-# 输出
+# 输出 / 日志
 output/
 logs/
 *.log
@@ -29,6 +46,17 @@ venv/
 
 # Node
 node_modules/
+remotion/node_modules/
 
 # 飞书 CLI 本地凭据
 .lark-cli/
+
+# Whisper 模型（150MB）+ 整个 models 文件夹避免大文件
+models/
+!models/.gitkeep
+
+# 临时 JSON
+*-batch.json
+*-todo.json
+todo.json
+field*.json

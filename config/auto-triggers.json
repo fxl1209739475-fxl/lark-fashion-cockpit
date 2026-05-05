@@ -1,0 +1,116 @@
+{
+  "_comment": "lark-fashion-cockpit 全部自动触发任务配置 — auto-scheduler skill 启动后接管。每条任务可独立 enable/disable。飞书发「列出自动任务」/「停 X」/「启用 X」 实时控制",
+  "_version": "1.0.0",
+  "_timezone": "Asia/Shanghai",
+
+  "triggers": [
+    {
+      "id": "morning-report",
+      "name": "📊 经营晨报",
+      "cron": "0 8 * * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/morning-report.ps1",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每日早 8:00 自动拉 4 平台销售/库存/直播综合数据，AI 分析后发到老板群"
+    },
+    {
+      "id": "task-tracker-daily",
+      "name": "⏰ 任务巡检日报",
+      "cron": "30 8 * * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/task-tracker.ps1",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每日早 8:30 自动巡检任务+升级逾期+完成复盘"
+    },
+    {
+      "id": "task-tracker-hourly",
+      "name": "⏰ 任务实时巡检",
+      "cron": "0 9-21 * * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/task-tracker.ps1 -SilentMode",
+      "target": "internal",
+      "enabled": false,
+      "description": "工作时段每小时静默巡检，仅升级紧急/逾期任务，不发卡片"
+    },
+    {
+      "id": "blogger-monitor",
+      "name": "👀 对标博主每日监控",
+      "cron": "0 8 * * *",
+      "command": "python skills/blogger-monitor/scripts/monitor-bloggers.py",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每日早 8:00 扫监控博主清单 + 4 路筛选 TOP N 发卡片"
+    },
+    {
+      "id": "opensource-radar",
+      "name": "🛰 开源雷达",
+      "cron": "0 9 * * *",
+      "command": "python skills/opensource-radar/scripts/scan-github.py",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每日早 9:00 扫 GitHub 新发开源项目 + AI 评估改造建议"
+    },
+    {
+      "id": "livestream-pre-check",
+      "name": "📺 直播前 30 分钟预检",
+      "cron": "30 13,18 * * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/livestream-prep.ps1",
+      "target": "anchor_chat",
+      "enabled": true,
+      "description": "直播前 30 分钟自动检查库存/重点款/排期，提醒主播"
+    },
+    {
+      "id": "livestream-daily-report",
+      "name": "📺 直播日报",
+      "cron": "0 23 * * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/livestream-daily-report.ps1",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每晚 23:00 自动总结当日直播 GMV / TOP 单品 / 主播表现"
+    },
+    {
+      "id": "personal-mirror",
+      "name": "🪞 个人成长镜子",
+      "cron": "0 22 * * *",
+      "command": "python skills/personal-mirror/scripts/personal-mirror.py --all",
+      "target": "each_employee_p2p",
+      "enabled": true,
+      "description": "每晚 22:00 给每位员工发个人成长复盘卡 + SOP 沉淀建议"
+    },
+    {
+      "id": "skill-recommender",
+      "name": "🎯 skill 推荐器",
+      "cron": "0 8 * * 1",
+      "command": "python skills/skill-recommender/scripts/recommend.py",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每周一早 8:00 基于上周 trigger-log 推荐这周该用哪些 skill"
+    },
+    {
+      "id": "stock-alert",
+      "name": "📦 库存预警实时",
+      "cron": "*/30 9-21 * * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/stock-alert-check.ps1",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "工作时段每 30 分钟检查库存预警，触发即推送"
+    },
+    {
+      "id": "competitor-trend-weekly",
+      "name": "📈 竞品趋势周报",
+      "cron": "0 10 * * 1",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/competitor-trend.ps1",
+      "target": "boss_chat",
+      "enabled": false,
+      "description": "每周一早 10:00 自动分析上周竞品爆款 + 趋势词云"
+    },
+    {
+      "id": "okr-progress-monthly",
+      "name": "🎯 OKR 月度进度",
+      "cron": "0 9 1 * *",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/okr-monthly.ps1",
+      "target": "boss_chat",
+      "enabled": true,
+      "description": "每月 1 日早 9:00 自动汇总上月 OKR 完成情况 + 本月目标拆解"
+    }
+  ]
+}

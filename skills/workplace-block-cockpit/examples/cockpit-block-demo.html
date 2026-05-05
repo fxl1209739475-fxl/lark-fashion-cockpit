@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>飞书工作台 · cockpit Widget Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: PingFang SC, -apple-system, sans-serif; background: #f4f5f7; color: #1f2329; }
+
+  /* 模拟飞书 PC 客户端 */
+  .feishu-app { display: flex; height: 100vh; }
+  .left-nav {
+    width: 220px; background: #2f3340; color: #adb1bb; padding: 16px 0;
+  }
+  .left-nav .logo { padding: 0 20px 16px; font-weight: 700; color: white; font-size: 16px; }
+  .nav-item {
+    padding: 10px 20px; font-size: 13px; cursor: pointer; display: flex; align-items: center;
+  }
+  .nav-item:hover { background: #3a3f50; }
+  .nav-item.active { background: #3370ff; color: white; }
+  .nav-item .icon { margin-right: 10px; font-size: 16px; }
+
+  .main { flex: 1; padding: 24px; overflow-y: auto; }
+  .header { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .subheader { font-size: 13px; color: #86909c; margin-bottom: 24px; }
+
+  /* Widget 网格 */
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .widget {
+    background: white; border-radius: 12px; padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #f0f1f5;
+  }
+  .widget.cockpit { grid-column: span 2;
+                     background: linear-gradient(135deg, #f6f9ff 0%, #fff 100%);
+                     border: 2px solid #3370ff; }
+  .widget h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; }
+  .widget h3 .badge { margin-left: auto; font-size: 11px; color: #86909c; font-weight: 400; }
+
+  .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid #f4f5f7;
+    cursor: pointer; transition: background 0.15s;
+    margin: 0 -8px; padding-left: 8px; padding-right: 8px;
+  }
+  .row:hover { background: #f7f8fa; border-radius: 4px; }
+  .row:last-child { border-bottom: none; }
+  .row .label { font-size: 13px; color: #4e5969; }
+  .row .value { font-size: 16px; font-weight: 700; color: #1f2329; }
+  .row .growth { color: #00b42a; font-size: 12px; margin-left: 8px; }
+  .row .alert { color: #f53f3f; }
+  .row .arrow { color: #86909c; font-size: 12px; margin-left: 8px; }
+
+  /* 应用列表 widget */
+  .apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .app-icon {
+    text-align: center; padding: 12px 4px; cursor: pointer;
+    border-radius: 6px;
+  }
+  .app-icon:hover { background: #f7f8fa; }
+  .app-icon .ico { font-size: 28px; margin-bottom: 4px; }
+  .app-icon .name { font-size: 11px; color: #4e5969; }
+
+  /* 公告 */
+  .announcement {
+    background: #fff7e6; padding: 10px 14px; border-radius: 6px; font-size: 12px;
+    color: #d46b08; margin-bottom: 10px;
+  }
+
+  /* 任务 */
+  .task-item {
+    padding: 8px 0; font-size: 12px; border-bottom: 1px solid #f4f5f7;
+  }
+  .task-item:last-child { border-bottom: none; }
+  .task-item .due { color: #f53f3f; font-size: 11px; margin-left: 6px; }
+
+  .ai-button {
+    display: inline-block; background: linear-gradient(90deg,#7c3aed,#3370ff);
+    color: white; padding: 6px 14px; border-radius: 4px; font-size: 12px;
+    cursor: pointer; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="feishu-app">
+    <div class="left-nav">
+      <div class="logo">📕 飞书</div>
+      <div class="nav-item"><span class="icon">💬</span>消息</div>
+      <div class="nav-item active"><span class="icon">🏢</span>工作台</div>
+      <div class="nav-item"><span class="icon">📅</span>日历</div>
+      <div class="nav-item"><span class="icon">✅</span>任务</div>
+      <div class="nav-item"><span class="icon">📋</span>多维表格</div>
+      <div class="nav-item"><span class="icon">📁</span>云文档</div>
+      <div class="nav-item"><span class="icon">📺</span>视频会议</div>
+    </div>
+
+    <div class="main">
+      <div class="header">工作台</div>
+      <div class="subheader">早上好，老板娘 · 2026/05/05 周二</div>
+
+      <div class="widget-grid">
+
+        <!-- 🚀 cockpit 主 widget（占两栏，最显眼）-->
+        <div class="widget cockpit">
+          <h3>🚀 lark-fashion-cockpit · 今日核心
+            <span class="badge">数据更新于 17:55 · 5 分钟自动刷新</span>
+          </h3>
+          <div class="row">
+            <span class="label">今日 GMV</span>
+            <span><span class="value">¥42,650</span><span class="growth">+12% ↑</span><span class="arrow">→</span></span>
+          </div>
+          <div class="row">
+            <span class="label">紧急任务</span>
+            <span><span class="value alert">3 项 🔴</span><span class="arrow">→</span></span>
+          </div>
+          <div class="row">
+            <span class="label">下场直播倒计时</span>
+            <span><span class="value">14:00 (1h 47m)</span><span class="arrow">→</span></span>
+          </div>
+          <div class="row">
+            <span class="label">库存预警</span>
+            <span><span class="value alert">DRS-0429 仅 12 件</span><span class="arrow">→</span></span>
+          </div>
+          <div class="row">
+            <span class="label">退货率（本周）</span>
+            <span><span class="value">7.8%</span><span class="growth" style="color:#f53f3f">+1.2% ↑</span><span class="arrow">→</span></span>
+          </div>
+          <div class="row">
+            <span class="label">AI 老板娘分身</span>
+            <span class="ai-button">🗣 一键问问</span>
+          </div>
+        </div>
+
+        <!-- 公告 widget -->
+        <div class="widget">
+          <h3>📌 公告 <span class="badge">3 条</span></h3>
+          <div class="announcement">📢 今晚 21:00 直播 - 全场满 200 减 30</div>
+          <div class="announcement">⚠ 工厂申丽媛要请假 5/8-5/10</div>
+          <div class="announcement">🎉 设计师马萍蔓本周新品交付优秀奖</div>
+        </div>
+
+        <!-- 我的任务 widget -->
+        <div class="widget">
+          <h3>✅ 我的任务 <span class="badge">3 紧急 + 5 常规</span></h3>
+          <div class="task-item">🔴 审核 DRS-0429 翻单建议<span class="due">超期 2h</span></div>
+          <div class="task-item">🔴 回复客户赵姐的退货申请<span class="due">5/5 18:00</span></div>
+          <div class="task-item">🔴 工厂催报 KNT-0402 起订量<span class="due">今日</span></div>
+          <div class="task-item">🟡 内容编辑朱健豪审稿（3 件）</div>
+          <div class="task-item">🟡 月度总结会议（5/7 14:00）</div>
+        </div>
+
+        <!-- 我的应用 widget -->
+        <div class="widget">
+          <h3>🛠 常用应用 <span class="badge">点击打开</span></h3>
+          <div class="apps">
+            <div class="app-icon"><div class="ico">📋</div><div class="name">多维表格</div></div>
+            <div class="app-icon"><div class="ico">📁</div><div class="name">云文档</div></div>
+            <div class="app-icon"><div class="ico">🎙</div><div class="name">妙记</div></div>
+            <div class="app-icon"><div class="ico">📺</div><div class="name">视频会议</div></div>
+            <div class="app-icon"><div class="ico">💬</div><div class="name">机器人</div></div>
+            <div class="app-icon"><div class="ico">📊</div><div class="name">仪表盘</div></div>
+            <div class="app-icon"><div class="ico">📝</div><div class="name">审批</div></div>
+            <div class="app-icon"><div class="ico">🤖</div><div class="name">老板娘 AI</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -32,6 +32,11 @@
     "_note": "完整 9 角色模板，用户首次安装 Skill 时由 agent 引导填充",
     "roles": ["设计师", "打版师", "生产主管", "摄影师", "模特", "运营", "内容编辑", "主播", "客服"]
   },
+  "dev_highlights_doc": {
+    "url": "https://my.feishu.cn/docx/OuwLdPkjroEMy8xPduncWg1qnmf",
+    "document_id": "OuwLdPkjroEMy8xPduncWg1qnmf",
+    "_note": "开发精彩记录 - agent 实时往里追加里程碑/精彩点/演讲素材，作为分享演讲的备料库"
+  },
   "_lessons_from_real_test": {
     "cross_tenant_p2p_im_forbid": "跨租户 P2P IM 返回 230038，需走飞书原生任务/审批/日历通知",
     "cross_tenant_chat_invite_forbid": "跨租户用户不能拉到统一群（错 232033），同租户团队才能群通知",

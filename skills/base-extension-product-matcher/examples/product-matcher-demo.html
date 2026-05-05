@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>飞书多维表格插件 · AI 一键搭配 — Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: PingFang SC, -apple-system, sans-serif; background: #f4f5f7; color: #1f2329; }
+
+  /* 顶部假装多维表标题栏 */
+  .topbar {
+    background: white; padding: 12px 24px;
+    border-bottom: 1px solid #dee0e3; display: flex; align-items: center;
+  }
+  .topbar h1 { font-size: 14px; font-weight: 600; margin-right: auto; }
+  .topbar button {
+    background: #3370ff; color: white; border: none; padding: 8px 16px;
+    border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600;
+  }
+  .topbar button:hover { background: #2055d6; }
+
+  /* 主体：左边假表格 + 右边插件侧边栏 */
+  .main { display: flex; height: calc(100vh - 50px); }
+  .table-area { flex: 1; padding: 16px; overflow-y: auto; background: white; border-right: 1px solid #dee0e3; }
+  .sidebar { width: 420px; background: white; padding: 20px; overflow-y: auto; border-left: 1px solid #dee0e3; }
+
+  /* 假多维表 */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #f7f8fa; border-bottom: 1px solid #dee0e3; }
+  th { padding: 8px 12px; text-align: left; font-weight: 600; color: #646a73; font-size: 12px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f4f5f7; }
+  tr.selected { background: #e6f0ff; }
+  tr:hover:not(.selected) { background: #f7f8fa; cursor: pointer; }
+  .tag { display: inline-block; padding: 2px 8px; background: #f0f1f5; border-radius: 4px;
+         margin-right: 4px; font-size: 11px; color: #4e5969; }
+
+  /* 侧边栏 */
+  .sidebar h2 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .sidebar .subtitle { font-size: 12px; color: #86909c; margin-bottom: 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; color: #4e5969; margin-bottom: 4px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 8px 12px; border: 1px solid #dee0e3;
+    border-radius: 4px; font-size: 13px;
+  }
+
+  .run-btn {
+    width: 100%; padding: 10px; background: linear-gradient(90deg,#7c3aed,#3370ff);
+    color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 16px;
+  }
+
+  .results { border-top: 1px solid #dee0e3; padding-top: 14px; }
+  .results .header { display: flex; justify-content: space-between;
+                     align-items: center; margin-bottom: 12px; font-size: 13px; }
+  .results .header span { color: #86909c; }
+
+  .match-card {
+    background: linear-gradient(135deg, #ffe5ec 0%, #ffeaea 100%);
+    padding: 14px; border-radius: 8px; margin-bottom: 10px;
+    border-left: 4px solid #ff7875;
+  }
+  .match-card .rank-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .match-card .rank {
+    background: #ff4d4f; color: white; width: 22px; height: 22px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; margin-right: 10px;
+  }
+  .match-card .partner-id { font-weight: 700; font-size: 14px; flex: 1; }
+  .match-card .score {
+    font-size: 13px; color: #d4380d; font-weight: 600;
+  }
+  .match-card .reason { font-size: 12px; color: #4e5969; margin-bottom: 6px; line-height: 1.5; }
+  .match-card .alert { font-size: 11px; color: #d4380d; }
+  .match-card .alert.green { color: #389e0d; }
+
+  .write-back {
+    width: 100%; padding: 8px; background: white; color: #3370ff;
+    border: 1px solid #3370ff; border-radius: 4px; font-size: 12px;
+    cursor: pointer; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>📋 01_产品库 · lark-fashion-cockpit</h1>
+    <button onclick="document.getElementById('panel').scrollIntoView()">🤖 AI 一键搭配</button>
+  </div>
+
+  <div class="main">
+    <div class="table-area">
+      <table>
+        <thead>
+          <tr>
+            <th>产品 ID</th>
+            <th>款式</th>
+            <th>颜色</th>
+            <th>面料</th>
+            <th>价格</th>
+            <th>元素标签</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="selected">
+            <td><b>DRS-0429-FL</b></td>
+            <td>法式碎花连衣裙</td>
+            <td>奶茶白</td>
+            <td>醋酸缎面</td>
+            <td>¥299</td>
+            <td>
+              <span class="tag">法式</span><span class="tag">A 字</span>
+              <span class="tag">显瘦</span><span class="tag">通勤</span>
+            </td>
+          </tr>
+          <tr><td>KNT-0402-CD</td><td>V 领针织开衫</td><td>米色</td><td>羊毛混纺</td><td>¥249</td>
+              <td><span class="tag">叠穿</span><span class="tag">基础款</span></td></tr>
+          <tr><td>BLK-0317-WT</td><td>白色衬衫</td><td>白</td><td>真丝</td><td>¥359</td>
+              <td><span class="tag">通勤</span><span class="tag">百搭</span></td></tr>
+          <tr><td>SKT-0418-MD</td><td>中长款 A 字裙</td><td>墨绿</td><td>羊毛</td><td>¥329</td>
+              <td><span class="tag">A 字</span><span class="tag">显瘦</span></td></tr>
+          <tr><td>JKT-0405-BG</td><td>米色短款外套</td><td>米色</td><td>羊毛</td><td>¥459</td>
+              <td><span class="tag">短款</span><span class="tag">显高</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sidebar" id="panel">
+      <h2>🤖 AI 一键搭配</h2>
+      <div class="subtitle">基于 lark-fashion-cockpit · product-matching skill</div>
+
+      <div class="form-group">
+        <label>产品 ID（自动从选中行带入）</label>
+        <input value="DRS-0429-FL" />
+      </div>
+      <div class="form-group">
+        <label>季节</label>
+        <select><option>春</option><option>夏</option><option>秋</option></select>
+      </div>
+      <div class="form-group">
+        <label>搭配数量</label>
+        <select><option>3 套</option><option selected>5 套</option><option>8 套</option></select>
+      </div>
+
+      <button class="run-btn">⚡ 生成 5 套搭配</button>
+
+      <div class="results">
+        <div class="header">
+          <b>5 套搭配建议（按 AI 评分排序）</b>
+          <span>0.4 秒</span>
+        </div>
+
+        <div class="match-card">
+          <div class="rank-row">
+            <div class="rank">1</div>
+            <div class="partner-id">KNT-0402-CD · V 领米色针织开衫</div>
+            <div class="score">9.2 分</div>
+          </div>
+          <div class="reason">法式连衣裙 + 米色叠穿，温柔通勤风。同元素历史爆款转化率 28%</div>
+          <div class="alert green">✓ 库存充足（86 件）</div>
+        </div>
+
+        <div class="match-card">
+          <div class="rank-row">
+            <div class="rank">2</div>
+            <div class="partner-id">JKT-0405-BG · 米色短款外套</div>
+            <div class="score">8.7 分</div>
+          </div>
+          <div class="reason">短款 + 长裙拉腿线，155 客群最爱。出片率最高</div>
+          <div class="alert">⚠ 库存倾斜：仅 23 件，建议先卖再翻单</div>
+        </div>
+
+        <div class="match-card">
+          <div class="rank-row">
+            <div class="rank">3</div>
+            <div class="partner-id">BLK-0317-WT · 白色真丝衬衫</div>
+            <div class="score">8.1 分</div>
+          </div>
+          <div class="reason">内搭叠穿，秋季拓展场景，通勤刚需</div>
+          <div class="alert green">✓ 库存充足</div>
+        </div>
+
+        <div class="match-card">
+          <div class="rank-row">
+            <div class="rank">4</div>
+            <div class="partner-id">SHO-0420-CR · 奶茶色尖头单鞋</div>
+            <div class="score">7.6 分</div>
+          </div>
+          <div class="reason">同色系延续，提升整体高级感</div>
+          <div class="alert green">✓ 库存充足</div>
+        </div>
+
+        <div class="match-card">
+          <div class="rank-row">
+            <div class="rank">5</div>
+            <div class="partner-id">BAG-0411-WT · 白色小方包</div>
+            <div class="score">7.2 分</div>
+          </div>
+          <div class="reason">提亮整体配色，法式风加分</div>
+          <div class="alert green">✓ 库存充足</div>
+        </div>
+
+        <button class="write-back">📝 一键写入 17_产品搭配组 表</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

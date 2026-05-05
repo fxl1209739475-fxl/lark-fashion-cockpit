@@ -1,7 +1,7 @@
 ---
 name: lark-fashion-cockpit
 version: 1.0.0
-description: "女装电商运营驾驶舱 — 给电商品牌主的飞书 CLI 数字化方案。包含 19 大能力（经营/商品/销售/供应链/管理 5 大板块）+ 4 大杀手锏（套娃远程指挥/AI 产品分析/产品关系图/多 CLI 编排）。当用户提到女装/服装/电商运营/上新/库存/选品/竞品/复盘/经营驾驶舱/品牌运营/初始化系统/搭建数据中枢/装这个 Skill 等场景时使用。"
+description: "女装电商运营驾驶舱 — 给电商品牌主的飞书 CLI 数字化方案。包含 38 大能力（经营/商品/销售/供应链/管理 5 大板块）+ 飞书 CLI 12 个深度集成 + 14 个独家创新（自演进/精准传达/评论迭代/经验沉淀/双级审批/智能反哺/客观贡献度/妙记自动剪辑/货盘梳理/直播话术分析/虚拟试穿/直播日报/库存 GMV 智能匹配/浏览器自动抓数据）。覆盖经营全流程+组织学习闭环+文档协作闭环+多模态视频/试穿+直播自动化抓数据。当用户提到女装/电商运营/搭配推荐/新品下单/任务追踪/手机指挥/AI 自演进/上传下达/根据评论改文档/经验沉淀/员工贡献度/剪个高光视频/会议金句剪辑/货盘梳理/直播话术分析/虚拟试穿/产品上身/今日直播总结/库存 GMV/浏览器自动抓数据/抖音视频号小红书自动化/初始化系统等场景时使用。"
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -20,7 +20,7 @@ metadata:
 
 读完本路由表，根据用户意图跳到对应的 `skills/<name>/SKILL.md` 读详细工作流。
 
-### 🅰️ 公司经营（4 能力）
+### 🅰️ 公司经营（7 能力，含 1 个 meta-skill）
 
 | 用户意图关键词 | 跳到子 skill |
 |---|---|
@@ -28,8 +28,15 @@ metadata:
 | "目标 / 进度 / 完成率 / 缺口 / 季度 / 月度" | [`target-tracking`](skills/target-tracking/SKILL.md) |
 | "利润 / 哪些款赚钱 / 投放 ROI / 成本结构" | [`profit-analysis`](skills/profit-analysis/SKILL.md) |
 | **"上新任务下发 / 给团队分任务 / 协同跟进"** ⭐ | [`task-collaboration`](skills/task-collaboration/SKILL.md) |
+| **"巡检任务 / 看下逾期 / 任务追踪 / 任务复盘 / 为啥老延期"** ⭐ | [`task-lifecycle`](skills/task-lifecycle/SKILL.md) |
+| **"飞书消息触发 / 手机指挥 / 离开电脑跑 skill / 套娃模式"** 🔥 | [`event-router`](skills/event-router/SKILL.md) |
+| **"AI 推荐 skills / 自演进 / 把高频操作固化"** 🔥 | [`skill-recommender`](scripts/skill-recommender.ps1) |
+| **"AI 审稿 / 设计稿评论 / 自动找改进点"** | scripts/design-review-comments |
+| **"审批分流 / 自动批 / 大额升级老板"** | scripts/approval-router.ps1 |
+| **"agent 越用越懂我 / 长期记忆 / 自动学习"** | scripts/memory-evolve.ps1 |
+| **"会议总结分发 / 按岗位定制纪要 / 让员工不懵 / 上传下达"** 🔥 | [`meeting-broadcaster`](skills/meeting-broadcaster/SKILL.md) |
 
-### 🅱️ 商品中心（5 能力）
+### 🅱️ 商品中心（8 能力）
 
 | 用户意图关键词 | 跳到子 skill |
 |---|---|
@@ -38,6 +45,9 @@ metadata:
 | "库存 / 补货 / 缺货 / 滞销 / 平台库存分配" | [`stock-replenishment`](skills/stock-replenishment/SKILL.md) |
 | "退货原因 / 评价反馈 / 商品反馈" | [`feedback-returns`](skills/feedback-returns/SKILL.md) |
 | "竞品 / 爆款 / 趋势 / 同行" | [`competitor-monitor`](skills/competitor-monitor/SKILL.md) |
+| **"XX 配什么好 / 搭配推荐 / 主图穿搭 / 直播搭配 / 老库存清仓"** ⭐ | [`product-matching`](skills/product-matching/SKILL.md) |
+| **"产品关系图 / 画产品全景 / 白板生成 / 全维度图"** 🔥 | [`product-graph`](skills/product-graph/SKILL.md) |
+| **"新品下多少件 / 备货建议 / 翻单决策 / 尺码颜色占比 / 面料备多少"** ⭐ | [`launch-decision`](skills/launch-decision/SKILL.md) |
 
 ### 🅲 销售增长（4 能力）
 
@@ -55,12 +65,26 @@ metadata:
 | "生产 / 供应商 / 工厂 / 打样 / 交期" | [`production-supplier`](skills/production-supplier/SKILL.md) |
 | "订单 / 发货 / 物流 / 履约异常" | [`order-fulfillment`](skills/order-fulfillment/SKILL.md) |
 
-### 🅴 公司管理（4 能力 — 飞书 CLI 增值层）
+### 🅴 公司管理（11 能力 — 飞书 CLI 增值层 + 组织学习闭环 + 视频剪辑）
 
 | 用户意图关键词 | 跳到子 skill |
 |---|---|
 | "知识库 / SOP / 客服话术 / 培训资料" | [`knowledge-base`](skills/knowledge-base/SKILL.md) |
 | **"复盘会 / 周会纪要 / 会议待办 / 自动出报告"** ⭐ | [`meeting-workflow`](skills/meeting-workflow/SKILL.md) |
+| **"会议总结分发 / 按岗位定制纪要 / 上传下达不损耗"** 🔥 | [`meeting-broadcaster`](skills/meeting-broadcaster/SKILL.md) |
+| **"根据评论改文档 / 整合评论意见 / 文档 V2 / 评论合并"** 🔥 | [`doc-iterator`](skills/doc-iterator/SKILL.md) |
+| **"提交经验 / 失败教训 / 改进建议 / 经验沉淀"** 🔥 | scripts/experience-capture.ps1 |
+| **"经验审批 / 知识库归档 / 复用部门"** 🔥 | scripts/experience-approval.ps1 |
+| **"AI 反哺 / 别人犯过吗 / 有人用过吗 / 找谁请教"** 🔥 | scripts/knowledge-feedback.ps1 |
+| **"员工贡献度 / 客观评估 / 奖金参考 / 年终述职"** 🔥 | scripts/contribution-tracker.ps1 |
+| **"剪个高光视频 / 妙记自动剪辑 / 会议金句 / 自动加字幕"** 🔥 | [`meeting-clip-extractor`](skills/meeting-clip-extractor/SKILL.md) |
+| **"货盘梳理 / 选品 / 冲销售/清库存/测款/提利润"** 🔥 | scripts/merchandise-curation.ps1 |
+| **"直播话术分析 / 主播评分 / 5 维度复盘"** 🔥 | scripts/livestream-script-analyzer.ps1 |
+| **"虚拟试穿 / 模特换装 / 产品上身预览"** 🔥 | scripts/virtual-tryon-mock.py |
+| **"今日直播总结 / 直播日报 / 早晚场对比"** 🔥 | scripts/livestream-daily-report.ps1 |
+| **"库存 GMV / 库存款销售 / 库存消化"** 🔥 | scripts/inventory-gmv-matcher.ps1 |
+| **"浏览器自动抓数据 / 直播平台自动化 / 抖音视频号小红书爬数据"** 🔥 | scripts/livestream-scraper.py |
+| **"抓直播 / 拉直播数据 / 自动抓数据"** 🔥 | scripts/livestream-fetch-by-record.ps1 |
 | "OKR / 目标拆解 / 部门指标" | [`okr-cascade`](skills/okr-cascade/SKILL.md) |
 | "审批 / 预算 / 采购单 / 退货特批" | [`approval-flow`](skills/approval-flow/SKILL.md) |
 

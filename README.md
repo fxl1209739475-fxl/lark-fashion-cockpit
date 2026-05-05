@@ -7,8 +7,193 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![飞书 CLI 创作者大赛](https://img.shields.io/badge/%E9%A3%9E%E4%B9%A6CLI-%E5%88%9B%E4%BD%9C%E8%80%85%E5%A4%A7%E8%B5%9B-orange)](https://github.com/larksuite/cli)
 [![已实测](https://img.shields.io/badge/%E5%B7%B2%E5%AE%9E%E6%B5%8B-%E7%9C%9F%E6%9C%8B%E5%8F%8B%E7%9C%9F%E4%BB%BB%E5%8A%A1%E7%9C%9F%E5%AE%8C%E6%88%90-brightgreen)](./examples/01-real-launch-demo.md)
-[![19 大能力](https://img.shields.io/badge/%E8%83%BD%E5%8A%9B-19%20%E5%A4%A7%2B4%20%E6%9D%80%E6%89%8B%E9%94%8F-blue)](#-核心能力19-大--4-杀手锏)
-[![13 个 lark-cli skill](https://img.shields.io/badge/lark--cli%20skill-13/23%20%E9%9B%86%E6%88%90-purple)](#-技术架构)
+[![40 sub-skill](https://img.shields.io/badge/sub--skill-40%20%E4%B8%AA%E8%87%AA%E5%8C%85%E5%90%AB-blue)](#-40-个-sub-skill-清单)
+[![lark-cli skills](https://img.shields.io/badge/npx%20skills%20add-fxl1209739475--fxl%2Flark--fashion--cockpit-purple)](#-安装与使用)
+
+---
+
+## 📦 安装与使用
+
+**一个仓库 = 一个大 skill 包，包含 40 个独立 self-contained sub-skill。**
+
+### 一键装全部 40 个 skill
+
+```bash
+# 1. 装 lark-cli 主程序
+npm install -g @larksuite/cli
+
+# 2. 装官方基础 skill
+npx skills add larksuite/cli -g -y
+
+# 3. 装本仓库 40 个 sub-skill
+npx skills add fxl1209739475-fxl/lark-fashion-cockpit -g -y
+
+# 4. 配置环境变量（拷贝模板填值）
+cp .env.example .env
+# 然后填 DOUBAO_API_KEY / DEEPSEEK_API_KEY / DOUYIN_COOKIE 等
+
+# 5. 一键初始化飞书 base（建 27 张表 schema + 字段 + mock 演示数据）
+python scripts/init-cockpit.py
+```
+
+> ⚠️ **重要：装 skill ≠ 自动建表**
+>
+> Skill 是 SKILL.md 工作流文档（教 AI 用 lark-cli 完成业务的"配方"）。**飞书多维表是数据载体**，需要单独建。
+> - **40 个 sub-skill** 装在 `~/.claude/skills/`（步骤 3 完成）
+> - **27 张多维表** 需要在你飞书 base 里建（步骤 5 完成）
+> - 两者**关系是 N:M**：一个 skill 可能用 0-N 张表，一张表可能被多个 skill 共用
+
+### 两种使用模式
+
+| 模式 | 适用 | 装哪些 |
+|---|---|---|
+| **🅐 完整应用模式** | 想体验完整女装运营驾驶舱 | 装全部 40 skill + 跑 init-cockpit.py 建 27 张表 + 飞书机器人 |
+| **🅑 单 skill 模式** | 只想用某个能力（如 video-script-parser）| 选装单个 skill + 自己已有的飞书表（按 SKILL.md 配 env 变量）|
+
+### 选装单个 skill
+
+```bash
+# 只装"视频脚本拆解"
+npx skills add fxl1209739475-fxl/lark-fashion-cockpit -s video-script-parser -y -g
+
+# 只装"老板分身"
+npx skills add fxl1209739475-fxl/lark-fashion-cockpit -s boss-clone-aily -y -g
+```
+
+### 触发方式（自然语言对话 AI agent）
+
+装好 skill 后，在 Claude Code / 飞书机器人 / 任何支持 lark-cli 的 AI agent 里说自然语言：
+
+| 你说 | 自动触发的 sub-skill |
+|---|---|
+| "今天卖得怎么样" | `morning-report`（晨报）|
+| "DRS-0429 配什么款" | `product-matching`（产品搭配）|
+| "巡检任务" | `task-lifecycle`（任务生命周期）|
+| "拆这个视频 [URL]" | `video-script-parser`（视频拆解）|
+| "问老板这款备多少件" | `boss-clone-aily`（老板分身）|
+| "看竞品博主" | `competitor-monitor`（对标博主监控）|
+| "今日直播总结" | `live-streaming` + `livestream-recap` |
+
+---
+
+## 📋 40 个 sub-skill 清单（按板块分类）
+
+### 🅐 公司经营（4）
+- [`morning-report`](skills/morning-report/SKILL.md) — 经营晨报，5 维数据 + AI 综合分析
+- [`target-tracking`](skills/target-tracking/SKILL.md) — 目标追踪，OKR + 实时进度
+- [`profit-analysis`](skills/profit-analysis/SKILL.md) — 利润分析，单品 + 平台双维拆解
+- [`task-collaboration`](skills/task-collaboration/SKILL.md) — 任务协作，跨租户朋友派工
+
+### 🅑 商品中心（9）
+- [`product-library`](skills/product-library/SKILL.md) — 产品库，元素标签 32 选项 × 5 维
+- [`new-launch-planning`](skills/new-launch-planning/SKILL.md) — 上新企划，波段排期
+- [`stock-replenishment`](skills/stock-replenishment/SKILL.md) — 库存补货
+- [`feedback-returns`](skills/feedback-returns/SKILL.md) — 退货反馈分析
+- [`competitor-monitor`](skills/competitor-monitor/SKILL.md) — 竞品监控
+- [`product-matching`](skills/product-matching/SKILL.md) — 产品搭配 ⭐（库存倾斜算法独家）
+- [`product-graph`](skills/product-graph/SKILL.md) — 产品关系图（飞书白板渲染）
+- [`launch-decision`](skills/launch-decision/SKILL.md) — 新品下单决策（4 维信号 + 教训库）
+- [`base-extension-product-matcher`](skills/base-extension-product-matcher/SKILL.md) ⭐ — 多维表格内置 AI 按钮
+
+### 🅒 销售增长（4）
+- [`platform-analytics`](skills/platform-analytics/SKILL.md) — 4 平台销售分析
+- [`content-pipeline`](skills/content-pipeline/SKILL.md) — 内容创作工作流
+- [`live-streaming`](skills/live-streaming/SKILL.md) — 直播管理 + 库存 GMV 匹配
+- [`private-domain`](skills/private-domain/SKILL.md) — 私域客户运营
+
+### 🅓 供应链履约（2）
+- [`production-supplier`](skills/production-supplier/SKILL.md) — 工厂供应商管理
+- [`order-fulfillment`](skills/order-fulfillment/SKILL.md) — 订单履约
+
+### 🅔 公司管理（5）
+- [`knowledge-base`](skills/knowledge-base/SKILL.md) — 知识库
+- [`meeting-workflow`](skills/meeting-workflow/SKILL.md) — 会议工作流
+- [`okr-cascade`](skills/okr-cascade/SKILL.md) — OKR 层级
+- [`approval-flow`](skills/approval-flow/SKILL.md) — 审批流
+- [`doc-iterator`](skills/doc-iterator/SKILL.md) — 文档迭代
+
+### 🅕 工作流（5）
+- [`task-lifecycle`](skills/task-lifecycle/SKILL.md) — 任务生命周期巡检 ⭐
+- [`event-router`](skills/event-router/SKILL.md) — 事件路由（飞书 IM 套娃模式）
+- [`meeting-broadcaster`](skills/meeting-broadcaster/SKILL.md) — 会议广播
+- [`meeting-clip-extractor`](skills/meeting-clip-extractor/SKILL.md) — 会议精彩切片
+- [`skill-recommender`](skills/skill-recommender/SKILL.md) — AI 推荐下一步用哪个 skill（自演进）
+
+### 🅖 AI 数字员工（3）⭐ 最新加
+- [`boss-clone-aily`](skills/boss-clone-aily/SKILL.md) ⭐ — 老板分身（飞书 Aily 原生）
+- [`lingo-fashion-glossary`](skills/lingo-fashion-glossary/SKILL.md) — 女装术语词典 Lingo
+- [`helpdesk-customer-tickets`](skills/helpdesk-customer-tickets/SKILL.md) — 客户工单系统
+
+### 🅗 可视化扩展（1）⭐
+- [`workplace-block-cockpit`](skills/workplace-block-cockpit/SKILL.md) ⭐ — 工作台首页 cockpit 仪表盘 widget
+
+### 🅘 开源生态雷达（1）⭐ 最新加
+- [`opensource-radar`](skills/opensource-radar/SKILL.md) ⭐ — 开源雷达每日扫描 GitHub + AI 评估和女装电商相关度 + 给改造方案 + 知识库归档
+
+### 🅙 视频拆解工具（2）⭐
+- [`video-script-parser`](skills/video-script-parser/SKILL.md) ⭐ — 视频脚本拆解（豆包多模态）
+- [`blogger-monitor`](skills/blogger-monitor/SKILL.md) ⭐ — 对标博主每日监控
+
+---
+
+## 📜 原创性声明
+
+- **原创**：库存倾斜搭配 / 4 维信号下单 / 任务生命周期大脑 / skill-recommender 自演进 / 产品关系图飞书白板 / 多角色权限矩阵 / 个人成长复盘 + SOP 自沉淀 / 开源雷达 等核心创新由作者独立设计实现
+- **致敬开源精神**：飞书 IM 长连接事件订阅模式按 [lark-cli 官方 event 文档](https://github.com/larksuite/cli) 实现；多模态视觉用 [豆包视觉理解 API](https://www.volcengine.com/docs/82379/1553586)；ASR 用 faster-whisper 开源模型
+- **官方推荐能力实现**：12+ 飞书原生能力（base / im / event / docs / vc / minutes / wiki / sheets / approval / task / okr / mail）按 lark-cli 官方文档落地
+- **mock 数据声明**：8 款产品 / 17 表销售数据均为虚构 mock；3 真朋友任务系统 / 3 真实妙记 / 飞书白板 Wiki 云盘均为真实接通
+
+---
+
+## ✅ 真实数据 vs Mock 透明声明
+
+**真实接通（8 个层）：**
+- ✅ 3 真朋友跨租户任务系统（马萍蔓 14 分 41 秒真完成）
+- ✅ 3 场真实飞书会议妙记（vc + minutes API 拉 90 章节 AI 摘要）
+- ✅ 飞书云盘 11 张真上传文件 + 3 子文件夹
+- ✅ 飞书白板真渲染产品关系图（Mermaid → docs +whiteboard-update）
+- ✅ 飞书 Wiki 1 空间 + 5 节点真创建
+- ✅ 飞书日历 5 个上新事件真写入
+- ✅ 18+ 篇飞书云文档真生成（含 5 条 AI 审稿评论）
+- ✅ event-listener 真持久化触发记录（trigger-log.jsonl）→ skill-recommender 真读 → 真生成推荐
+
+**Mock 数据（明确声明）：**
+- 🟡 8 款女装产品 / 17 表销售/库存/退货等业务数据
+- 🟡 4 平台 GMV 数据（淘宝/抖音/小红书/视频号）
+- 🟡 客户分层 / 生产档案 / 竞品监控
+- 🟡 库存占用金额 / 单品销售数据（如「OUT-2024-OL ¥82,620」等）
+
+> 🔐 **数据隐私声明**：作者真实经营的女装品牌数据涉及商业机密 + 客户隐私 + 工厂供应链信息，**不能在公开仓库泄露**。本仓库所有金额 / SKU / 客户 / 销量数字均为**模拟测试数据**，仅用于演示 cockpit 工作流和算法逻辑。**真实使用时用户自己的飞书 base 数据完全隔离在自己租户内，作者无权访问**。
+
+**Mock 替换路径：** 详见 [`docs/REAL-DATA-ROADMAP.md`](./docs/REAL-DATA-ROADMAP.md) — Phase 1 飞书原生数据已 80% 接通，Phase 2-5 接通真实电商平台 API 路径清晰（5-10 天/平台）。
+
+---
+
+## ⚠️ 已知限制（诚实声明）
+
+为了让评委明确认知作品边界，主动声明以下限制：
+
+### 1. 部分集成是脚本框架，待 scope 授权后真生产可用
+- **OKR 双向同步**（`scripts/okr-sync.ps1`）：等待 `okr:okr.period:readonly` 等 scope 授权（1 行命令 + 1 小时跑通，详见 [`docs/OKR-APPROVAL-MIGRATION.md`](./docs/OKR-APPROVAL-MIGRATION.md)）
+- **飞书原生审批接通**（`scripts/approval-router.ps1`）：当前基于 `14_审批` mock 表运行，接通飞书原生审批流需要后台配置 4 个审批模板 + 30 分钟
+
+### 2. 多事件并发 daemon 部署
+- `event-watcher.py` 多线程订阅 3 类事件，**生产部署需要常驻进程托管**（Windows 任务计划 / Linux systemd）
+- 当前演示是模拟模式 + 单事件源真实启动验证
+
+### 3. 通用性边界
+- 业务规则（元素标签 5 维 / 互补品类 / 11 步上新流程）女装专属
+- **架构层 100% 通用**，跨行业迁移指南详见 [`docs/INDUSTRY-ADAPT.md`](./docs/INDUSTRY-ADAPT.md)
+- 化妆品 / 男装 / 童装 1-2 天可适配；家居 / 食品 3-5 天
+
+### 4. 跨租户能力受飞书平台限制
+- 跨租户 P2P IM 不支持（错误 230038）→ 改用飞书原生任务通知（已绕过）
+- 跨租户用户不能拉同一群（错误 232033）→ 解决方案见 [`examples/04-im-card-best-practice.md`](./examples/04-im-card-best-practice.md)
+
+### 5. 视觉生成能力
+- 当前产品图为 PIL 占位卡（颜色 + 品类 + 价格）
+- 真实 AI 模特上身图需接入虚拟试穿 API（OOTDiffusion 本地 / 阿里 OutfitAnyone / 快手 Kolors-VTON）
+- 接入路线：1 天写脚本 + 1 张 ¥1 元成本
 
 ---
 
@@ -22,7 +207,7 @@
 
 ## 📖 为什么做这个
 
-我做过**品牌一**、**品牌二**等多个女装项目。最痛的不是设计款式，是**每天早上的运营对账**：
+我做过**莫千衣**、**一支探戈**等多个女装项目。最痛的不是设计款式，是**每天早上的运营对账**：
 
 | 痛点 | 时间成本 | 影响 |
 |---|---|---|
@@ -54,21 +239,21 @@
 
 ---
 
-## 🎯 核心能力（19 大 + 4 杀手锏）
+## 🎯 核心能力（40 大 + 4 杀手锏 + 自演进 meta-skill）
 
 ### 5 大业务板块
 
 | 板块 | 能力数 | 涵盖 |
 |---|---|---|
-| 🅰️ **公司经营** | 4 | 经营晨报 / 目标进度 / 利润分析 / **跨部门任务协同** ⭐ |
-| 🅱️ **商品中心** | 5 | **产品库 + 8 维详情** ⭐ / 上新企划 / 库存补货 / 退货反馈 / 竞品监控 |
+| 🅰️ **公司经营** | 4 | 经营晨报 / 目标进度 / 利润分析 / **跨部门任务协同** ⭐ / **任务生命周期大脑** ⭐ / **飞书 IM 套娃自然语言路由** 🔥 / **skill-recommender 自演进 meta-skill** 🔥（独家）|
+| 🅱️ **商品中心** | 9 | **产品库 + 8 维详情** ⭐ / 上新企划 / 库存补货 / 退货反馈 / 竞品监控 / **产品搭配（库存倾斜清老货）** ⭐ / **新品下单判断（4 维信号）** ⭐ / **产品关系图（飞书白板真实化）** 🔥 |
 | 🅲 **销售增长** | 4 | 4 平台数据 / **内容 5 阶段流转** ⭐ / 营销直播 / 私域 + 服务 |
 | 🅳 **供应链履约** | 2 | 生产 + 供应商 / 订单 + 物流 |
 | 🅴 **公司管理** | 4 | 知识库 / **复盘会工作流** ⭐ / OKR / 审批流 |
 
 ### 4 大杀手锏
 
-1. **🔥 飞书套娃远程指挥** — 老板手机飞书发消息 → agent 调用全部能力（基于 lark-event WebSocket 长连接，灵感来自来新璐 [Larkchannel](https://github.com/sharelab)）
+1. **🔥 飞书套娃远程指挥** — 老板手机飞书发消息 → agent 自动调用全部能力（基于 lark-event WebSocket 长连接 + 自然语言意图识别 + 角色权限矩阵）
 2. **🤖 AI 产品分析助手** — 自然语言问"找出售罄率<50%的春夏款排序" → AI 读多维表 → 生成飞书文档 → 群里弹卡片含按钮
 3. **🕸️ 产品关系图** — 飞书白板自动生成"产品×SKU×内容×投流×直播×素材×元素"全维度关系图
 4. **🔗 多 CLI 套娃编排** — 飞书 CLI + douyin-monitor Python CLI + 即梦 CLI + ffmpeg 串联
@@ -198,30 +383,30 @@ agent 检测到 task status = done
 │         ↓                                               │
 │  多 CLI 编排：飞书 CLI + douyin-monitor + ffmpeg + ...  │
 │         ↓                                               │
-│  数据中枢：飞书多维表（16 张表）+ 文档 + 任务 + 日历    │
+│  数据中枢：飞书多维表（27 张表）+ 文档 + 任务 + 日历    │
 │         ↓                                               │
 │  输出：IM 卡片 / 飞书文档 / 飞书白板 / 飞书任务         │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 集成的 13 个飞书 CLI 原生 skill
+### 集成的 12 大类飞书 CLI 原生能力
 
 `base` / `doc` / `im` / `task` / `event` / `calendar` / `whiteboard` / `drive` / `sheets` / `wiki` / `vc` + `minutes` / `okr` / `approval`
 
 ### 数据中枢（一键搭建后用户飞书会有）
 
 - 1 个多维表 App「lark-fashion-cockpit 数据中枢」
-- 16 张业务表（产品库 / 4 平台销售 / 任务 / 选题 / 文案 / 直播 / 生产 / 客户 / 退货 / 竞品 / OKR / 审批 / 市场内容 / 竞品产品 / 等）
-- 118 字段（含 8 个跨表 link、1 个 OKR↔任务双向关联）
+- 27 张业务表（产品库 / 4 平台销售 / 任务 / 选题 / 文案 / 直播 / 生产 / 客户 / 退货 / 竞品 / OKR / 审批 / 市场内容 / 竞品产品 / 等）
+- 300+ 字段（含 8 个跨表 link、1 个 OKR↔任务双向关联）
 - 4 个任务清单视图（本月团队总览 / 我的待办 / 按状态看板 / 截止日历）
 - 1 个经营总览仪表盘（4 指标卡 + 1 饼图 + 1 环形 + 2 柱状）
 - 1 个独人通知群（解决 P2P self 无推送问题）
 
 ---
 
-## 💼 商业化路径（参考 4/1 直播李祥瑞模式）
+## 💼 商业化路径
 
-直播里李祥瑞老师用飞书 CLI 给"彩虹少儿美术"搭多维表教务系统，**报价 3000-5000 元/单**。本 Skill 同样可对外承接咨询：
+不只是参赛工具 — 这套 cockpit 是给**所有女装/电商品牌主**的飞书 CLI 数字化解决方案，可对外承接咨询服务：
 
 | 客户类型 | 用法 | 报价参考 |
 |---|---|---|
@@ -230,7 +415,7 @@ agent 检测到 task status = done
 | MCN / 连锁品牌 | 年度服务（迭代 + 培训 + 二次开发）| ¥2-5 万 / 年 |
 | 服饰行业培训机构 | 把 Skill 当案例教学 | 课程合作 |
 
-**不只是参赛工具，还能开个咨询业务。**
+**核心价值** — 替代品牌主一堆 SaaS（库存系统 / 任务系统 / CRM / BI / 客服工单），用飞书原生能力搭出"我的女装 AI 公司"。
 
 ---
 
@@ -241,13 +426,13 @@ lark-fashion-cockpit/
 ├── SKILL.md                     # 主入口（路由总览 + 完整初始化 10 步）
 ├── README.md                    # 你正在看的
 ├── LICENSE
-├── skills/                      # 19 个子 skill
+├── skills/                      # 40 个 sub-skill（self-contained）
 │   ├── ⭐ task-collaboration/   # 上新一键下发
 │   ├── ⭐ product-library/      # 8 维详情 + AI 分析 + 关系图
 │   ├── ⭐ content-pipeline/     # 内容 5 阶段流转
 │   ├── ⭐ meeting-workflow/     # 复盘会自动出纪要
 │   ├── ⭐ morning-report/       # 经营晨报
-│   └── ...（共 19 个）
+│   └── ...（共 40 个）
 ├── lib/
 │   ├── base-schema/             # 字段定义 + 视图 + 仪表盘 schema
 │   ├── mock-data/               # 130 条演示数据
@@ -278,6 +463,52 @@ lark-fashion-cockpit/
 
 ---
 
+## ❓ 常见问题（FAQ）
+
+### Q1：装完 skill 后机器人就能用了吗？
+**A**：不能。还需要 3 步：① 配凭证（.env）② 跑 init-cockpit.py 建表 ③ 启动 event-listener.py 让机器人监听消息。
+
+### Q2：必须装全部 40 个 skill 吗？
+**A**：不必须。两种用法：① 完整应用模式（装全部）② 单 skill 模式（`npx skills add ...-s 单个 skill`，只用你需要的能力）。
+
+### Q3：跑 cockpit 需要哪些 API key？
+**A**：核心 3 个 — DOUBAO_API_KEY（豆包视觉，火山方舟免费 50w tokens）/ DEEPSEEK_API_KEY（DeepSeek 文本分析）/ DOUYIN_COOKIE（抖音爬数据，浏览器复制）。其他可选：可灵 / 阿里万相 / 阿里 ASR。
+
+### Q4：飞书 CLI 机器人怎么 24 小时跑？
+**A**：开机自启 `python scripts/event-listener.py` + `python skills/auto-scheduler/scripts/cockpit-scheduler.py`。Windows 用 Task Scheduler "At log on"，Linux 用 systemd。
+
+### Q5：为啥多维表是 27 张但 sub-skill 是 40 个？
+**A**：N:M 关系。一张表可能被多个 skill 共用（05_任务清单 同时被 task-tracker / task-lifecycle / task-collaboration / personal-mirror 4 个 skill 用）；一个 skill 也可能用 0 张表（lingo-fashion-glossary 用飞书词典不用 base）。
+
+### Q6：跨租户能用吗？
+**A**：群聊跨租户可以（已实测 3 朋友真任务真完成）。P2P 私聊跨租户飞书原生不支持。建议同租户员工用 P2P，跨租户朋友进共享群。
+
+### Q7：mock 数据怎么换成真实数据？
+**A**：详见 [`docs/REAL-DATA-ROADMAP.md`](./docs/REAL-DATA-ROADMAP.md)。Phase 1 飞书原生数据已 80% 接通，Phase 2 接抖音/淘宝/视频号 API 5-10 天/平台。
+
+### Q8：装了之后我电脑会不会被一直占用？
+**A**：event-listener + auto-scheduler 是常驻进程，CPU 占用 < 1%，内存 ~150MB。可后台跑/最小化窗口。但**不要关那个 PowerShell 黑窗口**，关了 = 机器人挂了。
+
+### Q9：可以在 Linux/Mac 跑吗？
+**A**：可以。本仓库脚本主要针对 Windows（PowerShell + Python），Mac/Linux 把 `.ps1` 改成 `.sh` 等价即可。Python 脚本完全跨平台。
+
+### Q10：能给同行老板娘做这种系统吗？
+**A**：能。复刻同套架构 1-2 天搭建即可。垂直行业（女装/男装/家居/食品/培训机构等）按客单 3000-5000 元/单是合理报价区间。本仓库就是你给同行做生意的工具包。
+
+---
+
+## 🤝 贡献
+
+```bash
+# 1. Fork 仓库
+# 2. 做你的女装行业改造（或别的行业适配）
+git checkout -b feat/your-skill
+# 3. 在 skills/ 下加你的 sub-skill 文件夹
+# 4. 提 PR，我会合入主仓库挂名感谢
+```
+
+---
+
 ## 📜 许可
 
 [MIT License](./LICENSE) — 欢迎 fork / 改造 / 用于其他垂直行业。
@@ -287,9 +518,7 @@ lark-fashion-cockpit/
 ## 🙏 致谢
 
 - **飞书 CLI 团队** — 开源整个生态
-- **4 月直播嘉宾**：张咋啦（Zara）/ AJ / 归藏 / 来新璐 — 思路启发
-- **来新璐 [Larkchannel](https://github.com/sharelab)** — 套娃模式直接抄作业
-- **4/20 优秀案例分享**：Larkrachel / wanna to do / commit-and-record-Lark / 飞书 CLI Web / Lark Group Sentinel — 设计灵感
+- **飞书 CLI 创作者大赛社区** — 开源精神 + 公开技术分享
 - **马萍蔓 / 申丽媛 / 朱健豪** — 配合实测，让真朋友真任务真完成成为可能 ❤️
 
 ---

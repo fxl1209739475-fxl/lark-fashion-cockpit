@@ -1,0 +1,22 @@
+{
+  "name": "lark-fashion-remotion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "lark-fashion-cockpit 视频生成 — Remotion 模板（小红书 / 抖音风格的运营卡片视频）",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "remotion render",
+    "build": "remotion render"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.457",
+    "remotion": "^4.0.457",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.0"
+  }
+}

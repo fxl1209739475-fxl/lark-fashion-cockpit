@@ -1,0 +1,1 @@
+{"name":"来源","type":"select","multiple":false,"options":[{"name":"人工锁定","hue":"Red","lightness":"Lighter"},{"name":"AI推荐","hue":"Blue","lightness":"Lighter"},{"name":"历史成交","hue":"Green","lightness":"Lighter"}]}

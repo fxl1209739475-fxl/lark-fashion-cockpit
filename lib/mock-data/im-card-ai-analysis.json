@@ -1,0 +1,17 @@
+{
+  "config":{"wide_screen_mode":true},
+  "header":{
+    "title":{"tag":"plain_text","content":"🤖 AI 产品分析报告"},
+    "template":"blue"
+  },
+  "elements":[
+    {"tag":"div","text":{"tag":"lark_md","content":"**问题**：找出春夏款里售罄率不到 50% 的，按销量排序"}},
+    {"tag":"hr"},
+    {"tag":"div","text":{"tag":"lark_md","content":"🚨 **结论：清仓候选 1 款**\n\n**OUT-2024-OL OL 极简通勤西服**\n• 售罄率 **40%**\n• 剩余库存 **180 件**\n• 库存占用资金 **¥82,620**"}},
+    {"tag":"div","text":{"tag":"lark_md","content":"💡 **AI 推荐 3 步策略**\n\n1. 6.5 折活动（¥459 → ¥299）\n2. 主播组合搭配主推\n3. 2 周后没清完进瑕疵渠道"}},
+    {"tag":"action","actions":[
+      {"tag":"button","text":{"tag":"plain_text","content":"📄 查看完整报告"},"type":"primary","url":"https://my.feishu.cn/docx/Wph6dknGPoFJI9xkk1CcgD3kneb"},
+      {"tag":"button","text":{"tag":"plain_text","content":"📊 打开产品库"},"type":"default","url":"https://my.feishu.cn/base/LWsdbVtIaa2MaDsANm3cNdYgn1j"}
+    ]}
+  ]
+}
