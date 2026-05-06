@@ -1,536 +1,310 @@
-# 🚀 lark-fashion-cockpit
+# 🚀 lark-fashion-cockpit · 电商航母驾驶舱
 
-> **女装电商运营驾驶舱 Skill** — 给电商品牌主的飞书 CLI 数字化方案
->
-> 适用所有服装电商品类，化妆品 / 家居 / 食品改改字段也能跑。
+> **一句话定位：** 把"飞书 CLI 全套能力"+"AI 大脑"+"45 个垂直业务 skill"打包成**全员可用的本地驾驶舱**——任何员工打开浏览器跟系统聊天，就能查飞书数据、下达任务、通知合作方。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![飞书 CLI 创作者大赛](https://img.shields.io/badge/%E9%A3%9E%E4%B9%A6CLI-%E5%88%9B%E4%BD%9C%E8%80%85%E5%A4%A7%E8%B5%9B-orange)](https://github.com/larksuite/cli)
-[![已实测](https://img.shields.io/badge/%E5%B7%B2%E5%AE%9E%E6%B5%8B-%E7%9C%9F%E6%9C%8B%E5%8F%8B%E7%9C%9F%E4%BB%BB%E5%8A%A1%E7%9C%9F%E5%AE%8C%E6%88%90-brightgreen)](./examples/01-real-launch-demo.md)
-[![40 sub-skill](https://img.shields.io/badge/sub--skill-40%20%E4%B8%AA%E8%87%AA%E5%8C%85%E5%90%AB-blue)](#-40-个-sub-skill-清单)
-[![lark-cli skills](https://img.shields.io/badge/npx%20skills%20add-fxl1209739475--fxl%2Flark--fashion--cockpit-purple)](#-安装与使用)
+[![45 sub-skill](https://img.shields.io/badge/sub--skill-45%20%E4%B8%AA%E8%87%AA%E5%8C%85%E5%90%AB-blue)](#-45-个-skill-清单详细痛点--解决方案)
+[![已实测](https://img.shields.io/badge/%E5%B7%B2%E5%AE%9E%E6%B5%8B-真朋友真任务真完成-brightgreen)](./examples/01-real-launch-demo.md)
+
+![架构图](./docs/images/architecture.svg)
 
 ---
 
-## 📦 安装与使用
+## 🤔 为什么做这个项目
 
-**一个仓库 = 一个大 skill 包，包含 40 个独立 self-contained sub-skill。**
+### 老板娘真实痛点
 
-### 一键装全部 40 个 skill
+> *"我每天早上 8 点起来，要看 4 个平台的销售数据（淘宝/抖音/小红书/视频号）、看库存预警、跟工厂催货、给设计师派活、看竞品博主新视频、回客户消息……每件事都在不同的工具里，光切换窗口就累死。"*
+
+经营一家女装品牌，**信息散落在 8 个工具**：
+- 飞书（团队协作）
+- 个人微信（朋友型供应商）
+- 企业微信（合作方）
+- 4 个电商后台
+- 抖音 / 小红书博主监控
+- ……
+
+她需要一个**统一指挥台**，最好长这样：
+
+> *"打开浏览器跟系统说话，它帮我把事情办了。"*
+
+### 为什么飞书 CLI 是答案
+
+飞书 CLI 已经把「base / im / task / calendar / docs / drive / vc / minutes / approval / okr / mail / contact / ……」全做成命令行能力了。问题是：
+
+- ❌ 老板娘**不会写**命令行
+- ❌ 员工**没法**直接用 CLI
+- ❌ 多个 CLI 命令**怎么编排**？
+
+答案：**用 AI 翻译"人话"成 CLI 调用**。
+
+---
+
+## 📐 项目板块构成（一图读懂）
+
+| 板块 | 干什么 | 包含 skill 数 |
+|---|---|---|
+| 🚀 **入口层** | 用户跟系统交互的界面：本地驾驶舱网页 + 常驻 AI 聊天浮窗 | 4 个 |
+| 📊 **经营数据** | 产品/销售/库存/利润/上新决策的飞书 base + AI 分析 | 11 个 |
+| 📱 **跨平台 IM** | 把飞书、企业微信、个人微信串起来的"统一收发系统" | 5 个 |
+| 🎬 **内容营销** | 博主监控、竞品监控、二创脚本、直播、私域、视频脚本拆解 | 7 个 |
+| 🎯 **任务协作** | 任务/审批/OKR/会议/早报/履约/客服工单——团队协同枢纽 | 12 个 |
+| 🤖 **AI 大脑 + 基础设施** | 自然语言路由、调度、知识库、词汇表、事件路由 | 6 个 |
+
+**合计 45 个 self-contained sub-skill**，每个都能 `npx skills add` 单独安装。
+
+---
+
+## 📦 安装与启动
+
+### 快速开始
 
 ```bash
 # 1. 装 lark-cli 主程序
 npm install -g @larksuite/cli
 
-# 2. 装官方基础 skill
-npx skills add larksuite/cli -g -y
-
-# 3. 装本仓库 40 个 sub-skill
+# 2. 装本仓库 45 个 sub-skill（一次性）
 npx skills add fxl1209739475-fxl/lark-fashion-cockpit -g -y
 
-# 4. 配置环境变量（拷贝模板填值）
+# 3. 配置环境变量
+git clone https://github.com/fxl1209739475-fxl/lark-fashion-cockpit
+cd lark-fashion-cockpit
 cp .env.example .env
-# 然后填 DOUBAO_API_KEY / DEEPSEEK_API_KEY / DOUYIN_COOKIE 等
+# 然后填 DOUBAO_API_KEY / DEEPSEEK_API_KEY / 飞书 base token / 等
 
-# 5. 一键初始化飞书 base（建 27 张表 schema + 字段 + mock 演示数据）
+# 4. 一键初始化飞书 base（建 27 张表 schema + 字段 + mock 演示数据）
 python scripts/init-cockpit.py
+
+# 5. 启动驾驶舱（本地 Web 系统 + 聊天浮窗）
+./start-omnitask.bat
+# 浏览器访问 http://localhost:8080
 ```
 
-> ⚠️ **重要：装 skill ≠ 自动建表**
->
-> Skill 是 SKILL.md 工作流文档（教 AI 用 lark-cli 完成业务的"配方"）。**飞书多维表是数据载体**，需要单独建。
-> - **40 个 sub-skill** 装在 `~/.claude/skills/`（步骤 3 完成）
-> - **27 张多维表** 需要在你飞书 base 里建（步骤 5 完成）
-> - 两者**关系是 N:M**：一个 skill 可能用 0-N 张表，一张表可能被多个 skill 共用
+> ⚠️ **装 skill ≠ 自动建表**。skill 是后端处理逻辑，飞书 base 数据需要 step 4 单独初始化。
 
-### 两种使用模式
+---
 
-| 模式 | 适用 | 装哪些 |
+## 🎯 核心场景演示
+
+### 场景 1：早 8:00 自动跨渠道情报早报
+
+```
+auto-scheduler 每天早 8:00 触发 morning-report
+  ↓
+并发拉：
+  ├─ 飞书：昨日团队群 @我 + 待办（lark-im + lark-task）
+  ├─ 企微：昨日核心客户消息（wecom-bridge → sync-history）
+  └─ 个微：扫主窗口红点（wechat-monitor → scan-wechat）
+  ↓
+DEEPSEEK 三路情报合并 → 一张早报卡片到老板娘飞书
+  ↓
+"昨晚 ZC 工厂群 @你说 DRS-0429 雪纺面料卡了，朱健豪发了脚本 V2 待审..."
+```
+
+### 场景 2：跟驾驶舱说人话办事
+
+```
+老板娘在浏览器聊天框输入：
+"通知 ZC 工厂 DRS-0429 雪纺面料下周一前能不能交货"
+
+→ DEEPSEEK 识别 notify.supplier，提取 supplier="ZC 工厂"
+→ 路由到 wxauto-supplier-bridge
+→ 自动给 ZC 工厂发微信通知（含审计 log）
+→ 飞书卡片："✓ 已发给 ZC 工厂浙江老张，对方已读"
+```
+
+### 场景 3：基于实时飞书数据的 AI 分析
+
+```
+聊天窗口："找出售罄率低于 50% 的产品，按春夏秋冬分类"
+
+→ 路由到 query.product_analysis
+→ lark-cli 拉 01_产品库 实时数据（80 条）
+→ DEEPSEEK 分析
+
+返回：
+【结论】共 3 个 SKU 售罄率 < 50%：NO.008（春夏，40%）+ NO.006/007（开发中）
+【数据支撑】
+- NO.008 OL极简通勤西服：售罄率 40%，库存 180 件
+- ...
+【建议】
+1. NO.008 立即启动促销 + 加强通勤场景推广
+2. NO.006/007 加快开发进度，提前预售
+3. 春夏 NO.001/004 控制补货节奏
+```
+
+---
+
+## 📋 45 个 skill 清单（详细痛点 + 解决方案）
+
+### 🚀 入口层（4 个）
+
+| Skill | 痛点 | 解决方案 |
 |---|---|---|
-| **🅐 完整应用模式** | 想体验完整女装运营驾驶舱 | 装全部 40 skill + 跑 init-cockpit.py 建 27 张表 + 飞书机器人 |
-| **🅑 单 skill 模式** | 只想用某个能力（如 video-script-parser）| 选装单个 skill + 自己已有的飞书表（按 SKILL.md 配 env 变量）|
+| **omnitask-bridge** ⭐ | 飞书 CLI 能力强但门槛高，老板娘和员工都不会用命令行；41 个后端 skill 是"散装能力"没有产品形态 | 本地 Web 驾驶舱（FastAPI 8080）+ 常驻聊天浮窗 + DEEPSEEK 自然语言路由，把所有 skill 包装成"任何人打开浏览器跟系统说话就能用" |
+| **natural-language-router** | 老板娘飞书发"扫微信群"和"看下微信谁找我"是同一意思，关键词路由覆盖不全 | DEEPSEEK V4 Flash 把模糊指令分类到 query/task/notify/content/doc/calendar/casual 七类，路由到对应 skill |
+| **multi-user-private-channels** | 不同角色（老板/设计师/生产/内容）应该有不同权限，不能员工冒用老板身份触发"通知供应商" | role-registry 角色权限矩阵，每个 skill 标注 scopes_required，调用前校验，支持"以 XX 身份"模拟测试 |
+| **workplace-block-cockpit** | 飞书工作台缺少专门服装电商场景的"经营驾驶舱"区块 | 自定义飞书工作台 block，把日报/库存/上新进度内嵌在飞书首页 |
 
-### 选装单个 skill
+### 📊 经营数据（11 个）
 
-```bash
-# 只装"视频脚本拆解"
-npx skills add fxl1209739475-fxl/lark-fashion-cockpit -s video-script-parser -y -g
-
-# 只装"老板分身"
-npx skills add fxl1209739475-fxl/lark-fashion-cockpit -s boss-clone-aily -y -g
-```
-
-### 触发方式（自然语言对话 AI agent）
-
-装好 skill 后，在 Claude Code / 飞书机器人 / 任何支持 lark-cli 的 AI agent 里说自然语言：
-
-| 你说 | 自动触发的 sub-skill |
-|---|---|
-| "今天卖得怎么样" | `morning-report`（晨报）|
-| "DRS-0429 配什么款" | `product-matching`（产品搭配）|
-| "巡检任务" | `task-lifecycle`（任务生命周期）|
-| "拆这个视频 [URL]" | `video-script-parser`（视频拆解）|
-| "问老板这款备多少件" | `boss-clone-aily`（老板分身）|
-| "看竞品博主" | `competitor-monitor`（对标博主监控）|
-| "今日直播总结" | `live-streaming` + `livestream-recap` |
-
----
-
-## 📋 40 个 sub-skill 清单（按板块分类）
-
-### 🅐 公司经营（4）
-- [`morning-report`](skills/morning-report/SKILL.md) — 经营晨报，5 维数据 + AI 综合分析
-- [`target-tracking`](skills/target-tracking/SKILL.md) — 目标追踪，OKR + 实时进度
-- [`profit-analysis`](skills/profit-analysis/SKILL.md) — 利润分析，单品 + 平台双维拆解
-- [`task-collaboration`](skills/task-collaboration/SKILL.md) — 任务协作，跨租户朋友派工
-
-### 🅑 商品中心（9）
-- [`product-library`](skills/product-library/SKILL.md) — 产品库，元素标签 32 选项 × 5 维
-- [`new-launch-planning`](skills/new-launch-planning/SKILL.md) — 上新企划，波段排期
-- [`stock-replenishment`](skills/stock-replenishment/SKILL.md) — 库存补货
-- [`feedback-returns`](skills/feedback-returns/SKILL.md) — 退货反馈分析
-- [`competitor-monitor`](skills/competitor-monitor/SKILL.md) — 竞品监控
-- [`product-matching`](skills/product-matching/SKILL.md) — 产品搭配 ⭐（库存倾斜算法独家）
-- [`product-graph`](skills/product-graph/SKILL.md) — 产品关系图（飞书白板渲染）
-- [`launch-decision`](skills/launch-decision/SKILL.md) — 新品下单决策（4 维信号 + 教训库）
-- [`base-extension-product-matcher`](skills/base-extension-product-matcher/SKILL.md) ⭐ — 多维表格内置 AI 按钮
-
-### 🅒 销售增长（4）
-- [`platform-analytics`](skills/platform-analytics/SKILL.md) — 4 平台销售分析
-- [`content-pipeline`](skills/content-pipeline/SKILL.md) — 内容创作工作流
-- [`live-streaming`](skills/live-streaming/SKILL.md) — 直播管理 + 库存 GMV 匹配
-- [`private-domain`](skills/private-domain/SKILL.md) — 私域客户运营
-
-### 🅓 供应链履约（2）
-- [`production-supplier`](skills/production-supplier/SKILL.md) — 工厂供应商管理
-- [`order-fulfillment`](skills/order-fulfillment/SKILL.md) — 订单履约
-
-### 🅔 公司管理（5）
-- [`knowledge-base`](skills/knowledge-base/SKILL.md) — 知识库
-- [`meeting-workflow`](skills/meeting-workflow/SKILL.md) — 会议工作流
-- [`okr-cascade`](skills/okr-cascade/SKILL.md) — OKR 层级
-- [`approval-flow`](skills/approval-flow/SKILL.md) — 审批流
-- [`doc-iterator`](skills/doc-iterator/SKILL.md) — 文档迭代
-
-### 🅕 工作流（5）
-- [`task-lifecycle`](skills/task-lifecycle/SKILL.md) — 任务生命周期巡检 ⭐
-- [`event-router`](skills/event-router/SKILL.md) — 事件路由（飞书 IM 套娃模式）
-- [`meeting-broadcaster`](skills/meeting-broadcaster/SKILL.md) — 会议广播
-- [`meeting-clip-extractor`](skills/meeting-clip-extractor/SKILL.md) — 会议精彩切片
-- [`skill-recommender`](skills/skill-recommender/SKILL.md) — AI 推荐下一步用哪个 skill（自演进）
-
-### 🅖 AI 数字员工（3）⭐ 最新加
-- [`boss-clone-aily`](skills/boss-clone-aily/SKILL.md) ⭐ — 老板分身（飞书 Aily 原生）
-- [`lingo-fashion-glossary`](skills/lingo-fashion-glossary/SKILL.md) — 女装术语词典 Lingo
-- [`helpdesk-customer-tickets`](skills/helpdesk-customer-tickets/SKILL.md) — 客户工单系统
-
-### 🅗 可视化扩展（1）⭐
-- [`workplace-block-cockpit`](skills/workplace-block-cockpit/SKILL.md) ⭐ — 工作台首页 cockpit 仪表盘 widget
-
-### 🅘 开源生态雷达（1）⭐ 最新加
-- [`opensource-radar`](skills/opensource-radar/SKILL.md) ⭐ — 开源雷达每日扫描 GitHub + AI 评估和女装电商相关度 + 给改造方案 + 知识库归档
-
-### 🅙 视频拆解工具（2）⭐
-- [`video-script-parser`](skills/video-script-parser/SKILL.md) ⭐ — 视频脚本拆解（豆包多模态）
-- [`blogger-monitor`](skills/blogger-monitor/SKILL.md) ⭐ — 对标博主每日监控
-
----
-
-## 📜 原创性声明
-
-- **原创**：库存倾斜搭配 / 4 维信号下单 / 任务生命周期大脑 / skill-recommender 自演进 / 产品关系图飞书白板 / 多角色权限矩阵 / 个人成长复盘 + SOP 自沉淀 / 开源雷达 等核心创新由作者独立设计实现
-- **致敬开源精神**：飞书 IM 长连接事件订阅模式按 [lark-cli 官方 event 文档](https://github.com/larksuite/cli) 实现；多模态视觉用 [豆包视觉理解 API](https://www.volcengine.com/docs/82379/1553586)；ASR 用 faster-whisper 开源模型
-- **官方推荐能力实现**：12+ 飞书原生能力（base / im / event / docs / vc / minutes / wiki / sheets / approval / task / okr / mail）按 lark-cli 官方文档落地
-- **mock 数据声明**：8 款产品 / 17 表销售数据均为虚构 mock；3 真朋友任务系统 / 3 真实妙记 / 飞书白板 Wiki 云盘均为真实接通
-
----
-
-## ✅ 真实数据 vs Mock 透明声明
-
-**真实接通（8 个层）：**
-- ✅ 3 真朋友跨租户任务系统（马萍蔓 14 分 41 秒真完成）
-- ✅ 3 场真实飞书会议妙记（vc + minutes API 拉 90 章节 AI 摘要）
-- ✅ 飞书云盘 11 张真上传文件 + 3 子文件夹
-- ✅ 飞书白板真渲染产品关系图（Mermaid → docs +whiteboard-update）
-- ✅ 飞书 Wiki 1 空间 + 5 节点真创建
-- ✅ 飞书日历 5 个上新事件真写入
-- ✅ 18+ 篇飞书云文档真生成（含 5 条 AI 审稿评论）
-- ✅ event-listener 真持久化触发记录（trigger-log.jsonl）→ skill-recommender 真读 → 真生成推荐
-
-**Mock 数据（明确声明）：**
-- 🟡 8 款女装产品 / 17 表销售/库存/退货等业务数据
-- 🟡 4 平台 GMV 数据（淘宝/抖音/小红书/视频号）
-- 🟡 客户分层 / 生产档案 / 竞品监控
-- 🟡 库存占用金额 / 单品销售数据（如「OUT-2024-OL ¥82,620」等）
-
-> 🔐 **数据隐私声明**：作者真实经营的女装品牌数据涉及商业机密 + 客户隐私 + 工厂供应链信息，**不能在公开仓库泄露**。本仓库所有金额 / SKU / 客户 / 销量数字均为**模拟测试数据**，仅用于演示 cockpit 工作流和算法逻辑。**真实使用时用户自己的飞书 base 数据完全隔离在自己租户内，作者无权访问**。
-
-**Mock 替换路径：** 详见 [`docs/REAL-DATA-ROADMAP.md`](./docs/REAL-DATA-ROADMAP.md) — Phase 1 飞书原生数据已 80% 接通，Phase 2-5 接通真实电商平台 API 路径清晰（5-10 天/平台）。
-
----
-
-## ⚠️ 已知限制（诚实声明）
-
-为了让评委明确认知作品边界，主动声明以下限制：
-
-### 1. 部分集成是脚本框架，待 scope 授权后真生产可用
-- **OKR 双向同步**（`scripts/okr-sync.ps1`）：等待 `okr:okr.period:readonly` 等 scope 授权（1 行命令 + 1 小时跑通，详见 [`docs/OKR-APPROVAL-MIGRATION.md`](./docs/OKR-APPROVAL-MIGRATION.md)）
-- **飞书原生审批接通**（`scripts/approval-router.ps1`）：当前基于 `14_审批` mock 表运行，接通飞书原生审批流需要后台配置 4 个审批模板 + 30 分钟
-
-### 2. 多事件并发 daemon 部署
-- `event-watcher.py` 多线程订阅 3 类事件，**生产部署需要常驻进程托管**（Windows 任务计划 / Linux systemd）
-- 当前演示是模拟模式 + 单事件源真实启动验证
-
-### 3. 通用性边界
-- 业务规则（元素标签 5 维 / 互补品类 / 11 步上新流程）女装专属
-- **架构层 100% 通用**，跨行业迁移指南详见 [`docs/INDUSTRY-ADAPT.md`](./docs/INDUSTRY-ADAPT.md)
-- 化妆品 / 男装 / 童装 1-2 天可适配；家居 / 食品 3-5 天
-
-### 4. 跨租户能力受飞书平台限制
-- 跨租户 P2P IM 不支持（错误 230038）→ 改用飞书原生任务通知（已绕过）
-- 跨租户用户不能拉同一群（错误 232033）→ 解决方案见 [`examples/04-im-card-best-practice.md`](./examples/04-im-card-best-practice.md)
-
-### 5. 视觉生成能力
-- 当前产品图为 PIL 占位卡（颜色 + 品类 + 价格）
-- 真实 AI 模特上身图需接入虚拟试穿 API（OOTDiffusion 本地 / 阿里 OutfitAnyone / 快手 Kolors-VTON）
-- 接入路线：1 天写脚本 + 1 张 ¥1 元成本
-
----
-
-## 🎬 一句话价值
-
-> **老板娘手机飞书一句话「启动 5 月连衣裙波段上新」 → agent 后台 30 秒搞定 12 任务下发到 9 个角色 + 仪表盘自动联动 + 群里弹卡片汇报。**
->
-> **离开电脑回去休息。**
-
----
-
-## 📖 为什么做这个
-
-我做过**莫千衣**、**一支探戈**等多个女装项目。最痛的不是设计款式，是**每天早上的运营对账**：
-
-| 痛点 | 时间成本 | 影响 |
+| Skill | 痛点 | 解决方案 |
 |---|---|---|
-| 切 4 个平台后台抄销售数据 | 每天 1 小时 | 决策滞后 1 天 |
-| 库存盲区，售罄才知道 | 每周丢 5-10 单 | ¥几千-几万损失 |
-| 上新流程靠微信群喊 | 漏单率 30% | 团队心里没数 |
-| 复盘会不落地行动项 | 100% 都忘 | 改进不了 |
-| 选品靠"感觉" | — | 滞销库存堆积 |
-| OKR 拆解不下去 | — | 目标空转 |
+| **product-library** | 服装电商一个 SKU 涉及"颜色 × 尺码 × 款式 × 平台"复合属性，普通表格描述不全 | 飞书多维表格 27 字段产品库 schema：颜色矩阵 / 尺码做货单 / 售罄率 / 退货率 / 4 平台分配 / 状态 |
+| **product-graph** | 产品之间的搭配关系（"上衣 A 配下装 B"）拍脑袋，没有结构化记录 | 17_产品搭配组 表 + 搭配评分 + 销售关联度统计，找出最佳搭配组合 |
+| **product-matching** | 新品上线时不知道老款里哪些可以搭配卖，凭印象拍脑袋 | 基于颜色 / 风格 / 价格区间向量化匹配老款，输出"最佳搭配 Top 5" |
+| **base-extension-product-matcher** | product-matching 的扩展能力（base 字段公式自动联动） | 飞书 base 字段联动公式：上新一个新品 → 自动跑 matching → 写入 17_搭配组 |
+| **stock-replenishment** | 4 平台库存分散在不同后台，断货才发现已经晚了 | 03_库存预警 表 + 安全线公式 + 紧急度自动着色（紧急 / 中），库存 < 安全线立刻飞书卡片报警 |
+| **platform-analytics** | 4 平台销售数据各自有报表，老板要拼半天才看清全局 | 02_4平台销售 表 + AI 拼图分析（"今天哪个平台贡献了利润大头"）|
+| **profit-analysis** | 销售额好不等于赚钱，光看销售忽略毛利和退货成本 | 综合销售-退货-成本-推广-人工 → 每 SKU 真实利润 + 全店日均利润趋势 |
+| **target-tracking** | 季度销售目标定了之后没人盯，到月底才发现差距大 | 13_OKR 表追踪季度/月度/周目标进度，自动算"距目标还需实销 X 件" |
+| **launch-decision** | 设计师把方案 A/B/C 摆出来，老板娘凭感觉选，事后发现 D 更好 | 给每个候选方案打综合分（成本/卖相/工艺/竞品对标），AI 给出推荐 + 理由 |
+| **new-launch-planning** | 一年 6 波上新（春夏 / 秋冬 / 节庆），节奏混乱，每次临时抓瞎 | 04_上新波段 表预排全年节奏 + 自动倒推每个 SKU 的设计 / 打版 / 生产 deadline |
+| **production-supplier** | 工厂任务靠微信群口头沟通，谁负责什么没记录，出问题甩锅 | 09_生产档案 表关联工厂 / 排期 / 进度 / 质量评分 + wxauto-supplier-bridge 自动通知 |
 
-所以我做了 `lark-fashion-cockpit`：把上面这些痛点全部用飞书 CLI + AI 编排成**自动化工作流**。**老板娘手机一句话，agent 在飞书里干活。**
+### 📱 跨平台 IM（5 个）
 
-> **设计哲学：** 让女装老板娘**离开电脑回去休息**。
-
----
-
-## ✅ 已实测：真朋友真任务真完成
-
-> **2026-05-03 实测：作者用本 Skill 真给 3 个真朋友（跨租户外部联系人）下发任务。马萍蔓 14 分 41 秒后真点了完成，作者飞书群弹完成卡片。**
-
-| 测试 | 时间 | 结果 |
+| Skill | 痛点 | 解决方案 |
 |---|---|---|
-| 上新一键下发 | 20:32 | ✅ 12 任务真分配，3 朋友手机响 |
-| 真朋友点完成 | 20:47 | ✅ 老板群自动弹绿色完成卡片 |
-| AI 产品分析 | 20:55 | ✅ 6 秒生成飞书报告 + 跳转按钮 |
-| 库存预警联动 | 21:10 | ✅ 自动给生产主管建紧急补货任务 |
+| **cross-platform-im-agent** ⭐ | 客户散落在飞书 / 企微 / 个微，三个 inbox，每天切换累死 | 总指挥层：飞书一句话指令 → 同时调度三条 IM 链路 + 跨渠道扫摘要早报 |
+| **wechat-monitor** | 工作微信群多消息密集，每天看不过来；wxauto 等桌面 RPA 受 Win11 焦点限制不可靠 | 4 路径覆盖：① 主窗口扫红点（自动）② 长截图 AI 总结（半自动主推）③ 第三方导出 .txt 总结 ④ 桌面 RPA（实验性） |
+| **wxauto-supplier-bridge** | 一天问 5 个面料商同样的问题手敲 5 次，切微信浪费时间 | 飞书一句话 → wxauto 控制 PC 微信 → 给指定供应商发消息（4 层风控：仅 owner / 白名单 / 限速 / 审计）|
+| **wecom-bridge** | wxauto 和数据库 dump 都受微信版本兼容 + 安全告警限制，B 端通讯不够稳 | 走企业微信合规 API：注册 → 启用客户联系 → API 拉历史 + 发消息（48h 主动窗口内无限）|
+| **personal-mirror** | 员工日报手动写流于形式，老板看不到真实工作流程 | 22:00 自动拉员工飞书活动（任务/IM/会议）→ AI 4 维分析 → 生成"今日真实贡献"个人镜像 |
 
-详见 [examples/](./examples/) 4 个真实演示日志。
+### 🎬 内容营销（7 个）
 
----
-
-## 🎯 核心能力（40 大 + 4 杀手锏 + 自演进 meta-skill）
-
-### 5 大业务板块
-
-| 板块 | 能力数 | 涵盖 |
+| Skill | 痛点 | 解决方案 |
 |---|---|---|
-| 🅰️ **公司经营** | 4 | 经营晨报 / 目标进度 / 利润分析 / **跨部门任务协同** ⭐ / **任务生命周期大脑** ⭐ / **飞书 IM 套娃自然语言路由** 🔥 / **skill-recommender 自演进 meta-skill** 🔥（独家）|
-| 🅱️ **商品中心** | 9 | **产品库 + 8 维详情** ⭐ / 上新企划 / 库存补货 / 退货反馈 / 竞品监控 / **产品搭配（库存倾斜清老货）** ⭐ / **新品下单判断（4 维信号）** ⭐ / **产品关系图（飞书白板真实化）** 🔥 |
-| 🅲 **销售增长** | 4 | 4 平台数据 / **内容 5 阶段流转** ⭐ / 营销直播 / 私域 + 服务 |
-| 🅳 **供应链履约** | 2 | 生产 + 供应商 / 订单 + 物流 |
-| 🅴 **公司管理** | 4 | 知识库 / **复盘会工作流** ⭐ / OKR / 审批流 |
+| **blogger-monitor** | 对标博主每天发新视频但没人盯，错过 100k+ 爆款选题 | 27_对标博主视频监控 表 + Deepseek 评分（女装关联度 / 学习价值 / 二创可行性）|
+| **competitor-monitor** | 竞品上新一波你不知道，价格调整你也不知道 | 16_竞品产品监控 表自动跑 + 飞书 IM 关键词命中报警（"XX 品牌新上 50 款 春夏系列"）|
+| **content-pipeline** | 选题→脚本→拍摄→剪辑→发布 5 步散在不同人手里，进度看不清 | 06_选题池 + 07_文案库 + 24_直播记录 表全链路追踪 + 卡点 alert |
+| **video-script-parser** | 看到爆款想二创，但仔细分析镜头/台词/节奏要花 1 小时 | yt-dlp 拉视频 + faster-whisper 转录 + DOUBAO 多模态拆解 5 维度（镜头/台词/视觉/声音/节奏）|
+| **live-streaming** | 直播场次数据 / 主推款 / 投流 / 转化分散，每场复盘要从 4 个工具拼数 | 21/22/23/24 表全链路：场次数据 / 主推款 / 投流 / 完整记录 + AI 复盘建议 |
+| **private-domain** | 客户加了微信但没分层，全部当成一类发广告，转化低 | 10_客户分层 表（高价值/普通/沉睡）+ 不同分层不同消息节奏 |
+| **opensource-radar** | 想用 AI 工具但天天有新项目出来不知道哪些适合女装电商 | 每日 GitHub trending 抓取 + DeepSeek 评估女装电商相关性 → 飞书卡片推荐 |
 
-### 4 大杀手锏
+### 🎯 任务协作（12 个）
 
-1. **🔥 飞书套娃远程指挥** — 老板手机飞书发消息 → agent 自动调用全部能力（基于 lark-event WebSocket 长连接 + 自然语言意图识别 + 角色权限矩阵）
-2. **🤖 AI 产品分析助手** — 自然语言问"找出售罄率<50%的春夏款排序" → AI 读多维表 → 生成飞书文档 → 群里弹卡片含按钮
-3. **🕸️ 产品关系图** — 飞书白板自动生成"产品×SKU×内容×投流×直播×素材×元素"全维度关系图
-4. **🔗 多 CLI 套娃编排** — 飞书 CLI + douyin-monitor Python CLI + 即梦 CLI + ffmpeg 串联
-
----
-
-## 🚀 三种使用方式
-
-### 🟢 路径 1：完全零代码（推荐普通老板娘）
-
-打开 [飞书 CLI Web](https://github.com/jingsongliujing/Feishu-CLI-Web)（参赛同期作品）→ 登录飞书 → 直接对 AI 说：
-```
-帮我安装 lark-fashion-cockpit
-初始化系统
-```
-
-然后日常用：
-```
-今天店铺经营怎么样？
-启动 4 月连衣裙波段上新
-看下哪些款要补货
-找出春夏款里售罄率不到 50% 的
-整理上周复盘会
-```
-
-### 🟡 路径 2：装国产 agent（5 分钟）
-
-```bash
-# 1. 装扣子 / Trae / 爱马仕（任选）
-# 2. 装飞书 CLI
-npm install -g @larksuite/cli
-
-# 3. 对 agent 说
-"安装 lark-fashion-cockpit Skill"
-"初始化系统"
-```
-
-### 🔴 路径 3：开发者向（Claude code / Codex）
-
-```bash
-git clone https://github.com/fxl1209739475-fxl/lark-fashion-cockpit.git ~/.claude/skills/lark-fashion-cockpit
-```
-
-详见 [`SKILL.md`](SKILL.md) 主路由 + [`SKILL.md#初始化流程`](SKILL.md#-初始化流程一键搭建整套数据中枢)（10 步搭建完整数据中枢）。
-
----
-
-## 🎬 演示场景（4 个已实测）
-
-### 1️⃣ 上新一键下发（最炸场）
-
-```
-你说：启动 2026Q2 早春第二波 上新
-
-agent 跑：
-- 读 04_上新波段 找波段 + 关联 3 款
-- 读 13_OKR 找当前周期 OKR
-- 按 11 步流程模板拆解 12 任务
-- 调 lark-cli task +create + +assign 真分配给 9 角色
-- 同步到 05_任务清单（产品/波段/OKR 三向关联）
-- 飞书 IM 卡片汇报老板群
-
-结果：30 秒。9 个角色手机响。多维表多 12 条带关联。
-```
-
-**👉 详见 [examples/01-real-launch-demo.md](./examples/01-real-launch-demo.md)**
-
-### 2️⃣ AI 产品分析（杀手锏 1）
-
-```
-你说：找出春夏款里售罄率不到 50% 的，按销量排序，哪些该清仓
-
-agent 跑：6 秒
-- AI 解析自然语言 → 结构化 query
-- 调 lark-cli base 拉数据
-- 算售罄率 + 智能识别"开发中款不是滞销"
-- 生成飞书文档（含表格 + 6 项可勾选行动）
-- 群里弹蓝色卡片 + 跳转按钮
-
-结果：找到清仓候选 1 款（OUT-2024-OL，库存占用 ¥82,620），含 AI 推荐 3 步策略。
-```
-
-**👉 详见 [examples/02-ai-analysis-demo.md](./examples/02-ai-analysis-demo.md)**
-
-### 3️⃣ 库存预警 + skill 间联动
-
-```
-你说：看下哪些款要补货
-
-agent 跑：12 秒
-- stock-replenishment skill 扫产品库
-- 找到 SKT-0328-A 库存 5 件，0.4 天后售罄
-- AI 算补货量 410 件 + 平台分配
-- 自动调 task-collaboration 给生产主管申丽媛建紧急任务
-- 群里弹红色紧急卡片 + 跳转按钮
-
-结果：申丽媛飞书任务图标响。老板群弹红色告警。决策已被执行。
-```
-
-**👉 详见 [examples/03-stock-alert-demo.md](./examples/03-stock-alert-demo.md)**
-
-### 4️⃣ 真朋友点完成 → 老板自动收到通知
-
-```
-朋友马萍蔓在自己飞书 App 点了"完成"
-
-agent 检测到 task status = done
-↓ 自动给老板群发完成通知卡片：
-
-✅ 任务完成通知
-马萍蔓 完成了「2026Q3 早秋第一波 5 款设计稿」
-耗时：14 分 41 秒
-🚀 AI 推荐下一步：通知打版师可以接手了
-```
-
-**这个闭环 30 个对手作品里 0 个人能演示。**
-
----
-
-## 🛠️ 技术架构
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  入口：手机飞书 IM / agent CLI / 飞书 CLI Web           │
-│         ↓                                               │
-│  飞书 CLI 套娃（lark-cli event +subscribe 长连接）      │
-│         ↓                                               │
-│  多 CLI 编排：飞书 CLI + douyin-monitor + ffmpeg + ...  │
-│         ↓                                               │
-│  数据中枢：飞书多维表（27 张表）+ 文档 + 任务 + 日历    │
-│         ↓                                               │
-│  输出：IM 卡片 / 飞书文档 / 飞书白板 / 飞书任务         │
-└─────────────────────────────────────────────────────────┘
-```
-
-### 集成的 12 大类飞书 CLI 原生能力
-
-`base` / `doc` / `im` / `task` / `event` / `calendar` / `whiteboard` / `drive` / `sheets` / `wiki` / `vc` + `minutes` / `okr` / `approval`
-
-### 数据中枢（一键搭建后用户飞书会有）
-
-- 1 个多维表 App「lark-fashion-cockpit 数据中枢」
-- 27 张业务表（产品库 / 4 平台销售 / 任务 / 选题 / 文案 / 直播 / 生产 / 客户 / 退货 / 竞品 / OKR / 审批 / 市场内容 / 竞品产品 / 等）
-- 300+ 字段（含 8 个跨表 link、1 个 OKR↔任务双向关联）
-- 4 个任务清单视图（本月团队总览 / 我的待办 / 按状态看板 / 截止日历）
-- 1 个经营总览仪表盘（4 指标卡 + 1 饼图 + 1 环形 + 2 柱状）
-- 1 个独人通知群（解决 P2P self 无推送问题）
-
----
-
-## 💼 商业化路径
-
-不只是参赛工具 — 这套 cockpit 是给**所有女装/电商品牌主**的飞书 CLI 数字化解决方案，可对外承接咨询服务：
-
-| 客户类型 | 用法 | 报价参考 |
+| Skill | 痛点 | 解决方案 |
 |---|---|---|
-| 个人 / 小品牌主 | 自助 fork 使用，可改字段适配自家 | 免费（开源）|
-| 中小品牌（年营收 < 1000 万）| 付费定制（角色映射、字段调整、SOP 接入）| ¥5,000-10,000 / 单 |
-| MCN / 连锁品牌 | 年度服务（迭代 + 培训 + 二次开发）| ¥2-5 万 / 年 |
-| 服饰行业培训机构 | 把 Skill 当案例教学 | 课程合作 |
+| **task-collaboration** | 跨租户朋友帮忙时飞书 P2P 私聊不通，IM API 返回 230038 | 用飞书原生任务/审批/日历通知绕开 IM 限制，跨租户协作走任务而不是私聊 |
+| **task-lifecycle** | 任务建好就忘了，没人跟进进度直到 deadline 当天才慌 | 任务全生命周期追踪：建立 → 接受 → 进行中 → 卡点 → 完成 → 复盘，自动提醒 |
+| **approval-flow** | 报销 / 批价 / 上新审核 走线下，凭口头/微信记录，找半天找不到 | 飞书审批 API + 14_审批记录 表自动归档，所有决策可追溯 |
+| **okr-cascade** | 季度 OKR 定了之后没在日常工作里体现，到月底对不上 | 13_OKR 表 + 任务 / 销售 / 库存自动关联到对应 KR，进度可视化 |
+| **morning-report** ⭐ | 每天起床要打开 5 个工具看昨天发生了啥，浪费 30 分钟 | 早 8:00 自动跑：拉飞书 + 企微 + 个微 + 销售 + 库存 + 任务 → 一张早报卡片 |
+| **personal-mirror** | 员工日报敷衍了事，老板分不清真假努力 | 22:00 自动拉员工飞书一天行为 → AI 4 维分析（任务推进/沟通密度/会议参与/重点产出）|
+| **meeting-workflow** | 会议结束没纪要，决议执行无人跟进 | 飞书妙记 + 18_会议决策 表 + 决议自动转任务 + 跟进者每周复盘 |
+| **meeting-broadcaster** | 重要会议结论想同步给没参会的人，手动转发 5 个群很麻烦 | 一键把会议纪要广播到指定的飞书群 / 个人，附带 AI 生成的 3 句话精简版 |
+| **meeting-clip-extractor** | 1 小时会议视频回看太累，找具体片段要拖进度条 | 妙记 AI 章节 + 关键词锚点提取，"播放 14:30 - 16:00 决策那段"一句话搞定 |
+| **feedback-returns** | 退货反馈散在客服记录里，质量问题相同 SKU 反复出现没人发现 | 11_退货反馈 表自动聚合 + 同款 ≥ 3 退货飞书报警 + 自动通知工厂 |
+| **order-fulfillment** | 4 平台订单履约状态分散，缺货 / 延迟发货后置发现 | 全平台订单状态 + 异常单自动飞书任务给客服跟进 |
+| **helpdesk-customer-tickets** | 客户问题在微信 / 飞书 / 平台客服三个口同时进来，处理乱 | 飞书 helpdesk 工单 + 自动分流 + AI 自动回复常见问题 + 升级时转人 |
 
-**核心价值** — 替代品牌主一堆 SaaS（库存系统 / 任务系统 / CRM / BI / 客服工单），用飞书原生能力搭出"我的女装 AI 公司"。
+### 🤖 AI 大脑 + 基础设施（6 个）
+
+| Skill | 痛点 | 解决方案 |
+|---|---|---|
+| **boss-clone-aily** | 老板出差 / 度假时同事问她"这个怎么处理"找不到答案 | 飞书 Aily 应用 + 26_老板语料库（历史决策案例 + 风格语料）→ 老板克隆 AI 替她答 |
+| **skill-recommender** | 45 个 skill 用户不知道哪个解决他的问题 | DEEPSEEK 看用户描述 → 推荐最匹配的 3 个 skill + 一行示例命令 |
+| **auto-scheduler** | 12 个定时任务（早报 / 库存扫 / 博主抓 等）散在不同 cron / 手动起，状态看不清 | APScheduler 主调度器 + config/auto-triggers.json 集中管理 + 状态可视化 |
+| **knowledge-base** | 公司经验沉淀在群聊和会议纪要里，新员工查询要问 5 个人 | 19_经验沉淀库 表 + 飞书 wiki 联动 + 向量检索 |
+| **lingo-fashion-glossary** | 服装行业黑话（"色号 / 版型 / 安全线 / 上新波段"）跨部门理解不一致 | 飞书 lingo 服装词汇表，新员工 / 跨租户朋友看到术语就能查 |
+| **event-router** | 飞书事件回调（消息 / 群变更 / 反应）多种类型，每个 skill 都自己处理太重 | 统一事件路由层 + 按类型分发到对应 skill，新增 skill 只需注册路由 |
+| **doc-iterator** | 飞书文档要批量改（比如 100 个产品 SOP 加一段免责声明），手动改累死 | DocxXML 批量更新 API + 失败回滚 + 进度追踪 |
 
 ---
 
-## 📂 仓库结构
+## 📂 关键架构文件
 
 ```
 lark-fashion-cockpit/
-├── SKILL.md                     # 主入口（路由总览 + 完整初始化 10 步）
-├── README.md                    # 你正在看的
-├── LICENSE
-├── skills/                      # 40 个 sub-skill（self-contained）
-│   ├── ⭐ task-collaboration/   # 上新一键下发
-│   ├── ⭐ product-library/      # 8 维详情 + AI 分析 + 关系图
-│   ├── ⭐ content-pipeline/     # 内容 5 阶段流转
-│   ├── ⭐ meeting-workflow/     # 复盘会自动出纪要
-│   ├── ⭐ morning-report/       # 经营晨报
-│   └── ...（共 40 个）
-├── lib/
-│   ├── base-schema/             # 字段定义 + 视图 + 仪表盘 schema
-│   ├── mock-data/               # 130 条演示数据
-│   ├── prompts/                 # AI 提示词模板
-│   └── team-config.json         # 团队角色 + 通知群配置
-├── docs/                        # 设计文档
-└── examples/                    # 真实演示日志
-    ├── 01-real-launch-demo.md   # 上新一键下发
-    ├── 02-ai-analysis-demo.md   # AI 产品分析
-    ├── 03-stock-alert-demo.md   # 库存预警 + skill 联动
-    └── 04-im-card-best-practice.md  # IM 卡片 4 坑沉淀
+  ├─ skills/                            # 45 个 sub-skill 自包含
+  │   ├─ omnitask-bridge/               # ⭐ 入口：驾驶舱 + 聊天 + AI 路由
+  │   │   ├─ web/                       # 前端（FastAPI serve）
+  │   │   │   ├─ index.html             # 主驾驶舱
+  │   │   │   ├─ chat.js                # 常驻聊天浮窗
+  │   │   │   └─ creator/               # 嵌入创作系统
+  │   │   ├─ scripts/
+  │   │   │   ├─ server.py              # FastAPI 8080 + WebSocket
+  │   │   │   ├─ chat_router.py         # DEEPSEEK 意图分类
+  │   │   │   ├─ skill_executor.py      # subprocess 调 skill
+  │   │   │   └─ feishu_data.py         # lark-cli 数据查询
+  │   │   └─ config/skills-registry.json # 12 个可被聊天调用的 skill
+  │   ├─ wechat-monitor/                # 个人微信 4 路径
+  │   ├─ wecom-bridge/                  # 企业微信 API
+  │   ├─ cross-platform-im-agent/       # 跨平台 IM 编排
+  │   └─ ... (41 个其他 skill)
+  ├─ scripts/
+  │   ├─ event-listener.py              # 飞书 IM 消息监听 + 路由分发
+  │   └─ init-cockpit.py                # 一键建 27 张表 + mock 数据
+  ├─ docs/images/architecture.svg       # 本 README 的大图
+  ├─ start-omnitask.bat                 # 一键启动驾驶舱
+  └─ .env.example                       # 环境变量模板
 ```
 
 ---
 
-## 🎓 真实踩坑沉淀
+## 🔑 必备的环境变量
 
-本仓库已固化 4 个飞书 CLI v2 API 的实测限制 + 解法：
-
-| 坑 | 解法 |
-|---|---|
-| `task +create --assignee` 静默不生效 | 分两步：`+create` 拿 guid → `+assign --add` |
-| 跨租户 P2P IM 禁止（错 230038）| 走飞书原生任务通道（不受跨租户限制）|
-| P2P self 无推送 | 建独人群替代 |
-| markdown 链接不可点击 | 用 interactive 卡片 + button 元素 |
-
-**详见 [examples/04-im-card-best-practice.md](./examples/04-im-card-best-practice.md)。** 后续 fork 本仓库做其他垂直行业（化妆品 / 家居 / 食品）的开发者直接受益，省 2 小时调试。
-
----
-
-## ❓ 常见问题（FAQ）
-
-### Q1：装完 skill 后机器人就能用了吗？
-**A**：不能。还需要 3 步：① 配凭证（.env）② 跑 init-cockpit.py 建表 ③ 启动 event-listener.py 让机器人监听消息。
-
-### Q2：必须装全部 40 个 skill 吗？
-**A**：不必须。两种用法：① 完整应用模式（装全部）② 单 skill 模式（`npx skills add ...-s 单个 skill`，只用你需要的能力）。
-
-### Q3：跑 cockpit 需要哪些 API key？
-**A**：核心 3 个 — DOUBAO_API_KEY（豆包视觉，火山方舟免费 50w tokens）/ DEEPSEEK_API_KEY（DeepSeek 文本分析）/ DOUYIN_COOKIE（抖音爬数据，浏览器复制）。其他可选：可灵 / 阿里万相 / 阿里 ASR。
-
-### Q4：飞书 CLI 机器人怎么 24 小时跑？
-**A**：开机自启 `python scripts/event-listener.py` + `python skills/auto-scheduler/scripts/cockpit-scheduler.py`。Windows 用 Task Scheduler "At log on"，Linux 用 systemd。
-
-### Q5：为啥多维表是 27 张但 sub-skill 是 40 个？
-**A**：N:M 关系。一张表可能被多个 skill 共用（05_任务清单 同时被 task-tracker / task-lifecycle / task-collaboration / personal-mirror 4 个 skill 用）；一个 skill 也可能用 0 张表（lingo-fashion-glossary 用飞书词典不用 base）。
-
-### Q6：跨租户能用吗？
-**A**：群聊跨租户可以（已实测 3 朋友真任务真完成）。P2P 私聊跨租户飞书原生不支持。建议同租户员工用 P2P，跨租户朋友进共享群。
-
-### Q7：mock 数据怎么换成真实数据？
-**A**：详见 [`docs/REAL-DATA-ROADMAP.md`](./docs/REAL-DATA-ROADMAP.md)。Phase 1 飞书原生数据已 80% 接通，Phase 2 接抖音/淘宝/视频号 API 5-10 天/平台。
-
-### Q8：装了之后我电脑会不会被一直占用？
-**A**：event-listener + auto-scheduler 是常驻进程，CPU 占用 < 1%，内存 ~150MB。可后台跑/最小化窗口。但**不要关那个 PowerShell 黑窗口**，关了 = 机器人挂了。
-
-### Q9：可以在 Linux/Mac 跑吗？
-**A**：可以。本仓库脚本主要针对 Windows（PowerShell + Python），Mac/Linux 把 `.ps1` 改成 `.sh` 等价即可。Python 脚本完全跨平台。
-
-### Q10：能给同行老板娘做这种系统吗？
-**A**：能。复刻同套架构 1-2 天搭建即可。垂直行业（女装/男装/家居/食品/培训机构等）按客单 3000-5000 元/单是合理报价区间。本仓库就是你给同行做生意的工具包。
-
----
-
-## 🤝 贡献
+参考 `.env.example`：
 
 ```bash
-# 1. Fork 仓库
-# 2. 做你的女装行业改造（或别的行业适配）
-git checkout -b feat/your-skill
-# 3. 在 skills/ 下加你的 sub-skill 文件夹
-# 4. 提 PR，我会合入主仓库挂名感谢
+# AI 模型
+DOUBAO_API_KEY=ark-xxxxx          # 火山方舟，视觉模型用
+DOUBAO_MODEL=doubao-1-5-vision-pro-32k-250115
+DEEPSEEK_API_KEY=sk-xxxxx         # DEEPSEEK，路由+总结用
+DEEPSEEK_MODEL=deepseek-chat
+
+# 飞书 base
+LARK_FASHION_COCKPIT_BASE_TOKEN=...
+LARK_FASHION_COCKPIT_BOSS_CHAT=oc_...
+LARK_FASHION_COCKPIT_BOSS_OPEN_ID=ou_...
+
+# 飞书表 ID（init-cockpit.py 自动建表后填）
+TABLE_PRODUCT_LIBRARY=tblxxxxx
+TABLE_SALES_4PLATFORMS=tblxxxxx
+TABLE_STOCK_ALERT=tblxxxxx
+... (共 27 张)
+
+# 抖音爬虫
+DOUYIN_COOKIE=...
 ```
 
 ---
 
-## 📜 许可
+## 🎬 5 分钟跑通的演示路径
 
-[MIT License](./LICENSE) — 欢迎 fork / 改造 / 用于其他垂直行业。
-
----
-
-## 🙏 致谢
-
-- **飞书 CLI 团队** — 开源整个生态
-- **飞书 CLI 创作者大赛社区** — 开源精神 + 公开技术分享
-- **马萍蔓 / 申丽媛 / 朱健豪** — 配合实测，让真朋友真任务真完成成为可能 ❤️
-
----
-
-## 📮 联系
-
-- 作者：冯兴龙
-- 仓库：[fxl1209739475-fxl/lark-fashion-cockpit](https://github.com/fxl1209739475-fxl/lark-fashion-cockpit)
-- 反馈：[GitHub Issues](https://github.com/fxl1209739475-fxl/lark-fashion-cockpit/issues)
+1. 装好依赖（参考"安装与启动"）
+2. 启动 `./start-omnitask.bat` → 浏览器打开 http://localhost:8080
+3. 看到女装驾驶舱 + 右下角 💬 浮窗
+4. 点 💬 浮窗，依次发送：
+   - `今天销售` → 自动拉飞书销售表
+   - `库存预警` → 自动列出红色 SKU
+   - `今天会议` → 自动列今日日程
+   - `找出售罄率低于50%的产品` → 拉产品库 + AI 结构化分析
+   - `让设计师汇报本周进度` → 自动建任务 + 指派给马萍蔓
+5. 每条指令的执行进度会实时流式显示在浮窗里
 
 ---
 
-> **🏆 飞书 CLI 创作者大赛参赛作品** — 2026 年 4-5 月
->
-> **目标**：最佳实践奖（Mac mini）— 评选标准"将 Skill 和业务结合，带来业务增效"完美对口本 Skill
+## 🤝 数据隐私声明
+
+- 所有飞书 base 数据**保留在你自己的飞书租户**，不上传第三方
+- AI 调用走 DEEPSEEK / DOUBAO 官方 API，不缓存对话内容
+- 个人微信桥（wechat-monitor / wxauto）所有截图**用完即丢不写盘**
+- 企业微信桥（wecom-bridge）走腾讯官方合规 API
+- 审计日志统一记 `logs/`，仅本地可见
+
+---
+
+## 🆘 反馈 / 报问题
+
+GitHub issues：https://github.com/fxl1209739475-fxl/lark-fashion-cockpit/issues
+
+---
+
+## 📜 License
+
+MIT License — 自由商用 / 改造 / 分发。
