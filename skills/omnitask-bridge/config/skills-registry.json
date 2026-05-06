@@ -1,0 +1,155 @@
+{
+  "_doc": "omnitask-bridge 聊天窗口可调用的 cockpit skill 注册表。chat_router 用这里的 trigger_keywords 和 description 帮 AI 选择该调谁。",
+  "_field_doc": {
+    "id": "skill 唯一标识",
+    "label": "面向用户的中文标签",
+    "description": "面向 AI 的 1-2 句话功能描述",
+    "category": "query/task/notify/content/doc/calendar/casual",
+    "trigger_keywords": "命中任一关键词时优先匹配（绕过 AI 节省时间）",
+    "scopes_required": "调用本 skill 需要的权限范围",
+    "params_schema": "AI 应提取的参数 JSON schema（简化）",
+    "executor": "subprocess 执行的命令（python ... 或 lark-cli ...）",
+    "long_running": "true 时走 spawn + 流式回报；false 时同步等待"
+  },
+
+  "skills": [
+    {
+      "id": "query.sales_today",
+      "label": "今日销售",
+      "description": "拉今日 4 平台销售总额、单量、各 SKU 排行",
+      "category": "query",
+      "trigger_keywords": ["今天销售", "今日销售", "今天卖了多少"],
+      "scopes_required": ["query.*"],
+      "params_schema": {},
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "sales_today"],
+      "long_running": false
+    },
+    {
+      "id": "query.stock_alerts",
+      "label": "库存预警",
+      "description": "查飞书 03_库存预警 表里所有 alert_level=red 的 SKU",
+      "category": "query",
+      "trigger_keywords": ["库存预警", "缺货", "断货", "红色库存"],
+      "scopes_required": ["query.*"],
+      "params_schema": {},
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "stock_alerts"],
+      "long_running": false
+    },
+    {
+      "id": "query.my_tasks",
+      "label": "我的待办",
+      "description": "拉当前用户飞书任务里未完成的待办",
+      "category": "query",
+      "trigger_keywords": ["我的待办", "我有什么任务", "今天我做什么"],
+      "scopes_required": ["query.*"],
+      "params_schema": {},
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "my_tasks"],
+      "long_running": false
+    },
+    {
+      "id": "query.bloggers_top",
+      "label": "对标博主爆款",
+      "description": "拉 27_对标博主视频监控 表本周点赞 top 5",
+      "category": "query",
+      "trigger_keywords": ["博主爆款", "对标博主", "本周爆款"],
+      "scopes_required": ["query.*"],
+      "params_schema": {},
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "bloggers_top"],
+      "long_running": false
+    },
+    {
+      "id": "task.create",
+      "label": "建任务",
+      "description": "在飞书任务里建一条任务，可指派给员工",
+      "category": "task",
+      "trigger_keywords": ["建任务", "新建任务", "派任务", "安排任务"],
+      "scopes_required": ["task.create.*"],
+      "params_schema": {
+        "title": "任务标题（必填）",
+        "assignee": "受指派员工名字（可选，AI 从聊天里提取）",
+        "due": "截止时间（可选，自然语言"
+      },
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "task_create"],
+      "long_running": false
+    },
+    {
+      "id": "notify.supplier",
+      "label": "通知供应商",
+      "description": "通过 wxauto-supplier-bridge 给指定供应商发微信通知",
+      "category": "notify",
+      "trigger_keywords": ["通知 ZC 工厂", "通知 GS 工厂", "通知供应商", "告诉工厂"],
+      "scopes_required": ["notify.supplier"],
+      "params_schema": {
+        "supplier": "供应商名（必填）",
+        "message": "通知内容（必填）"
+      },
+      "executor": ["python", "skills/wxauto-supplier-bridge/scripts/send-to-supplier.py"],
+      "long_running": true
+    },
+    {
+      "id": "notify.broadcast_supplier",
+      "label": "群发同类供应商",
+      "description": "给某类供应商（面料商/工厂/印花厂）群发消息",
+      "category": "notify",
+      "trigger_keywords": ["问所有面料商", "问所有工厂", "群发供应商"],
+      "scopes_required": ["notify.supplier_broadcast"],
+      "params_schema": {
+        "category": "类别（面料商/辅料商/成衣工厂/印花厂/物流）",
+        "message": "消息内容"
+      },
+      "executor": ["python", "skills/wxauto-supplier-bridge/scripts/broadcast-to-suppliers.py"],
+      "long_running": true
+    },
+    {
+      "id": "wechat.scan",
+      "label": "扫微信群",
+      "description": "调 scan-wechat 扫主窗口红点 + AI 摘要紧急消息",
+      "category": "notify",
+      "trigger_keywords": ["扫微信群", "微信速览", "看下微信"],
+      "scopes_required": ["query.wechat"],
+      "params_schema": {
+        "keywords": "关键词列表逗号分隔（可选）"
+      },
+      "executor": ["python", "skills/wechat-monitor/scripts/scan-wechat.py"],
+      "long_running": true
+    },
+    {
+      "id": "content.generate_script",
+      "label": "生成视频脚本",
+      "description": "调创作系统 douyin-monitor 基于选题生成短视频脚本",
+      "category": "content",
+      "trigger_keywords": ["写脚本", "生成视频脚本", "二创脚本"],
+      "scopes_required": ["content.create"],
+      "params_schema": {
+        "topic": "选题或来源视频"
+      },
+      "executor": ["__internal__", "open_creator_with_topic"],
+      "long_running": false
+    },
+    {
+      "id": "doc.create",
+      "label": "建飞书文档",
+      "description": "用 lark-cli docs 在云空间创建文档",
+      "category": "doc",
+      "trigger_keywords": ["建文档", "新建文档", "起草文档"],
+      "scopes_required": ["doc.create"],
+      "params_schema": {
+        "title": "文档标题",
+        "content": "初始内容（可选）"
+      },
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "doc_create"],
+      "long_running": false
+    },
+    {
+      "id": "calendar.today",
+      "label": "今天日程",
+      "description": "拉当前用户飞书今天的所有日程会议",
+      "category": "calendar",
+      "trigger_keywords": ["今天会议", "今天日程", "今天有什么会"],
+      "scopes_required": ["query.calendar"],
+      "params_schema": {},
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "calendar_today"],
+      "long_running": false
+    }
+  ]
+}

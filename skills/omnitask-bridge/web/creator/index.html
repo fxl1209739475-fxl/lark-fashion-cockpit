@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自媒体创作系统</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+
+  /* 顶部导航 */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #1a1d27; border-bottom: 1px solid #2d3148; }
+  .topbar .logo { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .topbar .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* 侧边栏 */
+  .layout { display: flex; min-height: calc(100vh - 57px); }
+  .sidebar { width: 220px; background: #1a1d27; border-right: 1px solid #2d3148; padding: 20px 0; flex-shrink: 0; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 24px; font-size: 14px; color: #94a3b8; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; }
+  .nav-item:hover { background: #23263a; color: #e2e8f0; }
+  .nav-item.active { background: #23263a; color: #818cf8; border-left-color: #818cf8; }
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-section { font-size: 11px; color: #475569; padding: 16px 24px 6px; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* 主内容 */
+  .main { flex: 1; padding: 28px 32px; overflow-y: auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* 通用卡片 */
+  .card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 12px; padding: 20px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #94a3b8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+  /* 首页统计卡片 */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 12px; padding: 20px; }
+  .stat-label { font-size: 13px; color: #64748b; margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 12px; color: #22c55e; margin-top: 4px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+
+  /* 热点榜单 */
+  .hot-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2d3148; }
+  .hot-item:last-child { border-bottom: none; }
+  .hot-rank { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .hot-rank.top3 { background: linear-gradient(135deg, #f97316, #ef4444); color: #fff; }
+  .hot-rank.normal { background: #2d3148; color: #64748b; }
+  .hot-title { flex: 1; font-size: 13px; color: #cbd5e1; }
+  .hot-heat { font-size: 12px; color: #f97316; }
+  .platform-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-left: 8px; flex-shrink: 0; }
+  .tag-douyin { background: #1a1a2e; color: #a78bfa; border: 1px solid #4c1d95; }
+  .tag-weibo { background: #2d1515; color: #f87171; border: 1px solid #7f1d1d; }
+  .tag-zhihu { background: #15202d; color: #60a5fa; border: 1px solid #1e3a5f; }
+
+  /* 博主监控 */
+  .blogger-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #2d3148; }
+  .blogger-item:last-child { border-bottom: none; }
+  .blogger-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .blogger-info { flex: 1; }
+  .blogger-name { font-size: 14px; color: #e2e8f0; }
+  .blogger-fans { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .blogger-score { text-align: right; }
+  .score-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+  .score-high { background: #14532d; color: #4ade80; }
+  .score-mid { background: #713f12; color: #fbbf24; }
+  .score-low { background: #2d3148; color: #64748b; }
+
+  /* 选题推荐 */
+  .topic-card { background: #23263a; border: 1px solid #2d3148; border-radius: 10px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: #6366f1; transform: translateY(-1px); }
+  .topic-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .topic-title { font-size: 14px; color: #e2e8f0; flex: 1; margin-right: 12px; }
+  .topic-meta { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+  .meta-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #2d3148; color: #94a3b8; }
+  .meta-tag.ec { background: #1e3a5f; color: #60a5fa; }
+  .ai-score { font-size: 13px; font-weight: 700; color: #f97316; flex-shrink: 0; }
+
+  /* 作品管理 */
+  .works-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .work-card { background: #23263a; border: 1px solid #2d3148; border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+  .work-card:hover { border-color: #6366f1; }
+  .work-thumb { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+  .work-thumb.video { background: linear-gradient(135deg, #1e1b4b, #312e81); }
+  .work-thumb.article { background: linear-gradient(135deg, #14532d, #166534); }
+  .work-thumb.image { background: linear-gradient(135deg, #7c2d12, #9a3412); }
+  .work-info { padding: 12px; }
+  .work-title { font-size: 13px; color: #e2e8f0; margin-bottom: 8px; line-height: 1.4; }
+  .work-stats { display: flex; gap: 12px; font-size: 12px; color: #64748b; }
+  .work-status { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-top: 8px; }
+  .status-published { background: #14532d; color: #4ade80; }
+  .status-draft { background: #2d3148; color: #94a3b8; }
+  .status-generating { background: #1e3a5f; color: #60a5fa; }
+
+  /* 创作工作台 */
+  .studio-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .step-list { counter-reset: step; }
+  .step-item { display: flex; gap: 12px; padding: 14px; background: #23263a; border-radius: 8px; margin-bottom: 8px; border: 1px solid #2d3148; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .step-content { flex: 1; }
+  .step-label { font-size: 13px; color: #e2e8f0; font-weight: 600; }
+  .step-desc { font-size: 12px; color: #64748b; margin-top: 4px; }
+  .step-btn { margin-top: 8px; padding: 6px 16px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 6px; color: #fff; font-size: 12px; cursor: pointer; }
+  .step-btn:hover { opacity: 0.85; }
+  .step-done .step-num { background: #14532d; }
+  .step-done .step-label { color: #4ade80; }
+
+  /* 数据大屏 */
+  .chart-placeholder { height: 160px; background: #23263a; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 13px; margin-top: 12px; border: 1px dashed #2d3148; }
+  .platform-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2d3148; }
+  .platform-row:last-child { border-bottom: none; }
+  .platform-name { width: 80px; font-size: 13px; color: #94a3b8; }
+  .progress-bar { flex: 1; height: 6px; background: #2d3148; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; }
+  .bar-douyin { background: linear-gradient(90deg, #a78bfa, #6366f1); width: 78%; }
+  .bar-wx { background: linear-gradient(90deg, #4ade80, #22c55e); width: 45%; }
+  .bar-xhs { background: linear-gradient(90deg, #f87171, #ef4444); width: 32%; }
+  .platform-num { width: 60px; text-align: right; font-size: 13px; color: #e2e8f0; }
+
+  /* 页面标题 */
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-size: 22px; font-weight: 700; color: #e2e8f0; }
+  .page-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+  /* 按钮 */
+  .btn { padding: 8px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-outline { background: transparent; border: 1px solid #2d3148; color: #94a3b8; }
+  .btn-outline:hover { border-color: #6366f1; color: #818cf8; }
+
+  .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+  .badge-new { background: #1e3a5f; color: #60a5fa; }
+  .badge-hot { background: #7f1d1d; color: #f87171; }
+
+  /* 作品数据页 */
+  .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-bar input, .filter-bar select { background: #1a1d27; border: 1px solid #2d3148; border-radius: 8px; padding: 8px 14px; color: #e2e8f0; font-size: 13px; outline: none; }
+  .filter-bar input { flex: 1; min-width: 200px; }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: #6366f1; }
+  .filter-bar select option { background: #1a1d27; }
+  .filter-count { padding: 8px 16px; background: #23263a; border-radius: 8px; font-size: 13px; color: #64748b; display: flex; align-items: center; }
+  .vtable-wrap { background: #1a1d27; border: 1px solid #2d3148; border-radius: 12px; overflow: hidden; margin-bottom: 16px; overflow-x: auto; }
+  .vtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .vtable th { padding: 11px 14px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #2d3148; background: #131520; white-space: nowrap; cursor: pointer; user-select: none; }
+  .vtable th:hover { color: #818cf8; }
+  .vtable td { padding: 11px 14px; border-bottom: 1px solid #1e2235; vertical-align: middle; }
+  .vtable tr:last-child td { border-bottom: none; }
+  .vtable tr:hover td { background: #23263a; cursor: pointer; }
+  .vtable tr.selected td { background: #1e2048; }
+  .vtable .title-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cbd5e1; }
+  .vtable .author-cell { color: #818cf8; white-space: nowrap; font-weight: 600; }
+  .vtable .num-cell { text-align: right; color: #94a3b8; font-variant-numeric: tabular-nums; }
+  .vtable .date-cell { color: #64748b; white-space: nowrap; font-size: 12px; }
+  .viral-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .viral-5 { background: #ef4444; }
+  .viral-4 { background: #f97316; }
+  .viral-3 { background: #eab308; }
+  .viral-2 { background: #22c55e; }
+  .viral-1 { background: #64748b; }
+  .detail-panel { background: #1a1d27; border: 1px solid #2d3148; border-radius: 12px; padding: 20px; animation: slideUp 0.2s ease; }
+  @keyframes slideUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .detail-panel.hidden { display: none; }
+  .dp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .dp-title { font-size: 15px; color: #e2e8f0; font-weight: 600; flex: 1; margin-right: 12px; line-height: 1.4; }
+  .dp-close { width: 24px; height: 24px; border-radius: 6px; background: #2d3148; border: none; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .dp-stats { display: flex; gap: 20px; margin-bottom: 16px; flex-wrap: wrap; padding: 14px; background: #23263a; border-radius: 8px; }
+  .dp-stat { text-align: center; }
+  .dp-stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .dp-stat-lbl { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .dp-section { margin-bottom: 12px; }
+  .dp-section-title { font-size: 11px; color: #6366f1; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .dp-text { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+  .dp-link { font-size: 13px; color: #6366f1; text-decoration: none; }
+  .dp-link:hover { color: #818cf8; }
+  .ec-chip { display: inline-block; padding: 3px 10px; background: #1e3a5f; color: #60a5fa; border-radius: 20px; font-size: 11px; margin-right: 6px; }
+  .sort-arrow { font-size: 10px; color: #475569; margin-left: 3px; }
+
+
+  /* ===== 选题池 ===== */
+  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .kanban-col { background: #131520; border: 1px solid #2d3148; border-radius: 12px; padding: 14px; min-height: 400px; }
+  .kanban-col-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .kanban-count { background: #2d3148; color: #94a3b8; border-radius: 10px; padding: 1px 7px; font-size: 11px; }
+  .kcard { background: #1a1d27; border: 1px solid #2d3148; border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s; }
+  .kcard:hover { border-color: #6366f1; }
+  .kcard-title { font-size: 13px; color: #e2e8f0; line-height: 1.4; margin-bottom: 8px; }
+  .kcard-meta { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .kcard-source { font-size: 11px; color: #818cf8; }
+  .kcard-score { font-size: 11px; font-weight: 700; }
+  .kcard-date { font-size: 11px; color: #475569; margin-left: auto; }
+  .kcard-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .ktag { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: #23263a; color: #94a3b8; }
+  .ktag-ec { background: #1e3a5f; color: #60a5fa; }
+  .col-idea .kanban-col-title { color: #94a3b8; }
+  .col-wip .kanban-col-title { color: #fbbf24; }
+  .col-done .kanban-col-title { color: #4ade80; }
+  .new-topic-btn { width: 100%; padding: 8px; border: 1px dashed #2d3148; border-radius: 8px; background: transparent; color: #475569; font-size: 12px; cursor: pointer; margin-top: 4px; transition: all 0.2s; }
+  .new-topic-btn:hover { border-color: #6366f1; color: #818cf8; }
+
+  /* ===== 发布日历 ===== */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px; }
+  .cal-day { background: #1a1d27; border: 1px solid #2d3148; border-radius: 8px; padding: 10px 8px; min-height: 90px; }
+  .cal-day.today { border-color: #6366f1; background: #1e2048; }
+  .cal-day-label { font-size: 11px; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .cal-day-num { font-size: 14px; font-weight: 700; }
+  .cal-day.today .cal-day-num { color: #818cf8; }
+  .cal-event { font-size: 11px; padding: 3px 6px; border-radius: 4px; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .cal-published { background: #14532d; color: #4ade80; }
+  .cal-wip { background: #1e3a5f; color: #60a5fa; }
+  .cal-planned { background: #713f12; color: #fbbf24; }
+  .cal-empty-slot { font-size: 11px; color: #2d3148; text-align: center; margin-top: 6px; }
+  .cal-legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; }
+  .cal-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .cal-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+
+  /* ===== 账号健康 ===== */
+  .health-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .spark-wrap { margin-top: 12px; }
+  .spark-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .spark-label { width: 70px; font-size: 12px; color: #64748b; flex-shrink: 0; }
+  .spark-bar-wrap { flex: 1; height: 6px; background: #2d3148; border-radius: 3px; overflow: hidden; }
+  .spark-bar { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+  .spark-val { width: 50px; text-align: right; font-size: 12px; color: #e2e8f0; font-variant-numeric: tabular-nums; }
+  .health-kpi { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hkpi { background: #23263a; border-radius: 8px; padding: 14px; }
+  .hkpi-val { font-size: 22px; font-weight: 700; color: #e2e8f0; }
+  .hkpi-label { font-size: 11px; color: #64748b; margin-top: 3px; }
+  .hkpi-trend { font-size: 11px; margin-top: 4px; }
+  .trend-up { color: #4ade80; }
+  .trend-down { color: #f87171; }
+  .heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+  .heatmap-cell { height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #475569; }
+
+  /* ===== 文案模板库 ===== */
+  .tpl-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tpl-tab { padding: 7px 16px; border-radius: 20px; border: 1px solid #2d3148; background: transparent; color: #64748b; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .tpl-tab.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+  .tpl-tab:hover:not(.active) { border-color: #6366f1; color: #818cf8; }
+  .tpl-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .tpl-card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 10px; padding: 14px; }
+  .tpl-card-title { font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .tpl-copy-btn { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #2d3148; border: none; color: #94a3b8; cursor: pointer; }
+  .tpl-copy-btn:hover { background: #6366f1; color: #fff; }
+  .tpl-text { font-size: 12px; color: #94a3b8; line-height: 1.7; background: #131520; border-radius: 6px; padding: 10px; margin-bottom: 8px; white-space: pre-line; }
+  .tpl-type-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; }
+  .tag-hook { background: #7f1d1d; color: #f87171; }
+  .tag-problem { background: #713f12; color: #fbbf24; }
+  .tag-method { background: #1e3a5f; color: #60a5fa; }
+  .tag-cta { background: #14532d; color: #4ade80; }
+
+  /* ===== 评论洞察 ===== */
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .insight-video-sel { margin-bottom: 16px; }
+  .insight-video-sel select { background: #1a1d27; border: 1px solid #2d3148; border-radius: 8px; padding: 8px 14px; color: #e2e8f0; font-size: 13px; outline: none; width: 100%; max-width: 500px; }
+  .comment-stat { display: flex; gap: 20px; padding: 14px; background: #23263a; border-radius: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .cs-item { text-align: center; }
+  .cs-val { font-size: 20px; font-weight: 700; color: #e2e8f0; }
+  .cs-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .question-item { display: flex; gap: 10px; padding: 10px; background: #23263a; border-radius: 8px; margin-bottom: 8px; align-items: flex-start; }
+  .q-freq { font-size: 11px; font-weight: 700; color: #f97316; background: #2d1c0a; border-radius: 4px; padding: 2px 7px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .q-text { font-size: 13px; color: #cbd5e1; flex: 1; }
+  .q-action { font-size: 11px; padding: 3px 10px; border-radius: 4px; background: #1e3a5f; color: #60a5fa; border: none; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .q-action:hover { background: #6366f1; color: #fff; }
+  .pain-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .pain-tag { padding: 5px 12px; border-radius: 20px; font-size: 12px; background: #23263a; color: #94a3b8; border: 1px solid #2d3148; }
+  .pain-tag.hot { background: #2d1c0a; color: #f97316; border-color: #7c2d12; }
+
+  /* ===== 变现追踪 ===== */
+  .revenue-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .deal-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #2d3148; }
+  .deal-item:last-child { border-bottom: none; }
+  .deal-brand { font-size: 13px; color: #e2e8f0; font-weight: 600; width: 120px; flex-shrink: 0; }
+  .deal-desc { font-size: 12px; color: #64748b; flex: 1; }
+  .deal-amount { font-size: 13px; font-weight: 700; color: #4ade80; width: 70px; text-align: right; }
+  .deal-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .ds-negotiating { background: #2d1c0a; color: #f97316; }
+  .ds-pending { background: #1e3a5f; color: #60a5fa; }
+  .ds-done { background: #14532d; color: #4ade80; }
+  .ds-rejected { background: #2d3148; color: #64748b; }
+  .rev-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .rev-month { width: 35px; font-size: 12px; color: #64748b; flex-shrink: 0; }
+  .rev-bar-wrap { flex: 1; height: 18px; background: #2d3148; border-radius: 4px; overflow: hidden; }
+  .rev-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6); display: flex; align-items: center; padding-left: 8px; }
+  .rev-bar-text { font-size: 11px; color: #e2e8f0; white-space: nowrap; }
+  .rev-amount { width: 55px; text-align: right; font-size: 12px; color: #e2e8f0; }
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">⚡ 自媒体创作系统</div>
+  <div class="status" style="gap:12px">
+    <div class="status-dot"></div>
+    <span id="stat-updated" style="font-size:12px;color:#64748b">加载中...</span>
+    <button id="refresh-btn" onclick="refreshData()" title="重新读取已有数据文件，不触发采集（约1秒）" style="padding:4px 12px;border-radius:6px;background:#23263a;border:1px solid #2d3148;color:#94a3b8;font-size:12px;cursor:pointer">↻ 读取最新</button>
+    <button id="collect-btn" onclick="triggerCollect()" title="重新爬取抖音视频 + DeepSeek AI分析 + 写入飞书（约2-3分钟）" style="padding:4px 12px;border-radius:6px;background:#14532d;border:none;color:#4ade80;font-size:12px;cursor:pointer">▶ 重新采集</button>
+    <span id="collect-status" style="font-size:12px;color:#64748b"></span>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- 侧边栏 -->
+  <div class="sidebar">
+    <div class="nav-section">概览</div>
+    <div class="nav-item active" onclick="showPage('home', this)">
+      <span class="nav-icon">🏠</span> 首页
+    </div>
+
+    <div class="nav-section">情报</div>
+    <div class="nav-item" onclick="showPage('hotspot', this)">
+      <span class="nav-icon">🔥</span> 热点榜单
+    </div>
+    <div class="nav-item" onclick="showPage('monitor', this)">
+      <span class="nav-icon">👁</span> 博主监控
+    </div>
+    <div class="nav-item" onclick="showPage('videos', this)">
+      <span class="nav-icon">📋</span> 作品数据
+    </div>
+
+    <div class="nav-section">选题</div>
+    <div class="nav-item" onclick="showPage('topics', this)">
+      <span class="nav-icon">💡</span> 选题推荐
+    </div>
+    <div class="nav-item" onclick="showPage('topicpool', this)">
+      <span class="nav-icon">🗂</span> 选题池
+    </div>
+
+    <div class="nav-section">创作</div>
+    <div class="nav-item" onclick="showPage('templates', this)">
+      <span class="nav-icon">📝</span> 文案模板库
+    </div>
+    <div class="nav-item" onclick="showPage('studio', this)">
+      <span class="nav-icon">🎬</span> 创作工作台
+    </div>
+    <div class="nav-item" onclick="showPage('calendar', this)">
+      <span class="nav-icon">📅</span> 发布日历
+    </div>
+    <div class="nav-item" onclick="showPage('works', this)">
+      <span class="nav-icon">📦</span> 作品管理
+    </div>
+
+    <div class="nav-section">数据</div>
+    <div class="nav-item" onclick="showPage('health', this)">
+      <span class="nav-icon">💚</span> 账号健康
+    </div>
+    <div class="nav-item" onclick="showPage('comments', this)">
+      <span class="nav-icon">💬</span> 评论洞察
+    </div>
+    <div class="nav-item" onclick="showPage('analytics', this)">
+      <span class="nav-icon">📊</span> 数据统计
+    </div>
+
+    <div class="nav-section">变现</div>
+    <div class="nav-item" onclick="showPage('monetize', this)">
+      <span class="nav-icon">💰</span> 变现追踪
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="main">
+
+    <!-- 首页 -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <div class="page-title">今日概览</div>
+        <div class="page-sub">2026年4月30日 · AI电商赛道</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">今日采集视频</div>
+          <div class="stat-value" id="stat-videos">133</div>
+          <div class="stat-sub">↑ <span id="stat-bloggers">48</span>个博主</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">高分选题</div>
+          <div class="stat-value" id="stat-highscore">21</div>
+          <div class="stat-sub">电商相关</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">已发布作品</div>
+          <div class="stat-value">12</div>
+          <div class="stat-sub">↑ 本月</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">总播放量</div>
+          <div class="stat-value">8.4w</div>
+          <div class="stat-sub">↑ 23% 较上月</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🔥 今日热点 TOP5</div>
+          <div class="hot-item">
+            <div class="hot-rank top3">1</div>
+            <div class="hot-title">DeepSeek V4正式发布，电商人怎么用</div>
+            <span class="platform-tag tag-douyin">抖音</span>
+          </div>
+          <div class="hot-item">
+            <div class="hot-rank top3">2</div>
+            <div class="hot-title">AI自动生成商品主图，设计师要失业了？</div>
+            <span class="platform-tag tag-weibo">微博</span>
+          </div>
+          <div class="hot-item">
+            <div class="hot-rank top3">3</div>
+            <div class="hot-title">用Claude Code搭建个人工具，3小时完成</div>
+            <span class="platform-tag tag-zhihu">知乎</span>
+          </div>
+          <div class="hot-item">
+            <div class="hot-rank normal">4</div>
+            <div class="hot-title">淘宝直播AI数字人正式上线，效果如何</div>
+            <span class="platform-tag tag-douyin">抖音</span>
+          </div>
+          <div class="hot-item">
+            <div class="hot-rank normal">5</div>
+            <div class="hot-title">跨境电商卖家用AI写listing，转化率提升40%</div>
+            <span class="platform-tag tag-weibo">微博</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⭐ 今日推荐选题</div>
+          <div class="topic-card">
+            <div class="topic-header">
+              <div class="topic-title">AI分析4800条差评，找到爆款核心问题</div>
+              <div class="ai-score">9分</div>
+            </div>
+            <div class="topic-meta">
+              <span class="meta-tag ec">数据分析</span>
+              <span class="meta-tag ec">竞品洞察</span>
+              <span class="meta-tag">点赞 1247</span>
+            </div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-header">
+              <div class="topic-title">双手营业！TRAE SOLO实现内容营销自动化流水线</div>
+              <div class="ai-score">9分</div>
+            </div>
+            <div class="topic-meta">
+              <span class="meta-tag ec">运营自动化</span>
+              <span class="meta-tag">点赞 26128</span>
+            </div>
+          </div>
+          <div class="topic-card">
+            <div class="topic-header">
+              <div class="topic-title">见证Agent崛起，AI自动完成电商视频营销</div>
+              <div class="ai-score">8分</div>
+            </div>
+            <div class="topic-meta">
+              <span class="meta-tag ec">视频营销</span>
+              <span class="meta-tag">点赞 59557</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 热点榜单 -->
+    <div class="page" id="page-hotspot">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">🔥 热点榜单</div>
+            <div class="page-sub" id="hotspot-update-time">微博实时热搜 · 每30分钟自动更新</div>
+          </div>
+          <button class="btn btn-primary" onclick="loadHotspots(true)">立即刷新</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card" style="grid-column: 1 / -1">
+          <div class="card-title">🌊 微博热搜 TOP 20</div>
+          <div id="weibo-hot-list" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
+            <div style="color:#475569;padding:20px 0;text-align:center;grid-column:1/-1">加载中...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">💡 今日AI电商相关热点解读</div>
+        <div id="ai-hot-analysis" style="font-size:13px;color:#94a3b8;line-height:1.8">
+          点击上方热搜词，AI将自动分析与你的电商AI赛道的关联性和创作机会...
+        </div>
+      </div>
+    </div>
+
+    <!-- 博主监控 -->
+    <div class="page" id="page-monitor">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">&#128065; 博主监控</div>
+            <div class="page-sub" id="monitor-sub">48个AI博主 · 加载中...</div>
+          </div>
+          <button class="btn btn-primary" onclick="triggerCollect()">&#9654; 立即采集</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">&#127942; 博主排行 TOP 10</div>
+          <div id="blogger-list" style="display:flex;flex-direction:column;gap:8px">
+            <div style="color:#475569;padding:20px 0;text-align:center">加载中...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">&#128202; 采集统计</div>
+          <div id="collect-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+            <div style="background:#1a1d2e;border-radius:8px;padding:12px;text-align:center">
+              <div id="stat-total-videos" style="font-size:28px;font-weight:700;color:#6366f1">-</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">总视频数</div>
+            </div>
+            <div style="background:#1a1d2e;border-radius:8px;padding:12px;text-align:center">
+              <div id="stat-total-bloggers" style="font-size:28px;font-weight:700;color:#22c55e">-</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">监控博主</div>
+            </div>
+            <div style="background:#1a1d2e;border-radius:8px;padding:12px;text-align:center">
+              <div id="stat-high-score" style="font-size:28px;font-weight:700;color:#f97316">-</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">高分视频(8+)</div>
+            </div>
+            <div style="background:#1a1d2e;border-radius:8px;padding:12px;text-align:center">
+              <div id="stat-avg-score" style="font-size:28px;font-weight:700;color:#fbbf24">-</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">平均评分</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:#64748b;margin-bottom:8px">数据来源</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div>
+              <span style="font-size:13px;color:#94a3b8">飞书多维表格 · AI电商博主最新视频</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div>
+              <span style="font-size:13px;color:#94a3b8">DeepSeek · 视频内容智能分析</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#6366f1"></div>
+              <span style="font-size:13px;color:#94a3b8" id="cache-hint">数据缓存中</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选题推荐 -->
+    <div class="page" id="page-topics">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">&#128161; 选题推荐</div>
+            <div class="page-sub" id="topics-sub">高分视频 · 加载中...</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="topics-min-score" onchange="loadTopics()" style="background:#23263a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:6px 10px;font-size:13px">
+              <option value="7">7分以上</option>
+              <option value="8">8分以上</option>
+              <option value="9">9分以上</option>
+            </select>
+            <button class="btn btn-primary" onclick="loadTopics()">刷新</button>
+          </div>
+        </div>
+      </div>
+      <div id="topics-list" style="display:flex;flex-direction:column;gap:12px">
+        <div style="color:#475569;padding:40px 0;text-align:center">加载中...</div>
+      </div>
+    </div>
+
+    <!-- 创作工作台 -->
+    <div class="page" id="page-studio">
+      <div class="page-header">
+        <div class="page-title">🎬 创作工作台</div>
+        <div class="page-sub">当前项目：AI分析差评找爆款 · 进行中</div>
+      </div>
+      <div class="studio-layout">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">📋 创作流水线</div>
+            <div class="step-list">
+              <div class="step-item step-done">
+                <div class="step-num">✓</div>
+                <div class="step-content">
+                  <div class="step-label">选题确认</div>
+                  <div class="step-desc">AI分析4800条差评找核心问题 · 已选定</div>
+                </div>
+              </div>
+              <div class="step-item step-done">
+                <div class="step-num">✓</div>
+                <div class="step-content">
+                  <div class="step-label">二创脚本</div>
+                  <div class="step-desc">口播脚本已生成，共70秒</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <div class="step-label">可灵提示词</div>
+                  <div class="step-desc">将脚本拆成分段提示词，准备生成素材</div>
+                  <button class="step-btn">开始拆分</button>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                  <div class="step-label">可灵生成素材</div>
+                  <div class="step-desc">调用可灵API，按段生成视频素材</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                  <div class="step-label">HyperFrames合成</div>
+                  <div class="step-desc">叠加字幕卡片、转场、配音</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">6</div>
+                <div class="step-content">
+                  <div class="step-label">上传发布</div>
+                  <div class="step-desc">上传飞书，准备发布</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📝 当前脚本预览</div>
+          <div style="font-size:13px;line-height:1.8;color:#cbd5e1;background:#0f1117;border-radius:8px;padding:16px;">
+            <div style="color:#f97316;font-weight:700;margin-bottom:8px">【Hook - 0~5秒】</div>
+            你还在一条一条翻竞品差评找卖点？我用AI，3分钟分析了4800条，直接给我列出来买家最恨的2个问题。
+            <br><br>
+            <div style="color:#f97316;font-weight:700;margin-bottom:8px">【问题 - 5~15秒】</div>
+            做电商最难的不是选品，是不知道买家真正在意什么。你以为的卖点，买家根本不在乎。
+            <br><br>
+            <div style="color:#f97316;font-weight:700;margin-bottom:8px">【方法 - 15~50秒】</div>
+            第一步，去竞品店铺，把差评复制下来。第二步，全部丢进DeepSeek，归纳3个核心问题。第三步，反向写进你的卖点...
+            <br><br>
+            <div style="color:#f97316;font-weight:700;margin-bottom:8px">【CTA - 60~70秒】</div>
+            评论区回复【差评】，领取完整提示词模板。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 作品管理 -->
+    <div class="page" id="page-works">
+      <div class="page-header">
+        <div class="page-title">📦 作品管理</div>
+        <div class="page-sub">全部作品 · 共12件</div>
+      </div>
+      <div class="works-grid">
+        <div class="work-card">
+          <div class="work-thumb video">🎬</div>
+          <div class="work-info">
+            <div class="work-title">DeepSeek V4电商人先别乱用</div>
+            <div class="work-stats"><span>👍 2341</span><span>▶ 1.2w</span></div>
+            <div class="work-status status-published">已发布</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb video">🎬</div>
+          <div class="work-info">
+            <div class="work-title">AI分析差评找爆款核心问题</div>
+            <div class="work-stats"><span>生成中...</span></div>
+            <div class="work-status status-generating">生成中</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb article">📄</div>
+          <div class="work-info">
+            <div class="work-title">2026电商AI工具完整指南</div>
+            <div class="work-stats"><span>👍 892</span><span>👁 4.3w</span></div>
+            <div class="work-status status-published">已发布</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb image">🖼</div>
+          <div class="work-info">
+            <div class="work-title">AI生成商品图实战教程</div>
+            <div class="work-stats"><span>草稿</span></div>
+            <div class="work-status status-draft">草稿</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb video">🎬</div>
+          <div class="work-info">
+            <div class="work-title">用豆包30秒写出爆款标题</div>
+            <div class="work-stats"><span>👍 1567</span><span>▶ 8.4w</span></div>
+            <div class="work-status status-published">已发布</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb article">📄</div>
+          <div class="work-info">
+            <div class="work-title">电商卖家AI工具使用手册</div>
+            <div class="work-stats"><span>👍 445</span><span>👁 2.1w</span></div>
+            <div class="work-status status-published">已发布</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据统计 -->
+    <div class="page" id="page-analytics">
+      <div class="page-header">
+        <div class="page-title">📊 数据统计</div>
+        <div class="page-sub">本月数据概览 · 2026年4月</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">总播放量</div>
+          <div class="stat-value">8.4w</div>
+          <div class="stat-sub">↑ 23% 较上月</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">总点赞数</div>
+          <div class="stat-value">5231</div>
+          <div class="stat-sub">↑ 18%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">总收藏数</div>
+          <div class="stat-value">1847</div>
+          <div class="stat-sub">↑ 31%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">新增粉丝</div>
+          <div class="stat-value">+342</div>
+          <div class="stat-sub">↑ 本月净增</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📱 各平台表现</div>
+          <div class="platform-row">
+            <div class="platform-name">抖音</div>
+            <div class="progress-bar"><div class="progress-fill bar-douyin"></div></div>
+            <div class="platform-num">6.5w播</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-name">微信公众号</div>
+            <div class="progress-bar"><div class="progress-fill bar-wx"></div></div>
+            <div class="platform-num">1.2w读</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-name">小红书</div>
+            <div class="progress-bar"><div class="progress-fill bar-xhs"></div></div>
+            <div class="platform-num">7800浏</div>
+          </div>
+          <div class="chart-placeholder">📈 趋势图（接入真实数据后展示）</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 爆款作品 TOP3</div>
+          <div class="blogger-item">
+            <div class="blogger-avatar" style="background:linear-gradient(135deg,#f97316,#ef4444)">1</div>
+            <div class="blogger-info"><div class="blogger-name">用豆包30秒写出爆款标题</div><div class="blogger-fans">▶ 8.4w · 👍 1567 · 收藏 634</div></div>
+            <div class="score-badge score-high">爆款</div>
+          </div>
+          <div class="blogger-item">
+            <div class="blogger-avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">2</div>
+            <div class="blogger-info"><div class="blogger-name">DeepSeek V4电商人先别乱用</div><div class="blogger-fans">▶ 1.2w · 👍 2341 · 收藏 412</div></div>
+            <div class="score-badge score-mid">优质</div>
+          </div>
+          <div class="blogger-item">
+            <div class="blogger-avatar" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">3</div>
+            <div class="blogger-info"><div class="blogger-name">电商卖家AI工具使用手册</div><div class="blogger-fans">👁 2.1w · 👍 445 · 转发 89</div></div>
+            <div class="score-badge score-mid">优质</div>
+          </div>
+          <div class="chart-placeholder">🥧 内容类型分布（视频/图文/文章）</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 作品数据 -->
+    <div class="page" id="page-videos">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">📋 作品数据</div>
+            <div class="page-sub">今日采集 · 按选题评分排序 · 点击行查看AI分析详情</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="filterByScore(8)">8分+</button>
+            <button class="btn btn-outline" onclick="filterByScore(7)">7分+</button>
+            <button class="btn btn-primary" onclick="resetFilter()">全部</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="vd-search" placeholder="搜索标题 / 博主名称..." oninput="renderTable()">
+        <select id="vd-author" onchange="renderTable()">
+          <option value="">所有博主</option>
+          <option value="AGI Hunt">AGI Hunt</option>
+          <option value="AIGC自修室">AIGC自修室</option>
+          <option value="AI冷科长">AI冷科长</option>
+          <option value="AI新榜">AI新榜</option>
+          <option value="AI红发魔女">AI红发魔女</option>
+          <option value="Ai训练师大宇">Ai训练师大宇</option>
+          <option value="Lau博士">Lau博士</option>
+          <option value="OrangeAI">OrangeAI</option>
+          <option value="Rico有三猫">Rico有三猫</option>
+          <option value="SuperWinnie">SuperWinnie</option>
+          <option value="之之2046">之之2046</option>
+          <option value="产品君">产品君</option>
+          <option value="卡尔的AI沃茨">卡尔的AI沃茨</option>
+          <option value="徐老师AI">徐老师AI</option>
+          <option value="数字生命卡兹克">数字生命卡兹克</option>
+          <option value="料到Ai">料到Ai</option>
+          <option value="新智元">新智元</option>
+          <option value="晓辉博士">晓辉博士</option>
+          <option value="朋克周">朋克周</option>
+          <option value="机器之心">机器之心</option>
+          <option value="机器坏人AI版">机器坏人AI版</option>
+          <option value="杨竹筠">杨竹筠</option>
+          <option value="林亦LYi">林亦LYi</option>
+          <option value="沃垠AI">沃垠AI</option>
+          <option value="清华姜学长">清华姜学长</option>
+          <option value="王宇辰AI">王宇辰AI</option>
+          <option value="瑞哥那">瑞哥那</option>
+          <option value="老麦的工具库">老麦的工具库</option>
+          <option value="苍何">苍何</option>
+          <option value="袋鼠帝AI客栈">袋鼠帝AI客栈</option>
+          <option value="赛文乔伊">赛文乔伊</option>
+          <option value="郭震AI">郭震AI</option>
+          <option value="陈生2.0">陈生2.0</option>
+        </select>
+        <select id="vd-score" onchange="renderTable()">
+          <option value="">全部评分</option>
+          <option value="9">9分</option>
+          <option value="8">8分</option>
+          <option value="7">7分</option>
+          <option value="6">6分以下</option>
+        </select>
+        <select id="vd-ec" onchange="renderTable()">
+          <option value="">全部场景</option>
+          <option value="图文">图文生成</option>
+          <option value="文案">营销文案</option>
+          <option value="数据">数据分析</option>
+          <option value="视频">视频营销</option>
+          <option value="运营">运营自动化</option>
+        </select>
+        <div class="filter-count" id="vd-count">-- 条</div>
+      </div>
+
+      <div class="vtable-wrap">
+        <table class="vtable">
+          <thead><tr>
+            <th onclick="sortBy('a')">博主 <span class="sort-arrow" id="sort-a">↕</span></th>
+            <th>视频标题</th>
+            <th onclick="sortBy('d')">日期 <span class="sort-arrow" id="sort-d">↕</span></th>
+            <th onclick="sortBy('lk')" style="text-align:right">点赞 <span class="sort-arrow" id="sort-lk">↕</span></th>
+            <th onclick="sortBy('cm')" style="text-align:right">评论 <span class="sort-arrow" id="sort-cm">↕</span></th>
+            <th onclick="sortBy('sv')" style="text-align:right">收藏 <span class="sort-arrow" id="sort-sv">↕</span></th>
+            <th onclick="sortBy('er')" style="text-align:right">互动率 <span class="sort-arrow" id="sort-er">↕</span></th>
+            <th onclick="sortBy('v')" style="text-align:right">爆款指数 <span class="sort-arrow" id="sort-v">↕</span></th>
+            <th onclick="sortBy('s')" style="text-align:right">评分 <span class="sort-arrow" id="sort-s">↓</span></th>
+          </tr></thead>
+          <tbody id="vd-tbody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- 选题池 -->
+    <div class="page" id="page-topicpool">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">🗂 选题池</div>
+            <div class="page-sub">管理所有选题创意 · 从灵感到发布全程跟踪</div>
+          </div>
+          <button class="btn btn-primary" onclick="addNewTopic()">+ 新建选题</button>
+        </div>
+      </div>
+      <div class="kanban">
+        <div class="kanban-col col-idea">
+          <div class="kanban-col-title">💭 想法池 <span class="kanban-count" id="kc-idea">0</span></div>
+          <div id="kb-idea"></div>
+        </div>
+        <div class="kanban-col col-wip">
+          <div class="kanban-col-title">✍️ 创作中 <span class="kanban-count" id="kc-wip">0</span></div>
+          <div id="kb-wip"></div>
+        </div>
+        <div class="kanban-col col-done">
+          <div class="kanban-col-title">✅ 已发布 <span class="kanban-count" id="kc-done">0</span></div>
+          <div id="kb-done"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 发布日历 -->
+    <div class="page" id="page-calendar">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">📅 发布日历</div>
+            <div class="page-sub">2026年4月 · 建议每周3-4条保持活跃度</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline">← 上周</button>
+            <button class="btn btn-outline">本周</button>
+            <button class="btn btn-outline">下周 →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-dot cal-published"></div>已发布</div>
+        <div class="cal-legend-item"><div class="cal-dot cal-wip"></div>制作中</div>
+        <div class="cal-legend-item"><div class="cal-dot cal-planned"></div>已规划</div>
+      </div>
+
+      <div class="cal-grid">
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周一</div>
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周二</div>
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周三</div>
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周四</div>
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周五</div>
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周六</div>
+        <div style="text-align:center;font-size:12px;color:#475569;padding-bottom:6px">周日</div>
+
+        <!-- 第一行 4月14-20 -->
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周一</span><span class="cal-day-num" data-full="2026-04-14">14</span></div>
+          <div class="cal-event cal-published" title="AI工具提升效率300%">AI工具效率300%</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周二</span><span class="cal-day-num" data-full="2026-04-15">15</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周三</span><span class="cal-day-num" data-full="2026-04-16">16</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周四</span><span class="cal-day-num" data-full="2026-04-17">17</span></div>
+          <div class="cal-event cal-published">DeepSeek 3个提示词</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周五</span><span class="cal-day-num" data-full="2026-04-18">18</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周六</span><span class="cal-day-num" data-full="2026-04-19">19</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周日</span><span class="cal-day-num" data-full="2026-04-20">20</span></div>
+          <div class="cal-event cal-published">AI工具箱全公开</div>
+        </div>
+
+        <!-- 第二行 4月21-27 -->
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周一</span><span class="cal-day-num" data-full="2026-04-21">21</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周二</span><span class="cal-day-num" data-full="2026-04-22">22</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周三</span><span class="cal-day-num" data-full="2026-04-23">23</span></div>
+          <div class="cal-event cal-published">AI做选品分析</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周四</span><span class="cal-day-num" data-full="2026-04-24">24</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周五</span><span class="cal-day-num" data-full="2026-04-25">25</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周六</span><span class="cal-day-num" data-full="2026-04-26">26</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周日</span><span class="cal-day-num" data-full="2026-04-27">27</span></div>
+          <div class="cal-event cal-published">月销百万工具箱</div>
+        </div>
+
+        <!-- 第三行 4月28 - 5月4 (本周，含today=30) -->
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周一</span><span class="cal-day-num" data-full="2026-04-28">28</span></div>
+          <div class="cal-event cal-published">TRAE SOLO物料自由</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周二</span><span class="cal-day-num" data-full="2026-04-29">29</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day today">
+          <div class="cal-day-label"><span>今天</span><span class="cal-day-num" data-full="2026-04-30">30</span></div>
+          <div class="cal-event cal-wip">AI评论分析二创</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周四</span><span class="cal-day-num" data-full="2026-05-01">5/1</span></div>
+          <div class="cal-event cal-planned">GPT Image 2图文</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周五</span><span class="cal-day-num" data-full="2026-05-02">5/2</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周六</span><span class="cal-day-num" data-full="2026-05-03">5/3</span></div>
+          <div class="cal-event cal-planned">电商AI工具对比</div>
+        </div>
+        <div class="cal-day">
+          <div class="cal-day-label"><span>周日</span><span class="cal-day-num" data-full="2026-05-04">5/4</span></div>
+          <div class="cal-empty-slot">空档</div>
+        </div>
+      </div>
+
+      <div class="cal-stats">
+        <div class="stat-card">
+          <div class="stat-label">本月已发布</div>
+          <div class="stat-value">6</div>
+          <div class="stat-sub">每周 1.5条</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">制作中</div>
+          <div class="stat-value" style="color:#60a5fa">1</div>
+          <div class="stat-sub">预计今日完成</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">已规划</div>
+          <div class="stat-value" style="color:#fbbf24">2</div>
+          <div class="stat-sub">本周内发布</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">建议频次</div>
+          <div class="stat-value" style="color:#f97316">3-4</div>
+          <div class="stat-sub">条/周 · 待提升</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 账号健康 -->
+    <div class="page" id="page-health">
+      <div class="page-header">
+        <div class="page-title">💚 账号健康</div>
+        <div class="page-sub">你的抖音账号数据分析 · 数据截至 2026-04-30</div>
+      </div>
+
+      <div class="health-grid">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">📈 粉丝增长趋势（近8周）</div>
+            <div class="spark-wrap">
+              <div class="spark-row"><span class="spark-label">3月10日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:20%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">3,200</span></div>
+              <div class="spark-row"><span class="spark-label">3月17日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:28%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">4,480</span></div>
+              <div class="spark-row"><span class="spark-label">3月24日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:35%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">5,610</span></div>
+              <div class="spark-row"><span class="spark-label">3月31日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:44%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">7,050</span></div>
+              <div class="spark-row"><span class="spark-label">4月07日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:55%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">8,800</span></div>
+              <div class="spark-row"><span class="spark-label">4月14日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:63%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">10,080</span></div>
+              <div class="spark-row"><span class="spark-label">4月21日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:77%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">12,320</span></div>
+              <div class="spark-row"><span class="spark-label" style="color:#4ade80;font-weight:700">4月28日</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:92%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div></div><span class="spark-val" style="color:#4ade80;font-weight:700">14,700</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🎯 内容类型表现对比</div>
+            <div class="spark-wrap">
+              <div class="spark-row"><span class="spark-label">工具教程</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:88%;background:linear-gradient(90deg,#f97316,#ef4444)"></div></div><span class="spark-val">8.4w均</span></div>
+              <div class="spark-row"><span class="spark-label">案例分析</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:72%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div></div><span class="spark-val">6.9w均</span></div>
+              <div class="spark-row"><span class="spark-label">行业资讯</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:45%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div></div><span class="spark-val">4.3w均</span></div>
+              <div class="spark-row"><span class="spark-label">二创解析</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:38%;background:linear-gradient(90deg,#22c55e,#16a34a)"></div></div><span class="spark-val">3.6w均</span></div>
+              <div class="spark-row"><span class="spark-label">个人观点</span><div class="spark-bar-wrap"><div class="spark-bar" style="width:22%;background:linear-gradient(90deg,#64748b,#475569)"></div></div><span class="spark-val">2.1w均</span></div>
+            </div>
+            <div style="font-size:12px;color:#475569;margin-top:10px">💡 工具教程类播放量最高，建议保持60%以上占比</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="health-kpi" style="margin-bottom:16px">
+            <div class="hkpi">
+              <div class="hkpi-val">1.47w</div>
+              <div class="hkpi-label">当前粉丝数</div>
+              <div class="hkpi-trend trend-up">↑ +2,380本周</div>
+            </div>
+            <div class="hkpi">
+              <div class="hkpi-val">19.3%</div>
+              <div class="hkpi-label">周增长率</div>
+              <div class="hkpi-trend trend-up">↑ 高速增长</div>
+            </div>
+            <div class="hkpi">
+              <div class="hkpi-val">5.8w</div>
+              <div class="hkpi-label">近30天播放</div>
+              <div class="hkpi-trend trend-up">↑ +23%</div>
+            </div>
+            <div class="hkpi">
+              <div class="hkpi-val">4.2%</div>
+              <div class="hkpi-label">平均互动率</div>
+              <div class="hkpi-trend trend-up">↑ 行业均值2x</div>
+            </div>
+            <div class="hkpi">
+              <div class="hkpi-val">38%</div>
+              <div class="hkpi-label">平均完播率</div>
+              <div class="hkpi-trend" style="color:#fbbf24">→ 待优化</div>
+            </div>
+            <div class="hkpi">
+              <div class="hkpi-val">1,847</div>
+              <div class="hkpi-label">本月新增粉丝</div>
+              <div class="hkpi-trend trend-up">↑ 较上月+41%</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🕐 最佳发布时间</div>
+            <div style="font-size:12px;color:#64748b;margin-bottom:8px">近30天数据 · 颜色越深互动越高</div>
+            <div style="display:grid;grid-template-columns:auto repeat(6,1fr);gap:3px;font-size:10px">
+              <div style="color:#475569"></div>
+              <div style="color:#475569;text-align:center">7-9</div>
+              <div style="color:#475569;text-align:center">10-12</div>
+              <div style="color:#475569;text-align:center">12-14</div>
+              <div style="color:#475569;text-align:center">17-19</div>
+              <div style="color:#475569;text-align:center;color:#4ade80;font-weight:700">20-22</div>
+              <div style="color:#475569;text-align:center">22-24</div>
+
+              <div style="color:#64748b;font-size:10px;padding-right:4px">工作日</div>
+              <div style="height:22px;border-radius:3px;background:#1e3a5f"></div>
+              <div style="height:22px;border-radius:3px;background:#2d4a7f"></div>
+              <div style="height:22px;border-radius:3px;background:#1e3a5f"></div>
+              <div style="height:22px;border-radius:3px;background:#3b5baf"></div>
+              <div style="height:22px;border-radius:3px;background:#6366f1"></div>
+              <div style="height:22px;border-radius:3px;background:#2d4a7f"></div>
+
+              <div style="color:#64748b;font-size:10px;padding-right:4px">周末</div>
+              <div style="height:22px;border-radius:3px;background:#2d4a7f"></div>
+              <div style="height:22px;border-radius:3px;background:#3b5baf"></div>
+              <div style="height:22px;border-radius:3px;background:#4ade8033;border:1px solid #4ade8066"></div>
+              <div style="height:22px;border-radius:3px;background:#3b5baf"></div>
+              <div style="height:22px;border-radius:3px;background:#818cf8"></div>
+              <div style="height:22px;border-radius:3px;background:#4ade80;border-radius:3px"></div>
+            </div>
+            <div style="font-size:12px;color:#4ade80;margin-top:10px">✓ 推荐：工作日 20:00-22:00 / 周末 22:00-24:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文案模板库 -->
+    <div class="page" id="page-templates">
+      <div class="page-header">
+        <div class="flex-between">
+          <div>
+            <div class="page-title">📝 文案模板库</div>
+            <div class="page-sub">可复用的脚本框架 · 点击复制直接使用</div>
+          </div>
+          <button class="btn btn-primary" onclick="alert('新建模板')">+ 新建模板</button>
+        </div>
+      </div>
+
+      <div class="tpl-tabs">
+        <button class="tpl-tab" onclick="showTpl('scripts', this)" style="background:#6366f1;border-color:#6366f1;color:#fff">✍️ 我的二创文案</button>
+        <button class="tpl-tab active" onclick="showTpl('hook', this)">🎣 开场钩子</button>
+        <button class="tpl-tab" onclick="showTpl('problem', this)">❗ 问题呈现</button>
+        <button class="tpl-tab" onclick="showTpl('method', this)">🔧 方法论</button>
+        <button class="tpl-tab" onclick="showTpl('cta', this)">🚀 结尾转化</button>
+        <button class="tpl-tab" onclick="showTpl('full', this)">📋 完整结构</button>
+      </div>
+      <!-- 我的二创文案列表 -->
+      <div id="tpl-scripts" style="display:none">
+        <div id="scripts-list" style="display:flex;flex-direction:column;gap:12px">
+          <div style="color:#475569;text-align:center;padding:40px">还没有二创文案，去选题池生成吧</div>
+        </div>
+      </div>
+
+      <div id="tpl-hook" class="tpl-grid">
+        <div class="tpl-card">
+          <div class="tpl-card-title">数字震惊型 <span class="tpl-type-tag tag-hook">钩子</span></div>
+          <div class="tpl-text">我用AI分析了[X]条竞品评论，
+发现一个99%卖家都忽略的问题——
+[核心发现]。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">反直觉颠覆型 <span class="tpl-type-tag tag-hook">钩子</span></div>
+          <div class="tpl-text">你以为[常见操作]是对的，
+但数据告诉你，
+这样做会让你损失[X]%的流量。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">痛点共鸣型 <span class="tpl-type-tag tag-hook">钩子</span></div>
+          <div class="tpl-text">做电商[X]年了，
+最让我痛苦的事就是[具体痛点]，
+直到我发现了[解决方案]。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">悬念提问型 <span class="tpl-type-tag tag-hook">钩子</span></div>
+          <div class="tpl-text">如果我告诉你，
+只需要[时间/成本]，
+你就能[理想结果]，你信吗？</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+      </div>
+
+      <div id="tpl-problem" class="tpl-grid" style="display:none">
+        <div class="tpl-card">
+          <div class="tpl-card-title">现状痛点展开 <span class="tpl-type-tag tag-problem">问题</span></div>
+          <div class="tpl-text">大多数[目标用户]在做[X]的时候，
+都会遇到这3个问题：
+第一，[问题1]
+第二，[问题2]
+第三，[问题3]
+其实这些都可以用AI解决。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">对比反差型 <span class="tpl-type-tag tag-problem">问题</span></div>
+          <div class="tpl-text">别人用AI做这件事只要[X]分钟，
+你手动做要[X]小时。
+差距在哪里？就在这[个/步]操作上。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">数据佐证型 <span class="tpl-type-tag tag-problem">问题</span></div>
+          <div class="tpl-text">我分析了[X]个[竞品/账号/评论]，
+发现[X]%的人都在犯同一个错误——
+[具体错误]，而这直接导致了[后果]。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">场景代入型 <span class="tpl-type-tag tag-problem">问题</span></div>
+          <div class="tpl-text">想象一下，
+你花了[X]天写的产品文案，
+AI只需要[X]秒就能生成，
+而且质量还比你的好。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+      </div>
+
+      <div id="tpl-method" class="tpl-grid" style="display:none">
+        <div class="tpl-card">
+          <div class="tpl-card-title">三步拆解法 <span class="tpl-type-tag tag-method">方法</span></div>
+          <div class="tpl-text">具体怎么做，我分三步说清楚：
+第一步：[操作] — [目的]
+第二步：[操作] — [目的]
+第三步：[操作] — [目的]
+整个流程下来不超过[X]分钟。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">提示词展示法 <span class="tpl-type-tag tag-method">方法</span></div>
+          <div class="tpl-text">我给你一个可以直接用的提示词：
+"[完整提示词内容]"
+把这段话复制给[AI工具]，
+然后替换掉方括号里的内容，
+[X]秒就能得到[期望输出]。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">工具对比推荐 <span class="tpl-type-tag tag-method">方法</span></div>
+          <div class="tpl-text">做[X]这件事，市面上有[N]个AI工具，
+我都试过了，推荐用[工具名]，原因：
+✓ [优势1]
+✓ [优势2]
+✗ 但要注意[缺点/限制]。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">实操演示法 <span class="tpl-type-tag tag-method">方法</span></div>
+          <div class="tpl-text">我现在当着你的面操作一遍：
+[屏幕录制/实际操作]
+你看，从[起始状态]到[结果状态]，
+总共只花了[时间]。
+你也可以照这个步骤来。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+      </div>
+
+      <div id="tpl-cta" class="tpl-grid" style="display:none">
+        <div class="tpl-card">
+          <div class="tpl-card-title">关注引导型 <span class="tpl-type-tag tag-cta">转化</span></div>
+          <div class="tpl-text">这个方法我还有[X]个进阶技巧，
+关注我，下期继续讲。
+如果你现在就想用，
+评论区回复"[关键词]"，
+我私信给你完整版提示词。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">收藏提醒型 <span class="tpl-type-tag tag-cta">转化</span></div>
+          <div class="tpl-text">这[X]个提示词，
+先收藏，下次用的时候再翻出来。
+手慢的话等下就找不到了——
+抖音不会一直给你推同一条视频。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">互动提问型 <span class="tpl-type-tag tag-cta">转化</span></div>
+          <div class="tpl-text">你现在做[X]，
+用的是什么工具？
+评论区告诉我，
+我帮你看看有没有更好的替代方案。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-card-title">资源引流型 <span class="tpl-type-tag tag-cta">转化</span></div>
+          <div class="tpl-text">今天用到的所有工具和提示词，
+我整理成了一份清单，
+评论区回复"[X]"，
+我发给你。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制</button>
+        </div>
+      </div>
+
+      <div id="tpl-full" class="tpl-grid" style="display:none">
+        <div class="tpl-card" style="grid-column:1/-1">
+          <div class="tpl-card-title">AI工具教程类完整结构 <span class="tpl-type-tag tag-method">完整</span></div>
+          <div class="tpl-text">【开场 0-5s】数字震惊型钩子
+我用AI分析了[X]条评论，发现[惊人发现]——
+
+【问题 5-15s】对比反差 + 痛点共鸣
+你现在手动做这件事要[X小时]，
+但用这个方法只需要[X分钟]。
+
+【方法 15-45s】三步拆解 + 实操演示
+第一步：打开[工具]，输入这段提示词：
+"[提示词]"
+第二步：等待[X秒]，看看输出结果……
+第三步：稍微调整一下[细节]，完成。
+
+【结果验证 45-55s】数据说话
+用了这个方法之后，
+我的[指标]从[X]提升到了[X]。
+
+【结尾转化 55-60s】收藏 + 关注
+这个提示词先收藏，下次要用直接翻。
+关注我，每天分享AI电商实战干货。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制完整结构</button>
+        </div>
+        <div class="tpl-card" style="grid-column:1/-1">
+          <div class="tpl-card-title">数据洞察类完整结构 <span class="tpl-type-tag tag-method">完整</span></div>
+          <div class="tpl-text">【开场 0-5s】悬念 + 数字
+[X]条竞品评论，AI帮我找到了[个]流量密码——
+
+【数据展示 5-20s】截图/录屏 + 解读
+你看这里，出现频率最高的词是[X]，
+这说明用户最关心的不是[常见误解]，
+而是[真实需求]。
+
+【转化思路 20-40s】如何利用这个发现
+知道了这个，你可以：
+1. 把[高频词]加到标题里
+2. 把[痛点]做成视频主题
+3. 用[需求]来优化产品描述
+
+【操作演示 40-55s】我是怎么分析的
+打开[AI工具]，复制这段指令……
+
+【结尾 55-60s】
+回复"数据分析"，我把这个提示词发给你。</div>
+          <button class="tpl-copy-btn" onclick="copyTpl(this)">复制完整结构</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 评论洞察 -->
+    <div class="page" id="page-comments">
+      <div class="page-header">
+        <div class="page-title">💬 评论洞察</div>
+        <div class="page-sub">AI批量分析你的视频评论 · 挖掘受众需求与痛点</div>
+      </div>
+
+      <div class="insight-video-sel">
+        <select onchange="alert('切换视频分析')">
+          <option>AI分析4800条评论发现2种流量密码 · 04-23 · 1247赞</option>
+          <option>DeepSeek电商人必备3个提示词技巧 · 04-17 · 892赞</option>
+          <option>AI工具帮我提升电商运营效率300% · 04-14 · 1400赞</option>
+          <option>月销百万电商卖家AI工具箱全公开 · 04-10 · 3800赞</option>
+        </select>
+      </div>
+
+      <div class="comment-stat">
+        <div class="cs-item"><div class="cs-val">20</div><div class="cs-label">总评论数</div></div>
+        <div class="cs-item"><div class="cs-val" style="color:#4ade80">72%</div><div class="cs-label">正向评论</div></div>
+        <div class="cs-item"><div class="cs-val" style="color:#f97316">8</div><div class="cs-label">明确提问</div></div>
+        <div class="cs-item"><div class="cs-val" style="color:#60a5fa">5</div><div class="cs-label">求资源/链接</div></div>
+        <div class="cs-item"><div class="cs-val" style="color:#a78bfa">3</div><div class="cs-label">求续集</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div>
+          <div class="card">
+            <div class="card-title">❓ 高频问题（可直接转选题）</div>
+            <div class="question-item">
+              <span class="q-freq">×6</span>
+              <span class="q-text">这个提示词在哪个AI工具上用？DeepSeek还是ChatGPT？</span>
+              <button class="q-action" onclick="alert('已加入选题池')">→ 转选题</button>
+            </div>
+            <div class="question-item">
+              <span class="q-freq">×4</span>
+              <span class="q-text">店铺规模多大才适合用AI做分析？新手能用吗？</span>
+              <button class="q-action" onclick="alert('已加入选题池')">→ 转选题</button>
+            </div>
+            <div class="question-item">
+              <span class="q-freq">×4</span>
+              <span class="q-text">分析竞品评论会不会违规？有没有被封号风险？</span>
+              <button class="q-action" onclick="alert('已加入选题池')">→ 转选题</button>
+            </div>
+            <div class="question-item">
+              <span class="q-freq">×3</span>
+              <span class="q-text">除了评论分析，AI还能分析竞品标题、详情页吗？</span>
+              <button class="q-action" onclick="alert('已加入选题池')">→ 转选题</button>
+            </div>
+            <div class="question-item">
+              <span class="q-freq">×2</span>
+              <span class="q-text">每次分析要花多少钱？API费用贵不贵？</span>
+              <button class="q-action" onclick="alert('已加入选题池')">→ 转选题</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">🔥 受众痛点标签</div>
+            <div style="font-size:12px;color:#64748b;margin-bottom:10px">AI分析评论提取的高频痛点词</div>
+            <div class="pain-tags">
+              <span class="pain-tag hot">看不懂提示词</span>
+              <span class="pain-tag hot">不知道用哪个AI</span>
+              <span class="pain-tag hot">怕被封号</span>
+              <span class="pain-tag">操作太复杂</span>
+              <span class="pain-tag">不知道从哪开始</span>
+              <span class="pain-tag">费用太贵</span>
+              <span class="pain-tag">效果不稳定</span>
+              <span class="pain-tag hot">没有时间学</span>
+              <span class="pain-tag">新手不敢用</span>
+              <span class="pain-tag">担心数据安全</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">💡 AI自动生成的选题建议</div>
+            <div style="font-size:13px;color:#cbd5e1;line-height:1.7">
+              根据评论分析，推荐以下3个后续选题：<br><br>
+              <span style="color:#fbbf24">① </span>「新手0基础：AI分析竞品评论完整教程，手把手跟做」<br>
+              <span style="color:#fbbf24">② </span>「免费！不花钱用AI分析评论的3种方法」<br>
+              <span style="color:#fbbf24">③ </span>「AI分析评论违规吗？平台规则全解读」<br><br>
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 14px" onclick="alert('批量加入选题池')">全部加入选题池</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变现追踪 -->
+    <div class="page" id="page-monetize">
+      <div class="page-header">
+        <div class="page-title">💰 变现追踪</div>
+        <div class="page-sub">商单管理 · 收入统计 · 变现健康度监控</div>
+      </div>
+
+      <div class="stats-grid" style="margin-bottom:20px">
+        <div class="stat-card">
+          <div class="stat-label">本月预计收入</div>
+          <div class="stat-value" style="color:#4ade80">¥3,200</div>
+          <div class="stat-sub">2单已确认</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">接洽中商单</div>
+          <div class="stat-value" style="color:#f97316">2</div>
+          <div class="stat-sub">待报价/谈判</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">今年累计收入</div>
+          <div class="stat-value">¥8,500</div>
+          <div class="stat-sub">4月数据</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">粉均价值</div>
+          <div class="stat-value">¥0.58</div>
+          <div class="stat-sub">↑ 行业均值0.3x</div>
+        </div>
+      </div>
+
+      <div class="revenue-grid">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:20px">📋 商单管理</div>
+          <div id="deals-list">
+          <div class="deal-item">
+            <div class="deal-brand">某AI写作工具</div>
+            <div class="deal-desc">软植入教程视频 · 60s口播</div>
+            <div class="deal-amount">¥1,500</div>
+            <div class="deal-status ds-done">已完成</div>
+          </div>
+          <div class="deal-item">
+            <div class="deal-brand">跨境选品SaaS</div>
+            <div class="deal-desc">专题测评 · 带链接 · 数据反馈</div>
+            <div class="deal-amount">¥1,700</div>
+            <div class="deal-status ds-pending">待交付</div>
+          </div>
+          <div class="deal-item">
+            <div class="deal-brand">某AI图片工具</div>
+            <div class="deal-desc">推荐植入 · 视频末尾</div>
+            <div class="deal-amount">¥800</div>
+            <div class="deal-status ds-negotiating">接洽中</div>
+          </div>
+          <div class="deal-item">
+            <div class="deal-brand">电商ERP系统</div>
+            <div class="deal-desc">CPS分成 · 按转化结算</div>
+            <div class="deal-amount">CPS</div>
+            <div class="deal-status ds-negotiating">接洽中</div>
+          </div>
+          <div class="deal-item">
+            <div class="deal-brand">某数据分析工具</div>
+            <div class="deal-desc">定向评测 · 竞品对比</div>
+            <div class="deal-amount">¥500</div>
+            <div class="deal-status ds-rejected">已婉拒</div>
+          </div>
+          </div><!-- /deals-list -->
+          <div style="margin-top:12px">
+            <button class="btn btn-primary" style="font-size:12px" onclick="addNewDeal()">+ 新增商单</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">📊 月度收入趋势</div>
+            <div style="margin-top:12px">
+              <div class="rev-bar-row">
+                <span class="rev-month">1月</span>
+                <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:0%"><span class="rev-bar-text"></span></div></div>
+                <span class="rev-amount" style="color:#475569">¥0</span>
+              </div>
+              <div class="rev-bar-row">
+                <span class="rev-month">2月</span>
+                <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:18%"><span class="rev-bar-text"></span></div></div>
+                <span class="rev-amount">¥500</span>
+              </div>
+              <div class="rev-bar-row">
+                <span class="rev-month">3月</span>
+                <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:50%"><span class="rev-bar-text"></span></div></div>
+                <span class="rev-amount">¥1,800</span>
+              </div>
+              <div class="rev-bar-row">
+                <span class="rev-month" style="color:#4ade80;font-weight:700">4月</span>
+                <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:85%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div></div>
+                <span class="rev-amount" style="color:#4ade80;font-weight:700">¥3,200</span>
+              </div>
+              <div class="rev-bar-row">
+                <span class="rev-month" style="color:#475569">5月</span>
+                <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:0%;border:1px dashed #2d3148;background:transparent"></div></div>
+                <span class="rev-amount" style="color:#475569">预测</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🎯 变现目标</div>
+            <div style="margin-top:10px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:6px">
+                <span>月收入目标：¥5,000</span>
+                <span style="color:#4ade80">64%</span>
+              </div>
+              <div class="spark-bar-wrap" style="height:10px">
+                <div class="spark-bar" style="width:64%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div>
+              </div>
+              <div style="font-size:12px;color:#475569;margin-top:10px;line-height:1.6">
+                距目标还差 <span style="color:#fbbf24">¥1,800</span><br>
+                建议：粉丝破2w后报价可提升30-50%<br>
+                当前粉均报价：<span style="color:#e2e8f0">¥0.10-0.15/粉</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+let VIDEOS = [];
+
+let _sortKey = 's', _sortDir = -1, _selIdx = -1;
+
+function getFiltered() {
+  const q = (document.getElementById('vd-search')||{value:''}).value.toLowerCase();
+  const author = (document.getElementById('vd-author')||{value:''}).value;
+  const scoreF = (document.getElementById('vd-score')||{value:''}).value;
+  const ecF = (document.getElementById('vd-ec')||{value:''}).value;
+  return VIDEOS.filter(function(r) {
+    if (q && r.t.toLowerCase().indexOf(q) < 0 && r.a.toLowerCase().indexOf(q) < 0) return false;
+    if (author && r.a !== author) return false;
+    if (scoreF) {
+      var sv = parseInt(scoreF);
+      if (sv === 6) { if (r.s >= 7) return false; }
+      else { if (r.s < sv) return false; }
+    }
+    if (ecF && r.ec.indexOf(ecF) < 0) return false;
+    return true;
+  });
+}
+
+function sortBy(key) {
+  if (_sortKey === key) _sortDir *= -1;
+  else { _sortKey = key; _sortDir = -1; }
+  document.querySelectorAll('.sort-arrow').forEach(function(el) { el.textContent = '↕'; });
+  var el = document.getElementById('sort-' + key);
+  if (el) el.textContent = _sortDir > 0 ? '↑' : '↓';
+  renderTable();
+}
+
+function filterByScore(minScore) {
+  var el = document.getElementById('vd-score');
+  if (el) el.value = String(minScore);
+  renderTable();
+}
+
+function resetFilter() {
+  ['vd-search','vd-author','vd-score','vd-ec'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  renderTable();
+}
+
+function fmtNum(n) {
+  n = parseFloat(n) || 0;
+  if (n >= 10000) return (n/10000).toFixed(1) + 'w';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'k';
+  return String(Math.round(n));
+}
+
+function fmtFans(n) {
+  n = parseFloat(n) || 0;
+  if (n >= 1000000) return (n/10000).toFixed(0) + 'w';
+  if (n >= 10000) return (n/10000).toFixed(1) + 'w';
+  return String(Math.round(n));
+}
+
+function scoreColor(s) {
+  s = parseInt(s);
+  if (s >= 9) return '#4ade80';
+  if (s >= 7) return '#fbbf24';
+  return '#64748b';
+}
+
+function renderTable() {
+  var filtered = getFiltered();
+  var sk = _sortKey, sd = _sortDir;
+  filtered.sort(function(a,b) {
+    if (sk === 'a' || sk === 'd') {
+      return sd * (a[sk] < b[sk] ? -1 : a[sk] > b[sk] ? 1 : 0);
+    }
+    return sd * ((parseFloat(b[sk])||0) - (parseFloat(a[sk])||0));
+  });
+
+  var tbody = document.getElementById('vd-tbody');
+  var cnt = document.getElementById('vd-count');
+  if (!tbody) return;
+  if (cnt) cnt.textContent = filtered.length + ' 条';
+
+  tbody.innerHTML = filtered.map(function(r) {
+    var idx = VIDEOS.indexOf(r);
+    var vn = Math.min(5, Math.max(1, parseInt(r.v)||1));
+    var sc = parseInt(r.s);
+    var er = (parseFloat(r.er)*100).toFixed(2) + '%';
+    var sel = idx === _selIdx ? ' class="selected"' : '';
+    return '<tr' + sel + ' onclick="showDetail(' + idx + ')">'
+      + '<td class="author-cell">' + r.a + '</td>'
+      + '<td class="title-cell" title="' + r.t.replace(/"/g,'&quot;') + '">' + r.t + '</td>'
+      + '<td class="date-cell">' + r.d + '</td>'
+      + '<td class="num-cell">' + fmtNum(r.lk) + '</td>'
+      + '<td class="num-cell">' + fmtNum(r.cm) + '</td>'
+      + '<td class="num-cell">' + fmtNum(r.sv) + '</td>'
+      + '<td class="num-cell">' + er + '</td>'
+      + '<td class="num-cell"><span class="viral-dot viral-' + vn + '"></span>' + r.v + '</td>'
+      + '<td class="num-cell" style="color:' + scoreColor(sc) + ';font-weight:700">' + r.s + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function showDetail(idx) {
+  _selIdx = idx;
+  var r = VIDEOS[idx];
+  if (!r) return;
+  document.getElementById('dp-title').textContent = r.t;
+  var stats = [
+    {v: fmtNum(r.lk), l: '点赞'},
+    {v: fmtNum(r.cm), l: '评论'},
+    {v: fmtNum(r.sv), l: '收藏'},
+    {v: fmtFans(r.fn), l: '粉丝'},
+    {v: (parseFloat(r.er)*100).toFixed(2)+'%', l: '互动率'},
+    {v: r.v, l: '爆款指数'},
+    {v: r.s, l: '选题评分'},
+  ];
+  document.getElementById('dp-stats').innerHTML = stats.map(function(x) {
+    var c = x.l === '选题评分' ? scoreColor(x.v) : '#e2e8f0';
+    return '<div class="dp-stat"><div class="dp-stat-val" style="color:' + c + '">' + x.v + '</div><div class="dp-stat-lbl">' + x.l + '</div></div>';
+  }).join('');
+  document.getElementById('dp-ec').innerHTML = r.ec
+    ? '<span class="ec-chip">' + r.ec + '</span>'
+    : '<span style="color:#475569">—</span>';
+  document.getElementById('dp-summary').textContent = r.sm || '—';
+  document.getElementById('dp-angle').textContent = r.ag || '—';
+  var lnk = document.getElementById('dp-link');
+  lnk.href = r.url || '#';
+  lnk.style.display = r.url ? '' : 'none';
+  document.getElementById('vd-detail').style.display = 'block';
+  document.getElementById('vd-backdrop').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // ESC 关闭
+  document.onkeydown = function(e) { if (e.key === 'Escape') closeDetail(); };
+}
+
+function closeDetail() {
+  _selIdx = -1;
+  document.getElementById('vd-detail').style.display = 'none';
+  document.getElementById('vd-backdrop').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadStats();
+  loadTopicPool();
+  loadDeals();
+  loadCalendar();
+});
+
+function showPage(name, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  var pg = document.getElementById('page-' + name);
+  if (!pg) { console.error('page not found: page-' + name); return; }
+  pg.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  if (name === 'videos') {
+    if (VIDEOS.length === 0) loadVideos(); else renderTable();
+  }
+  if (name === 'hotspot') loadHotspots();
+  if (name === 'monitor') loadMonitor();
+  if (name === 'topics') loadTopics();
+  if (name === 'topicpool') loadTopicPool();
+  if (name === 'monetize') loadDeals();
+  if (name === 'calendar') loadCalendar();
+}
+
+// ============================================================
+// API 集成层
+// ============================================================
+
+const API = {
+  async get(path) {
+    try {
+      const r = await fetch(path);
+      if (!r.ok) throw new Error(r.status);
+      return await r.json();
+    } catch(e) {
+      console.warn('API error', path, e);
+      return null;
+    }
+  },
+  async post(path, body) {
+    try {
+      const r = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+      return await r.json();
+    } catch(e) { return null; }
+  },
+  async patch(path, body) {
+    try {
+      const r = await fetch(path, {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+      return await r.json();
+    } catch(e) { return null; }
+  },
+  async del(path) {
+    try {
+      const r = await fetch(path, {method:'DELETE'});
+      return await r.json();
+    } catch(e) { return null; }
+  }
+};
+
+// ── 首页统计 ──
+async function loadStats() {
+  const data = await API.get('/creator-api/stats');
+  if (!data) return;
+  const map = {
+    'stat-videos': data.total_videos,
+    'stat-bloggers': data.total_bloggers,
+    'stat-highscore': data.high_score,
+    'stat-ec': data.ec_videos,
+    'stat-updated': '数据更新于 ' + (data.last_updated || '-'),
+  };
+  for (const [id, val] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+}
+
+// ── 视频数据加载 ──
+async function loadVideos(params) {
+  const qs = new URLSearchParams(params || {}).toString();
+  const data = await API.get('/creator-api/videos' + (qs ? '?' + qs : ''));
+  if (data && data.videos) {
+    VIDEOS = data.videos.map(function(v) {
+      return {
+        a: v.author || '', t: (v.title || '').replace(/\n/g,' '),
+        d: v.date || '', s: v.score || 0, v: v.viral || 0,
+        lk: v.likes || 0, cm: v.comments || 0, sv: v.saves || 0,
+        fn: v.fans || 0, er: v.eng_rate || 0, ec: v.ec || '',
+        sm: v.summary || '', ag: v.angle || '', url: v.link || '',
+      };
+    });
+    renderTable();
+  }
+}
+
+// ── 刷新按钮 ──
+async function refreshData() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) { btn.textContent = '刷新中...'; btn.disabled = true; }
+  await API.post('/creator-api/refresh', {});
+  await loadVideos();
+  await loadStats();
+  if (btn) { btn.textContent = '↻ 刷新数据'; btn.disabled = false; }
+}
+
+// ── 采集任务 ──
+let _collectPollTimer = null;
+async function triggerCollect() {
+  const btn = document.getElementById('collect-btn');
+  const status = document.getElementById('collect-status');
+  const res = await API.post('/creator-api/collect', {});
+  if (!res || !res.ok) {
+    if (status) status.textContent = res ? res.message : '请求失败';
+    return;
+  }
+  if (btn) btn.disabled = true;
+  if (status) status.textContent = '采集中... 约需2-3分钟';
+  _collectPollTimer = setInterval(async function() {
+    const s = await API.get('/creator-api/collect/status');
+    if (!s) return;
+    if (!s.running) {
+      clearInterval(_collectPollTimer);
+      if (btn) btn.disabled = false;
+      const ok = s.last_result && s.last_result.success;
+      var now = new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+      if (status) status.textContent = ok ? '✓ 采集完成 ' + now : '✗ 采集出错';
+      if (ok) { await loadStats(); await loadVideos(); }
+    }
+  }, 5000);
+}
+
+// ── 选题池 ──
+let _topicPool = [];
+async function loadTopicPool() {
+  const data = await API.get('/creator-api/topic-pool');
+  if (!data) return;
+  _topicPool = data.topics;
+  renderKanban();
+}
+
+function renderKanban() {
+  const cols = {idea: 'kc-idea', wip: 'kc-wip', done: 'kc-done'};
+  const colBodies = {idea: 'kb-idea', wip: 'kb-wip', done: 'kb-done'};
+  const counts = {idea: 0, wip: 0, done: 0};
+  const bodies = {idea: '', wip: '', done: ''};
+
+  _topicPool.forEach(function(t) {
+    const st = t.status || 'idea';
+    if (!(st in counts)) return;
+    counts[st]++;
+    const borderColor = st === 'wip' ? ';border-color:#fbbf24' : (st === 'done' ? ';opacity:0.75' : '');
+    const scoreColor = t.score >= 9 ? '#4ade80' : t.score >= 7 ? '#fbbf24' : '#64748b';
+    const tags = (t.tags || []).map(function(g) { return '<span class="ktag">' + g + '</span>'; }).join('');
+    var origLine = t.original_title
+      ? '<div style="font-size:11px;color:#475569;margin-bottom:6px;line-height:1.4">参考：' + t.original_title.slice(0,40) + (t.original_title.length > 40 ? '...' : '') + '</div>'
+      : '';
+    bodies[st] += '<div class="kcard" style="cursor:default' + borderColor + '">' +
+      origLine +
+      '<div class="kcard-title">' + t.title + '</div>' +
+      '<div class="kcard-meta">' +
+        '<span class="kcard-source">' + (t.source || '自创') + '</span>' +
+        '<span class="kcard-score" style="color:' + scoreColor + '">★ ' + t.score + '分</span>' +
+        (st === 'done'
+          ? '<span class="kcard-date" style="margin-left:auto">' + (t.updated_at || '').slice(0,10) + '</span>'
+          : '<span class="kcard-date">' + (t.created_at || '').slice(0,10) + '</span>') +
+      '</div>' +
+      (tags ? '<div class="kcard-tags">' + tags + '</div>' : '') +
+      '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">' +
+        (st !== 'done' ? '<button onclick="moveTopicStatus(' + t.id + ',\'' + (st === 'idea' ? 'wip' : 'done') + '\')" style="font-size:11px;padding:2px 8px;border-radius:4px;background:#1e3a5f;border:none;color:#60a5fa;cursor:pointer">' + (st === 'idea' ? '→ 开始创作' : '→ 标记完成') + '</button>' : '') +
+        '<button id="gen-btn-' + t.id + '" onclick="generateScript(' + t.id + ',this)" style="font-size:11px;padding:2px 8px;border-radius:4px;background:#312e81;border:none;color:#a78bfa;cursor:pointer">✍️ 生成文案</button>' +
+        '<button onclick="deleteTopic(' + t.id + ')" style="font-size:11px;padding:2px 8px;border-radius:4px;background:#2d1c0a;border:none;color:#f97316;cursor:pointer">删除</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  for (const st of ['idea', 'wip', 'done']) {
+    const cnt = document.getElementById(cols[st]);
+    if (cnt) cnt.textContent = counts[st];
+    const body = document.getElementById(colBodies[st]);
+    if (body) body.innerHTML = bodies[st];
+  }
+}
+
+async function moveTopicStatus(id, newStatus) {
+  await API.patch('/creator-api/topic-pool/' + id, {status: newStatus});
+  await loadTopicPool();
+}
+
+async function deleteTopic(id) {
+  if (!confirm('确定删除这个选题？')) return;
+  await API.del('/creator-api/topic-pool/' + id);
+  await loadTopicPool();
+}
+
+async function addNewTopic() {
+  const title = prompt('输入选题标题：');
+  if (!title || !title.trim()) return;
+  const source = prompt('来源博主（留空为"自创"）：') || '自创';
+  const scoreStr = prompt('预估评分（1-10）：', '7');
+  const score = parseInt(scoreStr) || 7;
+  await API.post('/creator-api/topic-pool', {title: title.trim(), source, score, status: 'idea'});
+  await loadTopicPool();
+}
+
+// ── 商单/变现 ──
+let _deals = [];
+async function loadDeals() {
+  const data = await API.get('/creator-api/deals');
+  if (!data) return;
+  _deals = data.deals;
+  renderDeals();
+}
+
+function renderDeals() {
+  const container = document.getElementById('deals-list');
+  if (!container) return;
+  const statusMap = {
+    negotiating: {cls: 'ds-negotiating', label: '接洽中'},
+    pending:     {cls: 'ds-pending',     label: '待交付'},
+    done:        {cls: 'ds-done',        label: '已完成'},
+    rejected:    {cls: 'ds-rejected',    label: '已婉拒'},
+  };
+  container.innerHTML = _deals.map(function(d) {
+    const st = statusMap[d.status] || statusMap.negotiating;
+    return '<div class="deal-item">' +
+      '<div class="deal-brand">' + d.brand + '</div>' +
+      '<div class="deal-desc">' + d.description + '</div>' +
+      '<div class="deal-amount">' + (d.amount && d.amount !== 'CPS' ? '¥' + d.amount : d.amount || '—') + '</div>' +
+      '<span class="deal-status ' + st.cls + '">' + st.label + '</span>' +
+    '</div>';
+  }).join('');
+
+  // Update revenue stats
+  const done = _deals.filter(function(d) { return d.status === 'done'; });
+  const pending = _deals.filter(function(d) { return d.status === 'pending'; });
+  const totalDone = done.reduce(function(s,d) { return s + (parseFloat(d.amount)||0); }, 0);
+  const totalPending = pending.reduce(function(s,d) { return s + (parseFloat(d.amount)||0); }, 0);
+  const el1 = document.getElementById('rev-done'); if (el1) el1.textContent = '¥' + totalDone.toLocaleString();
+  const el2 = document.getElementById('rev-pending'); if (el2) el2.textContent = '¥' + totalPending.toLocaleString();
+  const el3 = document.getElementById('rev-total'); if (el3) el3.textContent = '¥' + (totalDone + totalPending).toLocaleString();
+}
+
+async function addNewDeal() {
+  const brand = prompt('品牌/甲方名称：');
+  if (!brand || !brand.trim()) return;
+  const desc = prompt('合作内容说明：') || '';
+  const amount = prompt('报价金额（纯数字，CPS填"CPS"）：') || '';
+  await API.post('/creator-api/deals', {brand: brand.trim(), description: desc, amount, status: 'negotiating'});
+  await loadDeals();
+}
+
+// ── 发布日历 ──
+let _calItems = [];
+async function loadCalendar() {
+  const data = await API.get('/creator-api/calendar');
+  if (!data) return;
+  _calItems = data.items;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  _calItems.forEach(function(item) {
+    const dateStr = item.date;
+    const el = document.querySelector('[data-cal-date="' + dateStr + '"]');
+    if (!el) return;
+    const cls = item.status === 'published' ? 'cal-published' : item.status === 'wip' ? 'cal-wip' : 'cal-planned';
+    const existing = el.querySelector('.cal-event');
+    if (!existing) {
+      const div = document.createElement('div');
+      div.className = 'cal-event ' + cls;
+      div.setAttribute('data-id', item.id);
+      div.textContent = item.title.slice(0, 10);
+      div.title = item.title;
+      el.querySelector('.cal-empty-slot') && el.querySelector('.cal-empty-slot').remove();
+      el.appendChild(div);
+    }
+  });
+}
+
+// ── videos page 触发时加载数据 ──
+const _origShowPage = typeof showPage !== 'undefined' ? showPage : null;
+
+
+// ── 热点榜单 ──
+async function loadHotspots(force) {
+  var url = '/creator-api/hotspots' + (force ? '?refresh=true' : '');
+  var data = await API.get(url);
+  if (!data) return;
+  if (data.updated_at) {
+    var el = document.getElementById('hotspot-update-time');
+    if (el) el.textContent = '微博实时热搜 · 更新于 ' + data.updated_at;
+  }
+  renderWeiboHot(data.weibo || []);
+}
+
+function renderWeiboHot(items) {
+  var container = document.getElementById('weibo-hot-list');
+  if (!container) return;
+  if (!items.length) {
+    container.innerHTML = '<div style="color:#475569;padding:20px 0;text-align:center;grid-column:1/-1">暂无数据</div>';
+    return;
+  }
+  container.innerHTML = items.map(function(item) {
+    var rankStyle = item.rank <= 3
+      ? 'background:linear-gradient(135deg,#f97316,#ef4444);color:#fff'
+      : 'background:#2d3148;color:#64748b';
+    var heatColor = item.rank <= 3 ? '#f97316' : item.rank <= 10 ? '#fbbf24' : '#475569';
+    return '<div class="hot-item" style="cursor:pointer" onclick="analyzeHotTopic(\'' + item.title.replace(/'/g,"\'") + '\')">' +
+      '<div class="hot-rank ' + (item.rank <= 3 ? 'top3' : 'normal') + '">' + item.rank + '</div>' +
+      '<div class="hot-title" style="flex:1">' + item.title + '</div>' +
+      '<span style="font-size:12px;color:' + heatColor + ';white-space:nowrap">' + item.heat + '</span>' +
+      '<span class="platform-tag tag-weibo" style="margin-left:6px">微博</span>' +
+    '</div>';
+  }).join('');
+}
+
+async function analyzeHotTopic(word) {
+  var el = document.getElementById('ai-hot-analysis');
+  if (!el) return;
+  el.innerHTML = '<span style="color:#60a5fa">正在分析「' + word + '」与AI电商赛道的关联...</span>';
+  // Simple local analysis based on keywords
+  var analysis = generateHotAnalysis(word);
+  el.innerHTML = analysis;
+}
+
+function generateHotAnalysis(word) {
+  var aiKeywords = ['AI','人工智能','大模型','ChatGPT','DeepSeek','GPT','机器人','自动化','算法'];
+  var ecKeywords = ['电商','购物','消费','商品','品牌','带货','直播','跨境','亚马逊','淘宝'];
+  var isAI = aiKeywords.some(function(k) { return word.includes(k); });
+  var isEC = ecKeywords.some(function(k) { return word.includes(k); });
+  var relevance = isAI && isEC ? '高度相关' : isAI || isEC ? '中度相关' : '低相关';
+  var color = isAI && isEC ? '#4ade80' : isAI || isEC ? '#fbbf24' : '#64748b';
+  var angles = [];
+  if (isAI) angles.push('可从AI技术应用角度切入，结合你的AI电商定位');
+  if (isEC) angles.push('直接关联电商场景，可结合AI工具讲解解决方案');
+  if (!isAI && !isEC) angles.push('可从"AI如何看待/应对这个热点"的角度切入，借势引流');
+  angles.push('结合热点词制作标题，提高推荐权重');
+  return '<div style="margin-bottom:10px"><span style="padding:3px 10px;border-radius:4px;background:#23263a;color:' + color + ';font-weight:700">相关度: ' + relevance + '</span>' +
+    ' <span style="color:#475569;font-size:12px;margin-left:8px">「' + word + '」</span></div>' +
+    '<div style="color:#cbd5e1;line-height:1.8">' +
+    angles.map(function(a,i) { return '<span style="color:#6366f1">'+( i+1)+'.</span> ' + a; }).join('<br>') +
+    '</div>';
+}
+
+
+// ── 博主监控 ──
+async function loadBloggers() {
+  var data = await API.get('/creator-api/bloggers');
+  if (!data) return;
+  var bloggers = (data.bloggers || []).slice(0, 10);
+  var el = document.getElementById('blogger-list');
+  if (!el) return;
+  if (!bloggers.length) {
+    el.innerHTML = '<div style="color:#475569;text-align:center;padding:20px">暂无数据</div>';
+    return;
+  }
+  el.innerHTML = bloggers.map(function(b, i) {
+    var scoreClass = b.max_score >= 9 ? 'score-high' : b.max_score >= 7 ? 'score-mid' : 'score-low';
+    var fans = b.fans ? b.fans : '未知';
+    var rankColor = i < 3 ? '#f97316' : i < 7 ? '#6366f1' : '#475569';
+    return '<div class="blogger-item">' +
+      '<div style="width:22px;font-size:13px;font-weight:700;color:' + rankColor + ';text-align:center">' + (i+1) + '</div>' +
+      '<div class="blogger-avatar">' + (b.author.slice(0,1)) + '</div>' +
+      '<div class="blogger-info">' +
+        '<div class="blogger-name">' + b.author + '</div>' +
+        '<div class="blogger-fans">' + fans + '粉 &middot; ' + b.videos + '条视频</div>' +
+      '</div>' +
+      '<div class="blogger-score">' +
+        '<div class="score-badge ' + scoreClass + '">' + b.max_score + '分</div>' +
+        '<div style="font-size:11px;color:#64748b;margin-top:2px">最高赞 ' + Number(b.total_likes).toLocaleString() + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function loadMonitorStats() {
+  var data = await API.get('/creator-api/stats');
+  if (!data) return;
+  var setVal = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+  setVal('stat-total-videos', data.total_videos || 0);
+  setVal('stat-total-bloggers', data.total_bloggers || 0);
+  setVal('stat-high-score', data.high_score || 0);
+  setVal('stat-avg-score', data.avg_score ? data.avg_score.toFixed(1) : '-');
+  var sub = document.getElementById('monitor-sub');
+  if (sub) sub.textContent = (data.total_bloggers || 48) + '个AI博主 · 共' + (data.total_videos || 0) + '条视频';
+  var hint = document.getElementById('cache-hint');
+  if (hint) hint.textContent = data.last_updated ? '更新于 ' + data.last_updated : '数据缓存中';
+}
+
+function loadMonitor() {
+  loadBloggers();
+  loadMonitorStats();
+}
+
+// ── 选题推荐 ──
+async function loadTopics() {
+  var minScore = (document.getElementById('topics-min-score') || {value: '7'}).value || 7;
+  var data = await API.get('/creator-api/videos?min_score=' + minScore + '&limit=30');
+  if (!data) return;
+  var videos = data.videos || [];
+  var sub = document.getElementById('topics-sub');
+  if (sub) sub.textContent = '高分视频 (>=' + minScore + '分) · 共' + videos.length + '条';
+  var el = document.getElementById('topics-list');
+  if (!el) return;
+  if (!videos.length) {
+    el.innerHTML = '<div style="color:#475569;text-align:center;padding:40px">暂无高分视频</div>';
+    return;
+  }
+  el.innerHTML = videos.map(function(v) {
+    var scoreColor = v.score >= 9 ? '#4ade80' : v.score >= 7 ? '#fbbf24' : '#94a3b8';
+    var badge = v.score >= 9 ? '<span class="badge badge-hot">强烈推荐</span>' : '';
+    var ecTags = (v.ec || '').split(/[,，]/).filter(Boolean).slice(0, 2).map(function(t) {
+      return '<span class="meta-tag ec">' + t.trim() + '</span>';
+    }).join('');
+    var likesNum = Number(v.likes || 0);
+    var angle = v.angle ? '<div style="font-size:12px;color:#94a3b8;margin-top:6px;line-height:1.6">&#128270; ' + v.angle + '</div>' : '';
+    var summary = v.summary ? '<div style="font-size:12px;color:#64748b;margin-top:4px;line-height:1.6">' + v.summary.slice(0, 80) + (v.summary.length > 80 ? '...' : '') + '</div>' : '';
+    var safeV = JSON.stringify({title: v.title||'', author: v.author||'', score: v.score||0, ec: v.ec||'', angle: v.angle||'', summary: v.summary||''}).replace(/'/g, '&#39;');
+    return '<div class="topic-card">' +
+      '<div class="topic-header">' +
+        '<div class="topic-title">' + (v.title || '未知标题') + '</div>' +
+        '<div class="ai-score" style="color:' + scoreColor + '">' + (v.score || '-') + '分</div>' +
+      '</div>' +
+      '<div class="topic-meta">' +
+        ecTags +
+        '<span class="meta-tag">' + (v.author || '') + '</span>' +
+        '<span class="meta-tag">点赞 ' + (likesNum >= 10000 ? (likesNum/10000).toFixed(1) + 'w' : likesNum) + '</span>' +
+        badge +
+      '</div>' +
+      angle + summary +
+      '<div style="margin-top:10px">' +
+        '<button onclick=\'addToTopicPool(' + safeV + ')\' style="font-size:12px;padding:5px 14px;border-radius:6px;background:#1e3a5f;border:none;color:#60a5fa;cursor:pointer">＋ 加入选题池</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── 加入选题池 ──
+async function addToTopicPool(v) {
+  var payload = {
+    title: v.angle || v.title,
+    source: v.author || '',
+    score: v.score || 0,
+    ec: v.ec || '',
+    tags: (v.ec || '').split(/[,，]/).filter(Boolean).slice(0,3),
+    status: 'idea',
+    original_title: v.title || '',
+    angle: v.angle || '',
+    summary: v.summary || ''
+  };
+  var res = await API.post('/creator-api/topic-pool', payload);
+  if (res && res.ok) {
+    showToast('已加入选题池 ✓', '#4ade80');
+  }
+}
+
+// ── 文案生成 ──
+async function generateScript(topicId, btn) {
+  if (btn) { btn.textContent = '生成中...'; btn.disabled = true; }
+  var res = await API.post('/creator-api/generate-script/' + topicId, {});
+  if (btn) { btn.textContent = '✍️ 生成文案'; btn.disabled = false; }
+  if (!res || !res.ok) { showToast('生成失败，检查DeepSeek配置', '#f87171'); return; }
+  showToast('文案已生成，去文案模板库查看 ✓', '#4ade80');
+  showScriptModal(res.title, res.content);
+}
+
+function showScriptModal(title, content) {
+  var el = document.getElementById('vd-detail');
+  var backdrop = document.getElementById('vd-backdrop');
+  document.getElementById('dp-title').textContent = title;
+  document.getElementById('dp-stats').innerHTML = '';
+  document.getElementById('dp-ec').innerHTML = '';
+  document.getElementById('dp-link').style.display = 'none';
+  document.getElementById('dp-summary').textContent = '';
+  document.getElementById('dp-angle').innerHTML =
+    '<pre style="white-space:pre-wrap;font-size:13px;color:#cbd5e1;line-height:1.8;font-family:inherit">' + content + '</pre>' +
+    '<button onclick="navigator.clipboard.writeText(document.getElementById(\'dp-angle\').querySelector(\'pre\').textContent);showToast(\'已复制\',\'#4ade80\')" style="margin-top:10px;padding:6px 16px;border-radius:6px;background:#2d3148;border:none;color:#94a3b8;cursor:pointer;font-size:12px">复制全文</button>';
+  el.style.display = 'block';
+  backdrop.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  document.onkeydown = function(e) { if (e.key === 'Escape') closeDetail(); };
+}
+
+// ── 我的二创文案列表 ──
+async function loadScripts() {
+  var data = await API.get('/creator-api/scripts');
+  var list = document.getElementById('scripts-list');
+  if (!list) return;
+  var scripts = (data && data.scripts) || [];
+  if (!scripts.length) {
+    list.innerHTML = '<div style="color:#475569;text-align:center;padding:40px">还没有二创文案，去选题池生成吧</div>';
+    return;
+  }
+  list.innerHTML = scripts.map(function(s) {
+    var preview = s.content.slice(0, 120).replace(/\n/g, ' ');
+    return '<div class="tpl-card">' +
+      '<div class="tpl-card-title">' +
+        s.title +
+        '<button class="tpl-copy-btn" onclick="navigator.clipboard.writeText(' + JSON.stringify(s.content) + ');showToast(\'已复制\',\'#4ade80\')">复制</button>' +
+      '</div>' +
+      '<div style="font-size:11px;color:#475569;margin-bottom:8px">' + (s.original_title ? '参考：' + s.original_title : '') + ' · ' + s.created_at.slice(0,10) + '</div>' +
+      '<div class="tpl-text" onclick="showScriptModal(\'' + s.title.replace(/'/g,"\\'") + '\',' + JSON.stringify(s.content) + ')" style="cursor:pointer">' + preview + '...' + '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:8px">' +
+        '<button onclick="showScriptModal(\'' + s.title.replace(/'/g,"\\'") + '\',' + JSON.stringify(s.content) + ')" style="font-size:11px;padding:3px 10px;border-radius:4px;background:#1e3a5f;border:none;color:#60a5fa;cursor:pointer">查看全文</button>' +
+        '<button onclick="deleteScript(' + s.id + ',this)" style="font-size:11px;padding:3px 10px;border-radius:4px;background:#2d1c0a;border:none;color:#f97316;cursor:pointer">删除</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function deleteScript(id, btn) {
+  var res = await API.del('/creator-api/scripts/' + id);
+  if (res && res.ok) loadScripts();
+}
+
+function showTpl(name, btn) {
+  document.querySelectorAll('[id^="tpl-"]').forEach(function(el) { el.style.display = 'none'; });
+  document.querySelectorAll('.tpl-tab').forEach(function(b) { b.classList.remove('active'); b.style.background=''; b.style.borderColor=''; b.style.color=''; });
+  var el = document.getElementById('tpl-' + name);
+  if (el) el.style.display = name === 'hook' || name === 'problem' || name === 'method' || name === 'cta' || name === 'full' ? 'grid' : 'block';
+  if (btn) { btn.classList.add('active'); }
+  if (name === 'scripts') loadScripts();
+}
+
+// ── Toast 通知 ──
+function showToast(msg, color) {
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#23263a;color:' + (color||'#e2e8f0') + ';border:1px solid ' + (color||'#2d3148') + ';padding:10px 24px;border-radius:8px;font-size:13px;z-index:9999;pointer-events:none;animation:slideUp 0.2s ease';
+  document.body.appendChild(t);
+  setTimeout(function() { t.remove(); }, 2500);
+}
+
+</script>
+<!-- 视频详情 Modal -->
+<div id="vd-backdrop" onclick="closeDetail()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;backdrop-filter:blur(2px)"></div>
+<div id="vd-detail" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;width:min(680px,92vw);max-height:85vh;overflow-y:auto;background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:24px;animation:slideUp 0.2s ease">
+  <div class="dp-header">
+    <div class="dp-title" id="dp-title"></div>
+    <button class="dp-close" onclick="closeDetail()" style="flex-shrink:0">✕</button>
+  </div>
+  <div class="dp-stats" id="dp-stats"></div>
+  <div class="dp-section"><div class="dp-section-title">电商场景</div><div id="dp-ec"></div></div>
+  <div class="dp-section"><div class="dp-section-title">AI 摘要</div><div class="dp-text" id="dp-summary"></div></div>
+  <div class="dp-section"><div class="dp-section-title">推荐创作角度</div><div class="dp-text" id="dp-angle"></div></div>
+  <div class="dp-section" style="margin-top:16px">
+    <a class="dp-link" id="dp-link" target="_blank" style="display:inline-block;padding:8px 20px;background:#1e3a5f;border-radius:8px;font-size:13px">→ 在抖音查看原视频</a>
+  </div>
+</div>
+
+</body>
+</html>

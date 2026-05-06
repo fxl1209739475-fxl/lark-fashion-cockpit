@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>女装电商产品管理 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">M</div>
+          <div>
+            <strong>ModaOps</strong>
+            <span>女装电商管理</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <section class="nav-group">
+            <div class="nav-group-title">公司经营</div>
+            <button class="nav-item active" data-section="executiveDashboard">
+              <span class="nav-icon">◆</span>
+              经营总览
+            </button>
+            <button class="nav-item" data-section="salesProgress">
+              <span class="nav-icon">◔</span>
+              销售进度
+            </button>
+            <button class="nav-item" data-section="profitFinance">
+              <span class="nav-icon">¥</span>
+              利润财务
+            </button>
+            <button class="nav-item" data-section="taskCollaboration">
+              <span class="nav-icon">✓</span>
+              任务协同
+            </button>
+          </section>
+
+          <section class="nav-group">
+            <div class="nav-group-title">商品中心</div>
+            <button class="nav-item" data-section="products">
+              <span class="nav-icon">□</span>
+              产品库
+            </button>
+            <button class="nav-item" data-section="merchPlanning">
+              <span class="nav-icon">✎</span>
+              商品企划
+            </button>
+            <button class="nav-item" data-section="inventoryReplenishment">
+              <span class="nav-icon">▤</span>
+              库存补货
+            </button>
+            <button class="nav-item" data-section="feedbackReturns">
+              <span class="nav-icon">!</span>
+              评价退货
+            </button>
+          </section>
+
+          <section class="nav-group">
+            <div class="nav-group-title">销售增长</div>
+            <button class="nav-item" data-section="analytics">
+              <span class="nav-icon">▦</span>
+              数据分析
+            </button>
+            <button class="nav-item" data-section="contentStudio">
+              <span class="nav-icon">▶</span>
+              内容板块
+            </button>
+            <button class="nav-item" data-section="marketingLive">
+              <span class="nav-icon">◉</span>
+              营销直播
+            </button>
+            <button class="nav-item" data-section="privateDomain">
+              <span class="nav-icon">◎</span>
+              私域运营
+            </button>
+            <button class="nav-item" data-section="serviceExperience">
+              <span class="nav-icon">✦</span>
+              服务体验
+            </button>
+          </section>
+
+          <section class="nav-group">
+            <div class="nav-group-title">供应链履约</div>
+            <button class="nav-item" data-section="productionProgress">
+              <span class="nav-icon">▣</span>
+              生产进度
+            </button>
+            <button class="nav-item" data-section="supplierProfiles">
+              <span class="nav-icon">◇</span>
+              供应商档案
+            </button>
+            <button class="nav-item" data-section="fulfillmentLogistics">
+              <span class="nav-icon">⇥</span>
+              订单履约
+            </button>
+          </section>
+
+          <section class="nav-group">
+            <div class="nav-group-title">市场与数据</div>
+            <button class="nav-item" data-section="marketTrends">
+              <span class="nav-icon">⌁</span>
+              竞品趋势
+            </button>
+            <button class="nav-item" data-section="dataSources">
+              <span class="nav-icon">⇄</span>
+              数据源管理
+            </button>
+          </section>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Brand Commerce Console</p>
+            <h1>产品经营驾驶舱</h1>
+          </div>
+          <div class="toolbar">
+            <label>
+              日期
+              <input type="date" value="2026-04-29" />
+            </label>
+            <label>
+              平台
+              <select id="platformFilter">
+                <option value="all">全部平台</option>
+                <option value="taobao">淘宝</option>
+                <option value="douyin">抖音</option>
+                <option value="xiaohongshu">小红书</option>
+                <option value="shipinhao">视频号</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <section id="analytics" class="view">
+          <div class="metric-grid" id="metricGrid"></div>
+
+          <div class="panel-grid">
+            <section class="panel wide">
+              <div class="panel-head">
+                <div>
+                  <h2>近 7 日销售趋势</h2>
+                  <p>按平台汇总销售额与订单量</p>
+                </div>
+                <span class="status-pill">实时样例数据</span>
+              </div>
+              <div class="trend-chart" id="trendChart"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>平台销售构成</h2>
+                  <p>销售额占比</p>
+                </div>
+              </div>
+              <div class="platform-bars" id="platformBars"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="products" class="view">
+          <section class="panel product-panel">
+            <div class="panel-head product-head">
+              <div>
+                <h2>产品库 <span class="sync-badge" id="productPersistenceBadge">本地缓存</span></h2>
+                <p>历史款、在售款、SKU、颜色尺码库存与售罄率</p>
+              </div>
+              <div class="product-actions">
+                <input id="productSearch" type="search" placeholder="搜索款号 / 名称 / 颜色" />
+                <select id="statusFilter">
+                  <option value="all">全部状态</option>
+                  <option value="selling">在售</option>
+                  <option value="soldout">售罄</option>
+                  <option value="history">历史款</option>
+                </select>
+                <button class="secondary-button" type="button" id="openProductImport">导入产品表</button>
+                <button class="primary-button" type="button" id="openProductForm">新增产品</button>
+              </div>
+            </div>
+
+            <div class="product-dashboard" aria-label="产品库经营总览">
+              <div class="product-overview-grid" id="productOverviewGrid"></div>
+              <section class="product-watch-panel">
+                <div class="section-title-row">
+                  <div>
+                    <h3>重点款经营监控</h3>
+                    <p class="muted">展示目标缺口最高的 3 款，作为首页快速提醒。</p>
+                  </div>
+                </div>
+                <div class="product-watch-grid" id="productWatchGrid"></div>
+              </section>
+            </div>
+
+            <section class="ai-analysis-panel" aria-label="AI 产品分析">
+              <div class="ai-analysis-head">
+                <div>
+                  <h3>AI 产品分析</h3>
+                  <p class="muted">输入经营问题，系统会读取当前产品库字段，生成可追溯的分析结果。</p>
+                </div>
+                <span class="tag warning">本地分析 Demo</span>
+              </div>
+              <div class="ai-prompt-row">
+                <textarea id="aiProductPrompt" rows="3" placeholder="例如：找出售罄率低于50%的产品，按春夏秋冬分类，并按售卖权重优先排序。"></textarea>
+                <button class="primary-button" type="button" id="runProductAnalysis">生成分析</button>
+              </div>
+              <div class="ai-prompt-examples">
+                <button type="button" data-analysis-prompt="找出售罄率低于50%的产品，按春夏秋冬分类，并按售卖权重优先排序。">低售罄分季节</button>
+                <button type="button" data-analysis-prompt="列出距目标还需实销件数最高的产品，告诉我优先推进顺序。">目标缺口排序</button>
+                <button type="button" data-analysis-prompt="找出高退货率并且库存较高的风险款，给出处理建议。">退货库存风险</button>
+              </div>
+              <div class="ai-analysis-result" id="aiAnalysisResult">
+                <p>先选择一个示例问题，或者直接输入你的分析需求。</p>
+              </div>
+            </section>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>产品</th>
+                    <th>做货件数</th>
+                    <th>实销数</th>
+                    <th>剩余库存</th>
+                    <th>售罄率</th>
+                    <th>可用数</th>
+                    <th>距目标还需实销</th>
+                    <th>退货率</th>
+                    <th>到仓</th>
+                    <th>爆款分类</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="productTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="contentStudio" class="view">
+          <div class="metric-grid" id="contentMetricGrid"></div>
+
+          <div class="panel-grid content-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>视频数据分析</h2>
+                  <p>按内容平台查看播放、互动、转化与引导成交</p>
+                </div>
+              </div>
+              <div class="content-bars" id="contentBars"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>内容产能漏斗</h2>
+                  <p>选题到发布的当前分布</p>
+                </div>
+              </div>
+              <div class="funnel-list" id="contentFunnel"></div>
+            </section>
+          </div>
+
+          <section class="panel topic-panel">
+            <div class="panel-head product-head">
+              <div>
+                <h2>正在做的选题</h2>
+                <p>记录内容主题、绑定产品、负责人、预计完成时间和进度</p>
+              </div>
+              <div class="product-actions">
+                <select id="topicStageFilter">
+                  <option value="all">全部阶段</option>
+                  <option value="idea">选题</option>
+                  <option value="script">脚本</option>
+                  <option value="shooting">拍摄</option>
+                  <option value="editing">剪辑</option>
+                  <option value="publish">待发布</option>
+                </select>
+              </div>
+            </div>
+            <div class="topic-board" id="topicBoard"></div>
+          </section>
+        </section>
+
+        <section id="salesProgress" class="view">
+          <section class="panel annual-panel">
+            <div class="panel-head">
+              <div>
+                <h2>年度销售进度</h2>
+                <p>全年目标、已完成、剩余目标与当前达成率</p>
+              </div>
+              <span class="status-pill">2026 年</span>
+            </div>
+            <div class="annual-grid" id="annualProgress"></div>
+          </section>
+
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>季度目标进度</h2>
+                  <p>按季度看完成率和缺口</p>
+                </div>
+              </div>
+              <div class="progress-list" id="quarterProgress"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>平台目标进度</h2>
+                  <p>年度维度下各平台贡献</p>
+                </div>
+              </div>
+              <div class="progress-list" id="channelProgress"></div>
+            </section>
+          </div>
+
+          <section class="panel month-panel">
+            <div class="panel-head">
+              <div>
+                <h2>月度销售节奏</h2>
+                <p>每月目标与实际完成，方便做大促和上新排期</p>
+              </div>
+            </div>
+            <div class="month-grid" id="monthGrid"></div>
+          </section>
+        </section>
+
+        <section id="dataSources" class="view">
+          <div class="metric-grid" id="dataSourceMetricGrid"></div>
+
+          <div class="panel-grid data-source-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>平台数据源</h2>
+                  <p>销售、库存、内容数据的更新状态</p>
+                </div>
+                <span class="status-pill">自动 / 手动混合</span>
+              </div>
+              <div class="source-list" id="sourceList"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>产品表导入</h2>
+                  <p>支持 CSV、TSV，或直接从 Excel / 飞书表格复制粘贴</p>
+                </div>
+              </div>
+              <label class="import-box">
+                <input id="csvImport" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values" />
+                <span>选择产品表文件</span>
+                <small>按款号 / SKU 自动合并，颜色尺码会生成 SKU 单元</small>
+              </label>
+              <textarea id="pasteImportText" class="import-paste" rows="6" placeholder="也可以从 Excel / 飞书表格复制整块数据后粘贴到这里"></textarea>
+              <div class="import-actions">
+                <button class="secondary-button" type="button" id="parsePastedTable">预览粘贴数据</button>
+                <button class="secondary-button" type="button" id="downloadProductTemplate">生成导入模板</button>
+                <button class="primary-button" type="button" id="applyProductImport" disabled>导入到产品库</button>
+              </div>
+              <div class="import-summary" id="importSummary"></div>
+              <div class="import-field-hints" id="importFieldHints"></div>
+              <div class="import-preview" id="importPreview"></div>
+            </section>
+          </div>
+
+          <div class="panel-grid data-source-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>自动采集任务</h2>
+                  <p>网页采集、定时更新、最近结果</p>
+                </div>
+              </div>
+              <div class="crawler-card">
+                <div>
+                  <strong>淘宝销售页采集演示</strong>
+                  <span>本地模拟网页 · 每日 09:00</span>
+                </div>
+                <span class="tag selling">可运行</span>
+              </div>
+              <div class="script-path">
+                F:\Codex\Workspaces\fashion-admin-demo\scripts\scrape-demo.ps1
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>更新日志</h2>
+                  <p>每次导入或采集后的结果记录</p>
+                </div>
+              </div>
+              <div class="sync-log" id="syncLog"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="productionProgress" class="view">
+          <div class="metric-grid" id="productionMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel wide">
+              <div class="panel-head">
+                <div>
+                  <h2>产品生产进度</h2>
+                  <p>在做款、做货数量、阶段进度、预计到仓和延期风险</p>
+                </div>
+                <span class="status-pill">供应链协同</span>
+              </div>
+              <div class="production-list" id="productionList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>阶段分布</h2>
+                  <p>从打样到入仓的当前数量</p>
+                </div>
+              </div>
+              <div class="funnel-list" id="productionStageList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="supplierProfiles" class="view">
+          <div class="metric-grid" id="supplierMetricGrid"></div>
+          <section class="panel product-panel">
+            <div class="panel-head product-head">
+              <div>
+                <h2>供应商档案</h2>
+                <p>合作款式、成品率、次品率、准时履约率、平均交期和当前在做货</p>
+              </div>
+            </div>
+            <div class="supplier-grid" id="supplierGrid"></div>
+          </section>
+        </section>
+
+        <section id="privateDomain" class="view">
+          <div class="metric-grid" id="privateMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>客户分层</h2>
+                  <p>全平台客户沉淀、价值分层与运营动作</p>
+                </div>
+              </div>
+              <div class="segment-list" id="customerSegments"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>私域来源</h2>
+                  <p>企业微信、平台会员、社群与直播沉淀</p>
+                </div>
+              </div>
+              <div class="progress-list" id="privateChannels"></div>
+            </section>
+          </div>
+          <section class="panel topic-panel">
+            <div class="panel-head">
+              <div>
+                <h2>今日私域运营动作</h2>
+                <p>沟通、召回、搭配推荐、补货通知与会员转化</p>
+              </div>
+            </div>
+            <div class="operation-grid" id="privateActions"></div>
+          </section>
+        </section>
+
+        <section id="serviceExperience" class="view">
+          <div class="metric-grid" id="serviceMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>全平台客服体验</h2>
+                  <p>售前、售后、响应、满意度和问题类型</p>
+                </div>
+              </div>
+              <div class="service-list" id="serviceList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>问题类型</h2>
+                  <p>每天规划量和主要服务压力来源</p>
+                </div>
+              </div>
+              <div class="progress-list" id="serviceIssueList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="executiveDashboard" class="view active-view">
+          <div class="metric-grid" id="executiveMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>今日经营异常</h2>
+                  <p>需要老板和负责人优先处理的事项</p>
+                </div>
+              </div>
+              <div class="business-list" id="executiveAlerts"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>经营健康度</h2>
+                  <p>销售、利润、库存、履约、服务五个维度</p>
+                </div>
+              </div>
+              <div class="progress-list" id="businessHealth"></div>
+            </section>
+          </div>
+          <section class="panel topic-panel">
+            <div class="panel-head">
+              <div>
+                <h2>核心产品经营状态</h2>
+                <p>用产品视角串起利润、库存、内容、供应链和反馈</p>
+              </div>
+            </div>
+            <div class="business-grid" id="productHealthGrid"></div>
+          </section>
+        </section>
+
+        <section id="profitFinance" class="view">
+          <div class="metric-grid" id="profitMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>平台利润拆解</h2>
+                  <p>销售额、毛利、投放、佣金和净利率</p>
+                </div>
+              </div>
+              <div class="business-list" id="platformProfitList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>成本结构</h2>
+                  <p>商品成本、平台扣点、投放、达人佣金、物流</p>
+                </div>
+              </div>
+              <div class="progress-list" id="costStructure"></div>
+            </section>
+          </div>
+          <section class="panel topic-panel">
+            <div class="panel-head">
+              <div>
+                <h2>单品利润排行</h2>
+                <p>先看哪些款真正赚钱，哪些只是有销售额</p>
+              </div>
+            </div>
+            <div class="business-grid" id="productProfitGrid"></div>
+          </section>
+        </section>
+
+        <section id="merchPlanning" class="view">
+          <div class="metric-grid" id="planningMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>上新波段规划</h2>
+                  <p>从企划、打样、拍摄到上架的节奏</p>
+                </div>
+              </div>
+              <div class="business-list" id="launchWaveList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>商品结构</h2>
+                  <p>类目、价格带和角色分布</p>
+                </div>
+              </div>
+              <div class="progress-list" id="categoryMix"></div>
+            </section>
+          </div>
+          <section class="panel topic-panel">
+            <div class="panel-head">
+              <div>
+                <h2>开发中款式</h2>
+                <p>每个候选款的定位、目标价格和当前状态</p>
+              </div>
+            </div>
+            <div class="business-grid" id="developmentGrid"></div>
+          </section>
+        </section>
+
+        <section id="inventoryReplenishment" class="view">
+          <div class="metric-grid" id="inventoryMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>库存预警</h2>
+                  <p>缺货、滞销、在途和清仓风险</p>
+                </div>
+              </div>
+              <div class="business-list" id="stockAlertList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>平台库存分配</h2>
+                  <p>淘宝、抖音、小红书、视频号与私域库存策略</p>
+                </div>
+              </div>
+              <div class="progress-list" id="stockAllocation"></div>
+            </section>
+          </div>
+          <section class="panel topic-panel">
+            <div class="panel-head">
+              <div>
+                <h2>补货建议</h2>
+                <p>根据售罄率、内容热度和生产交期生成建议</p>
+              </div>
+            </div>
+            <div class="business-grid" id="replenishmentGrid"></div>
+          </section>
+        </section>
+
+        <section id="marketingLive" class="view">
+          <div class="metric-grid" id="marketingMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>活动与投放</h2>
+                  <p>ROI、大促节点、主推款和预算消耗</p>
+                </div>
+              </div>
+              <div class="business-list" id="campaignList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>直播排期</h2>
+                  <p>主播、场次、主推产品和预估 GMV</p>
+                </div>
+              </div>
+              <div class="business-list" id="liveScheduleList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="fulfillmentLogistics" class="view">
+          <div class="metric-grid" id="fulfillmentMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>订单履约</h2>
+                  <p>已付款、待发货、超时风险、仓库处理效率</p>
+                </div>
+              </div>
+              <div class="business-list" id="fulfillmentList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>物流异常</h2>
+                  <p>揽收、派送、拒收、退回和预售风险</p>
+                </div>
+              </div>
+              <div class="progress-list" id="logisticsIssueList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="feedbackReturns" class="view">
+          <div class="metric-grid" id="feedbackMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>退货原因</h2>
+                  <p>尺码、面料、色差、版型和物流问题</p>
+                </div>
+              </div>
+              <div class="progress-list" id="returnReasonList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>商品反馈</h2>
+                  <p>从评价和售后反推产品、详情页和客服话术</p>
+                </div>
+              </div>
+              <div class="business-list" id="productFeedbackList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="marketTrends" class="view">
+          <div class="metric-grid" id="trendMetricGrid"></div>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>竞品监控</h2>
+                  <p>爆款价格、卖点、内容热度和上新速度</p>
+                </div>
+              </div>
+              <div class="business-list" id="competitorList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>趋势信号</h2>
+                  <p>颜色、面料、款式、场景和内容关键词</p>
+                </div>
+              </div>
+              <div class="progress-list" id="trendSignalList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="taskCollaboration" class="view">
+          <div class="metric-grid" id="taskMetricGrid"></div>
+          <section class="panel topic-panel">
+            <div class="panel-head">
+              <div>
+                <h2>跨部门任务协同</h2>
+                <p>商品、供应链、内容、运营、客服围绕产品协同推进</p>
+              </div>
+            </div>
+            <div class="task-board" id="taskBoard"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+      <article class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="icon-button close-button" id="closeModal" aria-label="关闭">×</button>
+        <div class="modal-layout">
+          <div class="product-visual" id="modalVisual"></div>
+          <div class="modal-content">
+            <p class="eyebrow" id="modalSku"></p>
+            <h2 id="modalTitle"></h2>
+            <p class="muted" id="modalMeta"></p>
+            <div class="modal-actions">
+              <button class="secondary-button" type="button" id="editCurrentProduct">编辑产品与 SKU</button>
+            </div>
+            <div class="detail-metrics" id="detailMetrics"></div>
+            <div class="relation-summary" id="relationSummary"></div>
+            <div class="detail-tabs" role="tablist" aria-label="产品详情维度">
+              <button class="detail-tab active" type="button" data-product-tab="business">经营数据</button>
+              <button class="detail-tab" type="button" data-product-tab="sku">SKU 单元</button>
+              <button class="detail-tab" type="button" data-product-tab="content">关联内容</button>
+              <button class="detail-tab" type="button" data-product-tab="paid">付费投流</button>
+              <button class="detail-tab" type="button" data-product-tab="live">直播讲解</button>
+              <button class="detail-tab" type="button" data-product-tab="assets">素材详情</button>
+              <button class="detail-tab" type="button" data-product-tab="elements">元素分析</button>
+              <button class="detail-tab" type="button" data-product-tab="graph">关系图</button>
+            </div>
+            <div class="detail-panel active-detail-panel" id="tab-business">
+              <h3>经营概览</h3>
+              <div class="business-kpi-grid" id="businessKpiGrid"></div>
+              <div class="business-section-grid" id="businessSectionGrid"></div>
+              <div class="business-detail-card">
+                <div class="section-title-row">
+                  <div>
+                    <h3 id="businessDetailTitle">基础档案</h3>
+                    <p class="muted" id="businessDetailMeta"></p>
+                  </div>
+                </div>
+                <div class="business-field-grid" id="businessFieldGrid"></div>
+              </div>
+              <form class="business-edit-card" id="businessOpsForm">
+                <div class="section-title-row">
+                  <div>
+                    <h3>经营字段维护</h3>
+                    <p class="muted">编辑后会写入本地产品数据库，并刷新产品库总览、列表和详情。</p>
+                  </div>
+                  <button class="secondary-button" type="submit">保存经营数据</button>
+                </div>
+                <div class="business-edit-grid" id="businessOpsEditor"></div>
+                <p class="business-save-state" id="businessOpsStatus"></p>
+              </form>
+              <h3>完整字段表</h3>
+              <div class="business-ledger" id="businessFieldLedger"></div>
+            </div>
+            <div class="detail-panel" id="tab-sku">
+              <h3>颜色 / 尺码库存</h3>
+              <div class="sku-matrix" id="skuMatrix"></div>
+            </div>
+            <div class="detail-panel" id="tab-content">
+              <h3>关联内容</h3>
+              <div class="related-content-list" id="relatedContentList"></div>
+            </div>
+            <div class="detail-panel" id="tab-paid">
+              <h3>付费投流</h3>
+              <div class="paid-summary-grid" id="paidSummaryGrid"></div>
+              <div class="paid-campaign-list" id="paidCampaignList"></div>
+            </div>
+            <div class="detail-panel" id="tab-live">
+              <h3>直播讲解</h3>
+              <div class="live-insight-grid" id="liveInsightGrid"></div>
+              <h3>主播分类对比</h3>
+              <div class="live-host-grid" id="liveHostGrid"></div>
+              <div class="live-session-list" id="liveSessionList"></div>
+            </div>
+            <div class="detail-panel" id="tab-assets">
+              <h3>图片 / 商品详情页</h3>
+              <div class="asset-grid" id="assetGrid"></div>
+              <div class="detail-page-blocks" id="detailPageBlocks"></div>
+            </div>
+            <div class="detail-panel" id="tab-elements">
+              <h3>产品元素提炼</h3>
+              <div class="element-groups" id="elementGroups"></div>
+            </div>
+            <div class="detail-panel" id="tab-graph">
+              <h3>产品关系图</h3>
+              <p class="muted">它不是销售图表，而是把一个产品和 SKU、内容、投流、直播、素材、元素标签放在同一张关系图里，方便从“这个款”反查相关资料。</p>
+              <div class="relation-graph" id="relationGraph"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="modal-backdrop" id="productFormBackdrop" aria-hidden="true">
+      <article class="form-modal" role="dialog" aria-modal="true" aria-labelledby="productFormTitle">
+        <button class="icon-button close-button" id="closeProductForm" type="button" aria-label="关闭">×</button>
+        <form id="productForm">
+          <input type="hidden" id="productFormId" />
+          <div class="form-modal-head">
+            <p class="eyebrow">Product Library</p>
+            <h2 id="productFormTitle">新增产品</h2>
+            <p class="muted">维护款号、平台、售价、颜色尺码和库存。保存后会写入本机浏览器数据，刷新页面也会保留。</p>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              产品名称
+              <input id="productFormName" type="text" required placeholder="例如 法式收腰碎花连衣裙" />
+            </label>
+            <label>
+              SKU 款号
+              <input id="productFormSku" type="text" required placeholder="例如 DRS-0429-FL" />
+            </label>
+            <label>
+              品类
+              <input id="productFormCategory" type="text" required placeholder="连衣裙 / 裤装 / 衬衫" />
+            </label>
+            <label>
+              零售价
+              <input id="productFormPrice" type="number" min="0" step="1" required />
+            </label>
+            <label>
+              状态
+              <select id="productFormStatus">
+                <option value="selling">在售</option>
+                <option value="soldout">售罄</option>
+                <option value="history">历史款</option>
+              </select>
+            </label>
+            <label>
+              主色
+              <input id="productFormSwatchA" type="color" value="#9c2f45" />
+            </label>
+            <label>
+              辅色
+              <input id="productFormSwatchB" type="color" value="#f1c2cc" />
+            </label>
+          </div>
+
+          <fieldset class="platform-fieldset">
+            <legend>销售平台</legend>
+            <label class="check-item"><input type="checkbox" name="productPlatforms" value="淘宝" /> 淘宝</label>
+            <label class="check-item"><input type="checkbox" name="productPlatforms" value="抖音" /> 抖音</label>
+            <label class="check-item"><input type="checkbox" name="productPlatforms" value="小红书" /> 小红书</label>
+            <label class="check-item"><input type="checkbox" name="productPlatforms" value="视频号" /> 视频号</label>
+          </fieldset>
+
+          <section class="sku-editor-section">
+            <div class="section-title-row">
+              <div>
+                <h3>颜色 / 尺码库存</h3>
+                <p class="muted">最小管理单元就是一个颜色加一个尺码，做货件数和剩余库存会自动汇总。</p>
+              </div>
+              <button class="secondary-button" type="button" id="addColorRow">增加颜色</button>
+            </div>
+            <div class="sku-editor" id="productSkuEditor"></div>
+          </section>
+
+          <p class="form-error" id="productFormError" role="alert"></p>
+
+          <div class="form-actions">
+            <button class="secondary-button" type="button" id="cancelProductForm">取消</button>
+            <button class="primary-button" type="submit">保存产品库</button>
+          </div>
+        </form>
+      </article>
+    </div>
+
+    <!-- 常驻聊天窗口（omnitask-bridge 注入） -->
+    <div class="chat-fab" id="chatFab" title="跟系统对话">
+      <span>💬</span>
+      <span class="chat-fab-badge" id="chatFabBadge" hidden>1</span>
+    </div>
+
+    <div class="chat-panel" id="chatPanel" hidden>
+      <header class="chat-header">
+        <div class="chat-header-title">
+          <span class="chat-header-dot" id="chatHeaderDot"></span>
+          <strong>跟 cockpit 对话</strong>
+          <span class="chat-header-sub" id="chatHeaderSub">连接中…</span>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-icon-btn" id="chatClearBtn" title="清空">⟲</button>
+          <button class="chat-icon-btn" id="chatCloseBtn" title="收起">✕</button>
+        </div>
+      </header>
+      <div class="chat-quick">
+        <button class="chat-chip" data-quick="今天销售如何？">📊 今天销售</button>
+        <button class="chat-chip" data-quick="有哪些库存预警？">📦 库存预警</button>
+        <button class="chat-chip" data-quick="我今天的待办">✓ 我的待办</button>
+        <button class="chat-chip" data-quick="本周对标博主有什么爆款？">📺 博主爆款</button>
+      </div>
+      <div class="chat-stream" id="chatStream"></div>
+      <form class="chat-input-row" id="chatForm">
+        <textarea class="chat-input" id="chatInput" rows="2"
+                  placeholder="跟系统说话…（Enter 发送 / Shift+Enter 换行）"></textarea>
+        <button class="chat-send-btn" type="submit" id="chatSendBtn">发送</button>
+      </form>
+    </div>
+
+    <script src="./app.js"></script>
+    <script src="./chat.js"></script>
+  </body>
+</html>
