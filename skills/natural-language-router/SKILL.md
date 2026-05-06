@@ -1,7 +1,7 @@
 ---
 name: lark-fashion-cockpit-natural-language-router
 version: 1.0.0
-description: "自然语言路由 Skill — 让飞书机器人听懂人话，把员工口语自动路由到 35 个 sub-skill 并提取参数。员工不用记关键词，直接说人话："今天卖得咋样" → morning-report，"DRS-0429 配什么" → product-matching，"拆这个抖音 URL" → video-script-parser。让公司全员（含技术小白和年龄大的）都能在飞书移动端用 cockpit。"
+description: "自然语言路由 Skill — 让飞书机器人听懂人话，把员工口语自动路由到 35 个 sub-skill 并提取参数。员工不用记关键词，直接说人话："今天卖得咋样" → morning-report，"DRS-0429 配什么" → product-matching，"拆这个抖音 URL" → blogger-monitor。让公司全员（含技术小白和年龄大的）都能在飞书移动端用 cockpit。"
 metadata:
   requires:
     bins: ["lark-cli", "python"]
@@ -22,7 +22,7 @@ metadata:
 | "今天卖得咋样" | ❌ 无关键词命中 | ✅ → morning-report |
 | "看下任务情况" | ✅（巧合）| ✅ |
 | "DRS-0429 配什么款好" | ❌ | ✅ → product-matching, product_id=DRS-0429 |
-| "拆这条抖音 [URL]" | ❌（要写"拆 [URL]"）| ✅ → video-script-parser, url=URL |
+| "拆这条抖音 [URL]" | ❌（要写"拆 [URL]"）| ✅ → blogger-monitor, url=URL |
 | "马萍蔓任务到点没" | ❌ | ✅ → task-tracker, filter owner=马萍蔓 |
 | "新品 KNT-0501 该备多少件" | ❌ | ✅ → launch-decision, product_id=KNT-0501 |
 | "老板会怎么决定这事" | ✅（碰巧命中）| ✅ → boss-clone-aily |
@@ -50,7 +50,7 @@ SKILLS = [
      "desc": "给产品配搭配款",
      "trigger_examples": ["DRS-XXX 配什么", "搭配推荐"],
      "params": [{"name": "product_id", "required": true}]},
-    {"id": "video-script-parser",
+    {"id": "blogger-monitor",
      "desc": "拆解抖音/快手视频脚本",
      "trigger_examples": ["拆这个视频", "分析这条视频"],
      "params": [{"name": "url", "required": true}]},
@@ -194,7 +194,6 @@ natural-language-router 识别：
 
 - 是 35 个 sub-skill 的"前置网关" — 改 1 个 skill 这里也要改注册表
 - 联动 [`event-router`](../event-router/SKILL.md)（升级版）
-- 联动 [`skill-recommender`](../skill-recommender/SKILL.md)（推荐时也走相同 NLU）
 
 ---
 
@@ -203,7 +202,6 @@ natural-language-router 识别：
 | 谁 | 场景 | 方式 |
 |---|---|---|
 | 老板娘（移动端飞书）| 在出差路上问"今天卖得咋样" | 飞书机器人 → 自然语言路由 → morning-report |
-| 设计师马萍蔓 | "我设计稿被改了几次"| 路由 → doc-iterator |
 | 工厂申丽媛 | "今天我交了几单货"| 路由 → production-supplier |
 | 主播小马 | "下场直播该带什么货"| 路由 → live-streaming + product-matching |
 | 客服小红 | "客户赵姐之前买过啥"| 路由 → private-domain |

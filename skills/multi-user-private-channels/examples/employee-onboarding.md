@@ -52,7 +52,6 @@
    📋 看下我的任务  →  task-tracker
    🛍 DRS-XXX 配什么  →  product-matching
    📚 查产品元素标签  →  product-library
-   🎨 文档迭代  →  doc-iterator
    📖 查知识库 / 词典  →  knowledge-base
    ...
 

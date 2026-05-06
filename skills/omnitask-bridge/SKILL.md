@@ -39,7 +39,7 @@ AI 识别 query.sales_today
 "通知 ZC 工厂 DRS-0429 雪纺面料下周一前能不能交货"
   ↓
 AI 识别 notify.supplier，提取 supplier="ZC 工厂"、message="..."
-  ↓ 调 wxauto-supplier-bridge / wecom-bridge
+  ↓ 调 im-broadcaster
   ↓
 "⚙ 已发给 ZC 工厂的浙江老张  ✓ 对方已读"
 ```
@@ -142,9 +142,9 @@ python server.py    # 端口 8000
 | query.my_tasks | query | "我的待办" | lark-cli task +get-my-tasks |
 | query.bloggers_top | query | "对标博主爆款" | feishu_data → 27_对标博主视频 |
 | task.create | task | "建任务" | lark-cli task +create + assign |
-| notify.supplier | notify | "通知 XX 工厂" | wxauto-supplier-bridge |
-| notify.broadcast_supplier | notify | "问所有面料商" | wxauto-supplier-bridge |
-| wechat.scan | notify | "扫微信群" | wechat-monitor |
+| notify.supplier | notify | "通知 XX 工厂" | im-broadcaster |
+| notify.broadcast_supplier | notify | "问所有面料商" | im-broadcaster |
+| wechat.scan | notify | "扫微信群" | im-collector |
 | content.generate_script | content | "写脚本" | 跳转创作系统 |
 | doc.create | doc | "建文档" | lark-cli docs +create |
 | calendar.today | calendar | "今天会议" | lark-cli calendar +agenda |
@@ -172,10 +172,8 @@ python server.py    # 端口 8000
 ```
 omnitask-bridge
    │
-   ├ 调用 wxauto-supplier-bridge   (主动发微信)
-   ├ 调用 wechat-monitor           (扫红点 / 长图总结)
-   ├ 调用 wecom-bridge             (企微 API)
-   ├ 调用 cross-platform-im-agent  (跨平台编排)
+   ├ 调用 im-broadcaster   (跨平台消息发送：飞书/企微/个微)
+   ├ 调用 im-collector     (跨平台消息收集：扫红点 / 长图总结 / 导出分析)
    ├ 调用 task-collaboration       (跨租户任务)
    ├ 调用 morning-report           (早报)
    └ 调用 lark-cli 全套（im/base/task/calendar/docs/drive/...）

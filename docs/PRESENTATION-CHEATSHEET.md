@@ -38,7 +38,6 @@
 
 > "**市面上所有 Skill 都是固定能力。lark-fashion-cockpit 是会自演进的 Skill** —— agent 看你 7 天飞书活动，主动建议'要不要把每天 8:00 的经营晨报固化成定时 skill？'。**30 个对手作品里没人做了这件事**。"
 
-**演示画面：** skill-recommender 卡片 (置信度 95%, cron 0 8 * * *)
 
 ---
 
@@ -64,12 +63,10 @@
 | # | 能力 | 触发命令 | 演讲卡片 |
 |---|---|---|---|
 | 1 | morning-report 经营晨报 | "今日经营怎么样" | morning-report.xml |
-| 2 | target-tracking 目标进度 | "看下进度" | （并入晨报）|
 | 3 | profit-analysis 利润分析 | "看下利润" | profit-analysis 卡 |
 | 4 | task-collaboration ⭐ | "启动早春第三波上新" | 12 任务下发 |
 | 5 | task-lifecycle ⭐ | **"巡检任务"** | 红色巡检卡 |
 | 6 | event-router 🔥 套娃 | （所有触发都经它） | event-listener 日志 |
-| 7 | skill-recommender 🔥 自演进 | "推荐 skills" | 紫色推荐卡 |
 
 ### 🅱 商品中心（8）
 | # | 能力 | 触发命令 | 演讲卡片 |
@@ -81,7 +78,6 @@
 | 12 | competitor-monitor | "看竞品" | 红色竞品周报 |
 | 13 | product-matching ⭐ | **"DRS-0429-FL 配什么好"** | 蓝色搭配 + 搭配图 |
 | 14 | launch-decision ⭐ | **"DRS-2026-RM 下多少件"** | 紫色 4 维信号建议 |
-| 15 | product-graph 🔥 关系图 | "画产品关系图" | 飞书白板 |
 
 ### 🅲 销售增长（4）
 | # | 能力 | 触发命令 | 演讲卡片 |
@@ -95,16 +91,13 @@
 | # | 能力 | 触发命令 | 演讲卡片 |
 |---|---|---|---|
 | 20 | production-supplier | "看生产" | 橙色生产监控 |
-| 21 | order-fulfillment | "看物流" | 蓝色履约卡 |
 
 ### 🅴 公司管理（11）
 | # | 能力 | 触发命令 | 演讲卡片 |
 |---|---|---|---|
 | 22 | knowledge-base | "知识库" | 公司经营手册 Wiki |
-| 23 | meeting-workflow ⭐ | "整理上周会议" | 紫罗兰复盘卡 |
 | 24 | meeting-broadcaster 🔥 | "广播 4/29 会议" | 3 份个性化简报 |
 | 25 | meeting-clip-extractor 🔥 | "剪 4/29 会议高光 30 秒" | 3 个 mp4 视频 |
-| 26 | doc-iterator 🔥 | "根据评论改文档" | V2 修订段落 |
 | 27 | okr-cascade | "OKR 进度" | 绿色 OKR 卡 |
 | 28 | approval-flow | "审批分流" | 蓝色审批卡 |
 | 29 | experience-capture 🔥 | (员工日常录入) | 经验进表 |

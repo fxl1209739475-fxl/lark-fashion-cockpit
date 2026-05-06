@@ -118,10 +118,9 @@ foreach($theme in "信息卡点", "AI 决策", "数据沟通"){
 ## 六、和 meeting-broadcaster 的差别（4 件套完整闭环）
 
 ```
-1. meeting-workflow         妙记 → 派任务            （文字结果）
+1. task-lifecycle         妙记 → 派任务            （文字结果）
 2. meeting-broadcaster      妙记 → 个性化简报        （文字+定制）
 3. meeting-clip-extractor   妙记 → 高光视频          （视觉素材）⭐ 本能力
-4. doc-iterator             文档评论 → 自动 V2       （文档迭代）
 ```
 
 **4 件套覆盖从会议结束到产出落地的全链路。**

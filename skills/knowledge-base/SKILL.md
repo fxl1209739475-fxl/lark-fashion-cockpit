@@ -128,7 +128,7 @@ agent：
 ## 五、与其他 skill 协作
 
 - `product-library`：知识页内容来源
-- `meeting-workflow`：会议沉淀写入知识库
+- `task-lifecycle`：会议沉淀写入知识库
 - `task-collaboration`：建客服培训任务
 
 ## 六、参考

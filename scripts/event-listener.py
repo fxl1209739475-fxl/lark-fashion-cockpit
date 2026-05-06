@@ -223,10 +223,10 @@ AUTO_TOGGLE_RE = re.compile(r"^(?:(停|禁用|关闭)\s*(\S+)|(启用|开启|开
 # wxauto 供应商桥路由
 SUPPLIER_ASK_RE = re.compile(r"^问\s*(\S+?)(?:工厂|供应商)?\s+(.+)$")
 SUPPLIER_BROADCAST_RE = re.compile(r"^问所有\s*(\S+?)(?:商|工厂|供应商)?\s+(.+)$")
-WXAUTO_SEND_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wxauto-supplier-bridge\scripts\send-to-supplier.py"
-WXAUTO_BROADCAST_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wxauto-supplier-bridge\scripts\broadcast-to-suppliers.py"
-SUMMARIZE_IMAGE_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wechat-monitor\scripts\summarize-image.py"
-SUMMARIZE_EXPORT_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wechat-monitor\scripts\summarize-export.py"
+WXAUTO_SEND_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\im-broadcaster\scripts\wxauto\send-to-supplier.py"
+WXAUTO_BROADCAST_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\im-broadcaster\scripts\wxauto\broadcast-to-suppliers.py"
+SUMMARIZE_IMAGE_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\im-collector\scripts\summarize-image.py"
+SUMMARIZE_EXPORT_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\im-collector\scripts\summarize-export.py"
 AUTO_TRIGGERS_PATH = r"C:\Users\冯兴龙\lark-fashion-cockpit\config\auto-triggers.json"
 SCHEDULER_STATUS_PATH = r"C:\Users\冯兴龙\lark-fashion-cockpit\logs\scheduler-status.json"
 
@@ -627,8 +627,8 @@ def handle_message(event: dict, simulate: bool = False):
     # 视频拆解路由（主动触发）
     m_parse = VIDEO_PARSE_RE.match(text.strip())
     if m_parse:
-        if not simulate and not check_skill_permission(user_config, "video-script-parser"):
-            print(f"  🚫 权限不足: {user_config['name']} ({user_config['role']}) 不能用 video-script-parser")
+        if not simulate and not check_skill_permission(user_config, "blogger-monitor"):
+            print(f"  🚫 权限不足: {user_config['name']} ({user_config['role']}) 不能用 blogger-monitor")
             send_card(chat_id, "🚫 权限不足",
                       f"你（**{user_config['name']}** · {user_config['role']}）不能用视频拆解。请联系老板娘开权限", "red")
             return

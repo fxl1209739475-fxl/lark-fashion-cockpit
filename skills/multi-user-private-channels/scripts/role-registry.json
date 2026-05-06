@@ -12,17 +12,17 @@
     "designer": {
       "name": "设计师",
       "allowed_skills": [
-        "task-tracker", "task-collaboration", "task-lifecycle",
-        "product-library", "product-matching", "product-graph",
-        "doc-iterator", "knowledge-base",
+        "task-collaboration", "task-lifecycle",
+        "product-library", "product-matching",
+        "knowledge-base",
         "natural-language-router", "lingo-fashion-glossary"
       ]
     },
     "production": {
       "name": "生产主管/工厂",
       "allowed_skills": [
-        "task-tracker", "task-collaboration", "task-lifecycle",
-        "production-supplier", "order-fulfillment",
+        "task-collaboration", "task-lifecycle",
+        "production-supplier", "helpdesk-customer-tickets",
         "stock-replenishment", "feedback-returns",
         "natural-language-router", "lingo-fashion-glossary",
         "knowledge-base"
@@ -41,22 +41,23 @@
       "allowed_skills": [
         "feedback-returns", "private-domain",
         "helpdesk-customer-tickets", "lingo-fashion-glossary",
-        "natural-language-router", "knowledge-base"
+        "natural-language-router", "knowledge-base",
+        "im-collector", "im-broadcaster"
       ]
     },
     "content": {
       "name": "内容编辑",
       "allowed_skills": [
-        "content-pipeline", "video-script-parser", "blogger-monitor",
-        "competitor-monitor", "doc-iterator",
+        "content-pipeline", "blogger-monitor",
+        "competitor-monitor",
         "natural-language-router", "lingo-fashion-glossary"
       ]
     },
     "ops": {
       "name": "运营",
       "allowed_skills": [
-        "platform-analytics", "morning-report", "target-tracking",
-        "task-collaboration", "task-tracker",
+        "platform-analytics", "morning-report",
+        "task-collaboration", "task-lifecycle",
         "live-streaming", "competitor-monitor",
         "product-library", "product-matching",
         "natural-language-router", "knowledge-base", "lingo-fashion-glossary"

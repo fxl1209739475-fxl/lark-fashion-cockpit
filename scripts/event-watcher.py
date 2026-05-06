@@ -44,7 +44,6 @@ IM_ROUTES = [
     (r"配什么好|搭配推荐|主图穿搭", "product-matching-demo.ps1", "🛍 产品搭配推荐", "P1"),
     (r"新品.*多少件|下单建议|翻单|备货建议", "launch-decision.ps1", "📊 新品下单判断", "P0"),
     (r"利润|哪些款赚钱|净利率", "profit-analysis.ps1", "💰 利润分析", "P1"),
-    (r"画产品|关系图|白板生成", "product-graph.ps1", "🎨 产品关系图", "P1"),
 ]
 
 # @老板智能分类规则（无 skill 路由时执行）

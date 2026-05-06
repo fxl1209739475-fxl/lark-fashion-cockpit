@@ -118,11 +118,11 @@ agent：
 ## 五、与其他 skill 协作
 
 - `task-collaboration`：任务建立时自动关联到 OKR
-- `meeting-workflow`：会议行动项自动挂到 OKR
+- `task-lifecycle`：会议行动项自动挂到 OKR
 - `morning-report`：晨报里展示 OKR 进度
 
 ## 六、参考
 
 - [`../../../lark-okr/SKILL.md`](../../../lark-okr/SKILL.md)
 - [`../task-collaboration/SKILL.md`](../task-collaboration/SKILL.md)
-- [`../meeting-workflow/SKILL.md`](../meeting-workflow/SKILL.md)
+- [`../task-lifecycle/SKILL.md`](../task-lifecycle/SKILL.md)

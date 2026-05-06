@@ -217,7 +217,6 @@ OpenAgentX 可以替代我们的 ask-boss.py + product-matching 等 skill 内部
 - [`knowledge-base`](../knowledge-base/SKILL.md) — 高相关项目自动建 wiki 文档
 - [`task-collaboration`](../task-collaboration/SKILL.md) — 老板批准改造 → 自动建任务给 CTO/技术负责人
 - [`approval-flow`](../approval-flow/SKILL.md) — 涉及改造投入 > 16 小时的项目走审批
-- [`skill-recommender`](../skill-recommender/SKILL.md) — 雷达发现的高分项目可能成为新 sub-skill 的雏形
 
 ---
 

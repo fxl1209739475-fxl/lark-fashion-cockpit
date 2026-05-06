@@ -93,11 +93,11 @@ agent：
 
 ## 五、与其他 skill 协作
 
-- `target-tracking`：搭配 GMV 进度看
+- `platform-analytics`：搭配 GMV 进度看
 - `morning-report`：晨报展示日利润
 - `okr-cascade`：利润 OKR 进度
 
 ## 六、参考
 
-- [`../target-tracking/SKILL.md`](../target-tracking/SKILL.md)
+- [`../platform-analytics/SKILL.md`](../platform-analytics/SKILL.md)
 - [`../platform-analytics/SKILL.md`](../platform-analytics/SKILL.md)

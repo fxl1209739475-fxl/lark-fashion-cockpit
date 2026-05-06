@@ -89,11 +89,11 @@ agent：
 
 ## 五、与其他 skill 协作
 
-- `target-tracking`：平台目标进度
+- `platform-analytics`：平台目标进度
 - `live-streaming`：直播 ROI
 - `morning-report`：晨报里展示当日数据
 
 ## 六、参考
 
-- [`../target-tracking/SKILL.md`](../target-tracking/SKILL.md)
+- [`../platform-analytics/SKILL.md`](../platform-analytics/SKILL.md)
 - [`../profit-analysis/SKILL.md`](../profit-analysis/SKILL.md)

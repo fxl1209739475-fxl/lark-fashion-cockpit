@@ -81,7 +81,7 @@ NLU 识别: skill=task-lifecycle, params={owner: "马萍蔓"}, confidence=0.78
 
 ```
 员工 → "https://v.douyin.com/_wC6QT4SkQE/"
-NLU 识别: skill=video-script-parser, params={url: "https://v.douyin.com/_wC6QT4SkQE/"}, confidence=0.92
+NLU 识别: skill=blogger-monitor, params={url: "https://v.douyin.com/_wC6QT4SkQE/"}, confidence=0.92
 触发: parse-video-script.py --url ...
 回复: 视频拆解结果（30-60 秒后）
 ```

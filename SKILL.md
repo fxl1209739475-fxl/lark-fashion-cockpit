@@ -25,12 +25,10 @@ metadata:
 | 用户意图关键词 | 跳到子 skill |
 |---|---|
 | "今天怎么样 / 经营异常 / 健康度 / 老板早报" | [`morning-report`](skills/morning-report/SKILL.md) |
-| "目标 / 进度 / 完成率 / 缺口 / 季度 / 月度" | [`target-tracking`](skills/target-tracking/SKILL.md) |
 | "利润 / 哪些款赚钱 / 投放 ROI / 成本结构" | [`profit-analysis`](skills/profit-analysis/SKILL.md) |
 | **"上新任务下发 / 给团队分任务 / 协同跟进"** ⭐ | [`task-collaboration`](skills/task-collaboration/SKILL.md) |
 | **"巡检任务 / 看下逾期 / 任务追踪 / 任务复盘 / 为啥老延期"** ⭐ | [`task-lifecycle`](skills/task-lifecycle/SKILL.md) |
 | **"飞书消息触发 / 手机指挥 / 离开电脑跑 skill / 套娃模式"** 🔥 | [`event-router`](skills/event-router/SKILL.md) |
-| **"AI 推荐 skills / 自演进 / 把高频操作固化"** 🔥 | [`skill-recommender`](scripts/skill-recommender.ps1) |
 | **"AI 审稿 / 设计稿评论 / 自动找改进点"** | scripts/design-review-comments |
 | **"审批分流 / 自动批 / 大额升级老板"** | scripts/approval-router.ps1 |
 | **"agent 越用越懂我 / 长期记忆 / 自动学习"** | scripts/memory-evolve.ps1 |
@@ -46,7 +44,6 @@ metadata:
 | "退货原因 / 评价反馈 / 商品反馈" | [`feedback-returns`](skills/feedback-returns/SKILL.md) |
 | "竞品 / 爆款 / 趋势 / 同行" | [`competitor-monitor`](skills/competitor-monitor/SKILL.md) |
 | **"XX 配什么好 / 搭配推荐 / 主图穿搭 / 直播搭配 / 老库存清仓"** ⭐ | [`product-matching`](skills/product-matching/SKILL.md) |
-| **"产品关系图 / 画产品全景 / 白板生成 / 全维度图"** 🔥 | [`product-graph`](skills/product-graph/SKILL.md) |
 | **"新品下多少件 / 备货建议 / 翻单决策 / 尺码颜色占比 / 面料备多少"** ⭐ | [`launch-decision`](skills/launch-decision/SKILL.md) |
 
 ### 🅲 销售增长（4 能力）
@@ -63,16 +60,13 @@ metadata:
 | 用户意图关键词 | 跳到子 skill |
 |---|---|
 | "生产 / 供应商 / 工厂 / 打样 / 交期" | [`production-supplier`](skills/production-supplier/SKILL.md) |
-| "订单 / 发货 / 物流 / 履约异常" | [`order-fulfillment`](skills/order-fulfillment/SKILL.md) |
 
 ### 🅴 公司管理（11 能力 — 飞书 CLI 增值层 + 组织学习闭环 + 视频剪辑）
 
 | 用户意图关键词 | 跳到子 skill |
 |---|---|
 | "知识库 / SOP / 客服话术 / 培训资料" | [`knowledge-base`](skills/knowledge-base/SKILL.md) |
-| **"复盘会 / 周会纪要 / 会议待办 / 自动出报告"** ⭐ | [`meeting-workflow`](skills/meeting-workflow/SKILL.md) |
 | **"会议总结分发 / 按岗位定制纪要 / 上传下达不损耗"** 🔥 | [`meeting-broadcaster`](skills/meeting-broadcaster/SKILL.md) |
-| **"根据评论改文档 / 整合评论意见 / 文档 V2 / 评论合并"** 🔥 | [`doc-iterator`](skills/doc-iterator/SKILL.md) |
 | **"提交经验 / 失败教训 / 改进建议 / 经验沉淀"** 🔥 | scripts/experience-capture.ps1 |
 | **"经验审批 / 知识库归档 / 复用部门"** 🔥 | scripts/experience-approval.ps1 |
 | **"AI 反哺 / 别人犯过吗 / 有人用过吗 / 找谁请教"** 🔥 | scripts/knowledge-feedback.ps1 |

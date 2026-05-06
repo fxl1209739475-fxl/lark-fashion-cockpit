@@ -13,10 +13,7 @@
 | task-lifecycle 生命周期 | ⭐⭐⭐⭐⭐ | 派→追→提→复→反哺，全行业通用 |
 | morning-report 经营晨报 | ⭐⭐⭐⭐⭐ | 5 维数据整合模板 |
 | event-router 飞书 IM 套娃 | ⭐⭐⭐⭐⭐ | 消息路由，与业务无关 |
-| skill-recommender 自演进 | ⭐⭐⭐⭐⭐ | meta-skill，全行业通用 |
 | memory-evolve 长期记忆 | ⭐⭐⭐⭐⭐ | 通用 |
-| product-graph 关系图 | ⭐⭐⭐⭐ | Mermaid 框架通用，节点定义需改 |
-| meeting-workflow 复盘 | ⭐⭐⭐⭐⭐ | vc + minutes 集成，行业无关 |
 | profit-analysis 利润分析 | ⭐⭐⭐⭐ | 平台扣点系数需替换 |
 | approval-router 审批分流 | ⭐⭐⭐⭐ | 金额阈值需替换 |
 

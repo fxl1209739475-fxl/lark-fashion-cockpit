@@ -10,7 +10,7 @@ from datetime import datetime
 
 LARK_CLI = r"C:\Users\冯兴龙\AppData\Roaming\npm\node_modules\@larksuite\cli\bin\lark-cli.exe"
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-SEND_SCRIPT = os.path.join(PROJECT_ROOT, "skills", "wxauto-supplier-bridge", "scripts", "send-to-supplier.py")
+SEND_SCRIPT = os.path.join(PROJECT_ROOT, "skills", "im-broadcaster", "scripts", "send-to-supplier.py")
 
 INTERVAL_SECONDS = 12       # 间隔 12 秒（5 条/分钟）
 MAX_BROADCAST = 20          # 单次群发最多 20 个

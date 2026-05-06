@@ -153,7 +153,7 @@ event-router 是入口
    ├ 命中"搭配" → 调 product-matching
    ├ 命中"下单" → 调 launch-decision
    ├ 命中"利润" → 调 profit-analysis
-   ├ 命中"复盘" → 调 meeting-workflow
+   ├ 命中"复盘" → 调 task-lifecycle
    └ 命中"晨报" → 调 morning-report
 ```
 

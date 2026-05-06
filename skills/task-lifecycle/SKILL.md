@@ -16,7 +16,7 @@ metadata:
 
 > **板块：** 🅰 公司经营（第 22 个能力，task-collaboration 升级版）  
 > **数据源：** `05_任务清单`（含 8 个生命周期字段）+ `14_审批记录`（教训库）  
-> **下游联动：** `launch-decision` / `new-launch-planning` / `meeting-workflow`
+> **下游联动：** `launch-decision` / `new-launch-planning` / `task-lifecycle`
 
 ---
 
@@ -173,7 +173,7 @@ invoke task-lifecycle --create \
 invoke task-tracker → 嵌入晨报 P0/P1/P2 列表
 ```
 
-### meeting-workflow 调用（复盘会包含任务复盘）
+### task-lifecycle 调用（复盘会包含任务复盘）
 
 ```bash
 # 复盘会前自动跑 task-retrospective
@@ -217,6 +217,6 @@ invoke task-tracker → 嵌入晨报 P0/P1/P2 列表
 
 - [`../task-collaboration/SKILL.md`](../task-collaboration/SKILL.md) — 任务派工基础（被本 skill 升级）
 - [`../launch-decision/SKILL.md`](../launch-decision/SKILL.md) — 反哺目标
-- [`../meeting-workflow/SKILL.md`](../meeting-workflow/SKILL.md) — 复盘会消费方
+- [`../task-lifecycle/SKILL.md`](../task-lifecycle/SKILL.md) — 复盘会消费方
 - [`../morning-report/SKILL.md`](../morning-report/SKILL.md) — 晨报含巡检
 - 数据：`05_任务清单`（8 字段扩展）+ `14_审批记录`（教训反哺目标）

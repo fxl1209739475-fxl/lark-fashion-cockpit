@@ -1,17 +1,61 @@
 ---
 name: lark-fashion-cockpit-blogger-monitor
-version: 1.0.0
-description: "对标博主每日监控 Skill — 监控指定竞品博主清单（抖音/快手/视频号）的最新视频，按 5 项算法（赞粉比/收藏率/分享率/评赞比/AI 评分）给爆款指数 0-10 分，4 路筛选出值得二创的 TOP N，发飞书工作汇报卡片。当用户说「监控博主」「看竞品博主」「同行最近发了啥」「TOP N 爆款」「博主每日汇报」时使用。"
+version: 2.0.0
+description: "对标博主每日监控 + 视频脚本一键拆解 — 监控竞品博主（抖音/快手/视频号）最新视频，AI 评分爆款指数；选中爆款一键拆脚本（yt-dlp + faster-whisper + DOUBAO 多模态 5 维度：镜头/台词/视觉/声音/节奏）。当用户说「监控博主」「看竞品博主」「同行发了啥」「拆这条视频」「二创脚本」时使用。"
 metadata:
   requires:
-    bins: ["lark-cli", "python"]
+    bins: ["lark-cli", "python", "yt-dlp", "ffmpeg"]
+    pip: ["openai", "faster-whisper"]
 ---
 
-# 对标博主每日监控 — 不刷抖音也能掌握同行动态
+# 对标博主监控 + 视频拆解一站式
 
-> **🎯 痛点：** 老板娘每天花 2 小时刷竞品博主，看完没数据沉淀也不知道哪条值得学。
+> **🎯 痛点：** 老板娘每天花 2 小时刷竞品博主，看完没数据沉淀也不知道哪条值得学；想二创还要切工具拉视频 + 拆脚本，工作流断裂。
 
-> **核心能力：** 监控 N 个博主 → 算法筛选 → 飞书卡片汇报 TOP 3，附数据指标 + 文案前 120 字 + 看视频按钮
+> **核心能力：**
+> 1. 监控 N 个博主 → 算法评分 → 飞书卡片汇报 TOP 3
+> 2. **同 skill 内一键拆脚本** —— 选中爆款 → yt-dlp 拉视频 → faster-whisper 转录 → DOUBAO 多模态拆解 5 维度（镜头 / 台词 / 视觉 / 声音 / 节奏）→ 输出可执行二创 md
+
+## 二、视频拆解能力（合并自原 video-script-parser）
+
+`scripts/parse-video-script.py` 主脚本：
+
+```bash
+# 单条拆解
+python scripts/parse-video-script.py --url "https://www.douyin.com/video/xxx"
+
+# 不写飞书 wiki 只本地存
+python scripts/parse-video-script.py --url "..." --no-wiki
+```
+
+输出 5 维度结构化拆解：
+- 一、镜头脚本（按秒粒度）
+- 二、文案台词（含转场点）
+- 三、视觉设计（构图 / 配色 / 道具）
+- 四、声音设计（旁白节奏 / BGM 选型）
+- 五、节奏分析（高潮点位置）
+
+依赖外部能力：
+- `yt-dlp` 拉抖音 / 快手 / 视频号视频
+- `faster-whisper` 本地 ASR（备选：DOUBAO ASR API，HF 网络受阻时用）
+- `DOUBAO doubao-1-5-vision-pro-32k-250115` 多模态视觉拆帧
+- 防盗链：requests Referer + Cookie header 解决 CDN 403
+
+## 三、典型工作流（监控 → 拆解一气呵成）
+
+```
+每天 9:00 自动跑 monitor-bloggers.py
+  ↓
+飞书卡片"今日 Top 3 爆款"
+  ↓
+老板娘点其中一条的【拆脚本】按钮
+  ↓
+parse-video-script.py 自动跑
+  ↓
+30 秒后飞书 wiki 收到完整拆解 md
+  ↓
+朱健豪基于 md 二创新视频
+```
 
 ---
 
@@ -101,7 +145,7 @@ python scripts/monitor-bloggers.py --top 5 --reply-chat-id oc_xxx
 
 ## 六、与其他 skill 协作
 
-- [`video-script-parser`](../video-script-parser/SKILL.md) — 老板娘看完 TOP 3 选 1 个发「拆 NO.001」自动拆解视频脚本到 27 表「视频拆解」字段
+- 视频拆解能力已合并入本 skill（见上方"二、视频拆解能力"），同 skill 内一键调 `parse-video-script.py`
 - [`content-pipeline`](../content-pipeline/SKILL.md) — 选中的视频作为二创素材源
 - [`competitor-monitor`](../competitor-monitor/SKILL.md) — 趋势分析联动
 

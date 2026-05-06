@@ -60,8 +60,7 @@ ROLE_REGISTRY = {
         "role": "designer",
         "allowed_skills": [
             "task-tracker", "task-collaboration",
-            "product-library", "product-matching", "product-graph",
-            "doc-iterator", "knowledge-base",
+            "product-library", "product-matching", "product-matching",
             "natural-language-router",
         ],
     },
@@ -70,7 +69,7 @@ ROLE_REGISTRY = {
         "name": "申丽媛",
         "role": "production",
         "allowed_skills": [
-            "task-tracker", "production-supplier", "order-fulfillment",
+            "task-tracker", "production-supplier", "helpdesk-customer-tickets",
             "stock-replenishment", "natural-language-router",
         ],
     },
@@ -79,7 +78,7 @@ ROLE_REGISTRY = {
         "name": "朱健豪",
         "role": "content",
         "allowed_skills": [
-            "content-pipeline", "video-script-parser", "blogger-monitor",
+            "content-pipeline", "blogger-monitor", "blogger-monitor",
             "competitor-monitor", "natural-language-router",
         ],
     },
@@ -195,7 +194,7 @@ private-domain  ✅    ❌     ❌    ❌    ✅    -
 production-supp ✅    ❌     ✅    ❌    ❌    -
 live-streaming  ✅    ❌     ❌    ✅    ❌    -
 content-pipeline ✅    ❌     ❌    ❌    ❌    朱健豪
-video-script-parser ✅ ❌    ❌    ❌    ❌    朱健豪 + 老板娘
+blogger-monitor ✅ ❌    ❌    ❌    ❌    朱健豪 + 老板娘
 opensource-radar  ✅   ❌    ❌    ❌    ❌    （仅老板 + 技术负责人）
 helpdesk-customer-tickets ✅ ❌  ❌    ❌    ✅    -
 lingo-fashion-glossary ✅   ✅   ✅    ✅   ✅    所有员工查词典

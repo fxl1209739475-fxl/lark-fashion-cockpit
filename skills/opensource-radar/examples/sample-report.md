@@ -100,7 +100,7 @@
 **改造思路**：
 1. 对接 25_未完成事项 第 3 条「企业微信 → 客户个人微信通知」
 2. 替代我们当前还没做的 wxauto 方案，更稳更合规
-3. 联动 skill：private-domain / order-fulfillment
+3. 联动 skill：private-domain / helpdesk-customer-tickets
 
 **工时预估**: 4-6 小时
 

@@ -77,15 +77,6 @@
       "description": "每晚 22:00 给每位员工发个人成长复盘卡 + SOP 沉淀建议"
     },
     {
-      "id": "skill-recommender",
-      "name": "🎯 skill 推荐器",
-      "cron": "0 8 * * 1",
-      "command": "python skills/skill-recommender/scripts/recommend.py",
-      "target": "boss_chat",
-      "enabled": true,
-      "description": "每周一早 8:00 基于上周 trigger-log 推荐这周该用哪些 skill"
-    },
-    {
       "id": "stock-alert",
       "name": "📦 库存预警实时",
       "cron": "*/30 9-21 * * *",

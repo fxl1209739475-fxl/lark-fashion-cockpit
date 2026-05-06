@@ -14,7 +14,7 @@ metadata:
 
 > **🚀 解决：** 会议 → AI 拆通用 + N 个角色定制 → 每人收到专属简报（含 why/how/when/notes 完整上下文）→ 同步建任务带说明。
 
-> **板块：** 🅴 公司管理（第 26 个能力，meeting-workflow 升级版）  
+> **板块：** 🅴 公司管理（第 26 个能力，task-lifecycle 升级版）  
 > **数据源：** 飞书 vc + minutes API（真实妙记）  
 > **下游：** task-collaboration / task-lifecycle 派任务
 
@@ -140,9 +140,9 @@ PowerShell -File scripts/meeting-broadcaster.ps1 \
 
 ---
 
-## 八、和 meeting-workflow 的差别
+## 八、和 task-lifecycle 的差别
 
-| meeting-workflow（已有）| meeting-broadcaster（新）|
+| task-lifecycle（已有）| meeting-broadcaster（新）|
 |---|---|
 | 拉妙记 → 提取 todos → 派任务 | 拉妙记 → AI 拆通用+定制 → **每人专属简报** + 任务带上下文 |
 | "你要做这件事" | "你要做这件事，**因为...，应该这样...，截止..., 注意...**" |
@@ -152,7 +152,7 @@ PowerShell -File scripts/meeting-broadcaster.ps1 \
 
 ## 九、参考
 
-- [`../meeting-workflow/SKILL.md`](../meeting-workflow/SKILL.md) — 上一代能力
+- [`../task-lifecycle/SKILL.md`](../task-lifecycle/SKILL.md) — 上一代能力
 - [`../task-lifecycle/SKILL.md`](../task-lifecycle/SKILL.md) — 派任务后的生命周期管理
 - 真实演示：`scripts/meeting-broadcaster.ps1` 跑 4/29 女装会议
 - 飞书 vc + minutes API 真实接通（不是 mock）

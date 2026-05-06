@@ -23,8 +23,6 @@ SKILLS_REGISTRY = [
     # 公司经营
     {"id": "morning-report", "desc": "今日 4 平台销售/库存/直播综合数据 + AI 分析",
      "examples": ["今天卖得怎么样", "今日数据", "经营晨报", "店铺今天咋样"]},
-    {"id": "target-tracking", "desc": "目标追踪 OKR 实时进度",
-     "examples": ["目标进度", "OKR 完成度", "本月达标了吗"]},
     {"id": "profit-analysis", "desc": "利润分析单品/平台双维拆解",
      "examples": ["哪些款赚钱", "利润分析", "净利率", "店赚多少"]},
     {"id": "task-collaboration", "desc": "任务协作派工",
@@ -57,10 +55,8 @@ SKILLS_REGISTRY = [
     # 工作流
     {"id": "task-lifecycle", "desc": "任务生命周期巡检 + 升级逾期",
      "examples": ["看下任务", "巡检任务", "任务追踪", "逾期"]},
-    {"id": "video-script-parser", "desc": "拆解抖音/快手视频脚本",
-     "examples": ["拆这个视频", "分析这条视频", "拆 [URL]"]},
-    {"id": "blogger-monitor", "desc": "对标博主每日监控 TOP N",
-     "examples": ["看竞品博主", "今日同行 TOP", "博主排行"]},
+    {"id": "blogger-monitor", "desc": "对标博主监控 + 视频脚本拆解（合一）",
+     "examples": ["看竞品博主", "今日同行 TOP", "博主排行", "拆这个视频", "拆 [URL]"]},
 
     # AI 数字员工
     {"id": "boss-clone-aily", "desc": "问老板娘 AI 分身（基于 200 题语料）",

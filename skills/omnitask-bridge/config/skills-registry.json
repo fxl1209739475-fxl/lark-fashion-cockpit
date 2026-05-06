@@ -88,7 +88,7 @@
     {
       "id": "notify.supplier",
       "label": "通知供应商",
-      "description": "通过 wxauto-supplier-bridge 给指定供应商发微信通知",
+      "description": "通过 im-broadcaster 给指定供应商发微信通知（wxauto 通道）",
       "category": "notify",
       "trigger_keywords": ["通知 ZC 工厂", "通知 GS 工厂", "通知供应商", "告诉工厂"],
       "scopes_required": ["notify.supplier"],
@@ -96,7 +96,7 @@
         "supplier": "供应商名（必填）",
         "message": "通知内容（必填）"
       },
-      "executor": ["python", "skills/wxauto-supplier-bridge/scripts/send-to-supplier.py"],
+      "executor": ["python", "skills/im-broadcaster/scripts/wxauto/send-to-supplier.py"],
       "long_running": true
     },
     {
@@ -110,7 +110,7 @@
         "category": "类别（面料商/辅料商/成衣工厂/印花厂/物流）",
         "message": "消息内容"
       },
-      "executor": ["python", "skills/wxauto-supplier-bridge/scripts/broadcast-to-suppliers.py"],
+      "executor": ["python", "skills/im-broadcaster/scripts/wxauto/broadcast-to-suppliers.py"],
       "long_running": true
     },
     {
@@ -123,7 +123,7 @@
       "params_schema": {
         "keywords": "关键词列表逗号分隔（可选）"
       },
-      "executor": ["python", "skills/wechat-monitor/scripts/scan-wechat.py"],
+      "executor": ["python", "skills/im-collector/scripts/scan-wechat.py"],
       "long_running": true
     },
     {

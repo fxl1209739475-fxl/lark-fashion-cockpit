@@ -215,7 +215,6 @@ def detect_patterns(today_data, history_7d):
 - [`morning-report`](../morning-report/SKILL.md) — 早 8:00 经营晨报（公司视角） + 22:00 个人镜子（个人视角）= 全天双重复盘
 - [`task-lifecycle`](../task-lifecycle/SKILL.md) — 提取员工今日任务作为镜子数据源
 - [`knowledge-base`](../knowledge-base/SKILL.md) — 个人 SOP 库是员工私域 wiki
-- [`skill-recommender`](../skill-recommender/SKILL.md) — 沉淀的 SOP 多了之后可能升级成新 sub-skill
 - [`lingo-fashion-glossary`](../lingo-fashion-glossary/SKILL.md) — 反复出现的术语自动加词典
 
 ---

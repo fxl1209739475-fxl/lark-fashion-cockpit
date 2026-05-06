@@ -49,7 +49,7 @@ def main():
     print("   2. 客户授权同意会话存档")
     print("   3. 下载会话存档 SDK（C++/Python 包）")
     print()
-    print("   当前 cockpit 不强制实现此能力，仅作为 wecom-bridge skill 的扩展点保留。")
+    print("   当前 cockpit 不强制实现此能力，仅作为 im-broadcaster skill 的扩展点保留。")
     print()
     print("   如果你已有会话存档环境，本脚本应实现：")
     print("   - 调 GetChatData (SDK) 拉加密消息流")
@@ -59,7 +59,7 @@ def main():
     print("   - 发飞书卡片")
     print()
     print("   想用替代方案：")
-    print("   - 个人微信好友 → 用 ../../wechat-monitor/scripts/summarize-image.py（飞书滚动截屏 + AI）")
+    print("   - 个人微信好友 → 用 ../../im-collector/scripts/summarize-image.py（飞书滚动截屏 + AI）")
     print("   - 客户企微会话 → 让客户主动发一条消息触发 48h 窗口，期间用 send-msg.py 双向沟通")
 
 
