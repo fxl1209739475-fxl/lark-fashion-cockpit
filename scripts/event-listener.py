@@ -225,6 +225,8 @@ SUPPLIER_ASK_RE = re.compile(r"^问\s*(\S+?)(?:工厂|供应商)?\s+(.+)$")
 SUPPLIER_BROADCAST_RE = re.compile(r"^问所有\s*(\S+?)(?:商|工厂|供应商)?\s+(.+)$")
 WXAUTO_SEND_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wxauto-supplier-bridge\scripts\send-to-supplier.py"
 WXAUTO_BROADCAST_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wxauto-supplier-bridge\scripts\broadcast-to-suppliers.py"
+SUMMARIZE_IMAGE_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wechat-monitor\scripts\summarize-image.py"
+SUMMARIZE_EXPORT_SCRIPT = r"C:\Users\冯兴龙\lark-fashion-cockpit\skills\wechat-monitor\scripts\summarize-export.py"
 AUTO_TRIGGERS_PATH = r"C:\Users\冯兴龙\lark-fashion-cockpit\config\auto-triggers.json"
 SCHEDULER_STATUS_PATH = r"C:\Users\冯兴龙\lark-fashion-cockpit\logs\scheduler-status.json"
 
@@ -380,6 +382,46 @@ def route(text: str):
     return None
 
 
+def handle_image_summary(message_id: str, image_key: str, chat_id: str):
+    """老板发图片 → 下载 → 调 summarize-image.py → 飞书卡片"""
+    import tempfile
+    fd, tmp_path = tempfile.mkstemp(suffix=".jpg", prefix="lark-img-")
+    os.close(fd)
+
+    print(f"  下载图 (image_key={image_key[:20]}...) → {tmp_path}")
+    r = subprocess.run(
+        [LARK_CLI_EXE_PATH, "im", "+messages-resources-download",
+         "--as", "user",
+         "--message-id", message_id,
+         "--file-key", image_key,
+         "--type", "image",
+         "--output", tmp_path],
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30,
+    )
+    if r.returncode != 0 or not os.path.exists(tmp_path) or os.path.getsize(tmp_path) < 100:
+        print(f"  ❌ 图下载失败: {(r.stderr or r.stdout or '')[:200]}")
+        send_card(chat_id, "❌ 图片下载失败",
+                  f"lark-cli stderr: {(r.stderr or r.stdout or '')[:200]}",
+                  "red")
+        return
+
+    size_kb = os.path.getsize(tmp_path) / 1024
+    print(f"  ✓ 图已下载 ({size_kb:.0f} KB)")
+
+    # 异步调 summarize-image.py，让 listener 不阻塞
+    print(f"  ⚡ 触发 summarize-image.py 后台处理")
+    subprocess.Popen(
+        ["python", "-u", SUMMARIZE_IMAGE_SCRIPT,
+         "--image", tmp_path,
+         "--label", "微信滚动截图"],
+        cwd=os.path.dirname(SUMMARIZE_IMAGE_SCRIPT),
+    )
+    # 给老板一个"已收到"提示
+    send_card(chat_id, "📸 图片收到，AI 分析中...",
+              f"长图已下载（{size_kb:.0f} KB）\n约 10-30 秒后回卡片摘要。",
+              "blue")
+
+
 def handle_message(event: dict, simulate: bool = False):
     sender = event.get("sender_id", "")
     chat_id = event.get("chat_id", "")
@@ -392,7 +434,26 @@ def handle_message(event: dict, simulate: bool = False):
     print(f"\n[{datetime.now().strftime('%H:%M:%S')}] sender={sender[:12]}... chat={chat_id[:12]}... type={message_type} chat_type={chat_type}")
     print(f"  text: {text[:80]}")
 
-    # 防死循环：忽略 agent 自己发的卡片（interactive / post / image）
+    # 图片消息：owner 发图片 → 自动调 summarize-image（长图 AI 总结）
+    if message_type == "image":
+        registry = load_role_registry()
+        u = registry.get("users", {}).get(sender, {})
+        if u.get("role") != "owner":
+            print(f"  → ignore (image but sender not owner)")
+            return
+        try:
+            c = json.loads(content_raw) if isinstance(content_raw, str) else (content_raw or {})
+            image_key = c.get("image_key", "")
+        except Exception as e:
+            print(f"  → image content parse failed: {e}")
+            return
+        if not image_key:
+            print(f"  → image_key missing")
+            return
+        handle_image_summary(message_id, image_key, chat_id)
+        return
+
+    # 防死循环：忽略 agent 自己发的卡片（interactive / post）
     if message_type != "text":
         print(f"  → ignore (non-text message: {message_type})")
         return
