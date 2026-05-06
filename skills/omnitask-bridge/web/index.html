@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>女装电商产品管理 Demo</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=5" />
   </head>
   <body>
     <div class="app-shell">
@@ -195,25 +195,24 @@
               </section>
             </div>
 
-            <section class="ai-analysis-panel" aria-label="AI 产品分析">
+            <section class="ai-analysis-panel ai-analysis-redirect" aria-label="AI 产品分析">
               <div class="ai-analysis-head">
                 <div>
-                  <h3>AI 产品分析</h3>
-                  <p class="muted">输入经营问题，系统会读取当前产品库字段，生成可追溯的分析结果。</p>
+                  <h3>📊 AI 产品分析</h3>
+                  <p class="muted">分析功能已统一到右下角 💬 浮窗 — 点击下方示例直接发起 AI 对话分析。</p>
                 </div>
-                <span class="tag warning">本地分析 Demo</span>
-              </div>
-              <div class="ai-prompt-row">
-                <textarea id="aiProductPrompt" rows="3" placeholder="例如：找出售罄率低于50%的产品，按春夏秋冬分类，并按售卖权重优先排序。"></textarea>
-                <button class="primary-button" type="button" id="runProductAnalysis">生成分析</button>
+                <span class="tag info">合并到聊天助手</span>
               </div>
               <div class="ai-prompt-examples">
-                <button type="button" data-analysis-prompt="找出售罄率低于50%的产品，按春夏秋冬分类，并按售卖权重优先排序。">低售罄分季节</button>
-                <button type="button" data-analysis-prompt="列出距目标还需实销件数最高的产品，告诉我优先推进顺序。">目标缺口排序</button>
-                <button type="button" data-analysis-prompt="找出高退货率并且库存较高的风险款，给出处理建议。">退货库存风险</button>
+                <button type="button" data-chat-prompt="找出售罄率低于50%的产品，按春夏秋冬分类，并按售卖权重优先排序。">💬 低售罄分季节</button>
+                <button type="button" data-chat-prompt="列出距目标还需实销件数最高的产品，告诉我优先推进顺序。">💬 目标缺口排序</button>
+                <button type="button" data-chat-prompt="找出高退货率并且库存较高的风险款，给出处理建议。">💬 退货库存风险</button>
               </div>
-              <div class="ai-analysis-result" id="aiAnalysisResult">
-                <p>先选择一个示例问题，或者直接输入你的分析需求。</p>
+              <!-- 隐藏元素：保留是因为 app.js 启动时引用这些 id，删除会导致 TypeError 中断初始化 -->
+              <div hidden>
+                <textarea id="aiProductPrompt" rows="3"></textarea>
+                <button type="button" id="runProductAnalysis"></button>
+                <div id="aiAnalysisResult"></div>
               </div>
             </section>
 
@@ -920,8 +919,8 @@
           <span class="chat-header-sub" id="chatHeaderSub">连接中…</span>
         </div>
         <div class="chat-header-actions">
-          <button class="chat-icon-btn" id="chatClearBtn" title="清空">⟲</button>
-          <button class="chat-icon-btn" id="chatCloseBtn" title="收起">✕</button>
+          <button class="chat-icon-btn" id="chatClearBtn" title="清空对话">⟲</button>
+          <button class="chat-icon-btn chat-close-btn" id="chatCloseBtn" title="收起浮窗（ESC 也行）">收起</button>
         </div>
       </header>
       <div class="chat-quick">
@@ -938,7 +937,7 @@
       </form>
     </div>
 
-    <script src="./app.js"></script>
-    <script src="./chat.js"></script>
+    <script src="./app.js?v=5"></script>
+    <script src="./chat.js?v=5"></script>
   </body>
 </html>

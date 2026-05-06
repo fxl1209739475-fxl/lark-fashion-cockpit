@@ -147,6 +147,44 @@ async def list_skills():
 
 
 # ============================================================
+# 产品库（兼容 fashion-admin-demo 前端，避免它调 /api/products 404）
+# 当前实现：本地 JSON 文件持久化（后续可改成读飞书 base 01_产品库）
+# ============================================================
+
+_PRODUCTS_DB = SKILL_ROOT / "config" / "products-cache.json"
+
+
+def _read_products_db() -> dict:
+    if not _PRODUCTS_DB.exists():
+        return {"schemaVersion": 1, "updatedAt": None, "products": []}
+    try:
+        return json.loads(_PRODUCTS_DB.read_text(encoding="utf-8"))
+    except Exception:
+        return {"schemaVersion": 1, "updatedAt": None, "products": []}
+
+
+@app.get("/api/products")
+async def get_products():
+    return _read_products_db()
+
+
+@app.put("/api/products")
+async def put_products(request: Request):
+    body = await request.json()
+    products = body.get("products") or []
+    from datetime import datetime
+    payload = {
+        "schemaVersion": 1,
+        "updatedAt": datetime.now().isoformat(),
+        "source": body.get("source", "browser"),
+        "products": products,
+    }
+    _PRODUCTS_DB.parent.mkdir(parents=True, exist_ok=True)
+    _PRODUCTS_DB.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return payload
+
+
+# ============================================================
 # 创作系统反向代理（/creator-api/* → http://localhost:8000/api/*）
 # ============================================================
 

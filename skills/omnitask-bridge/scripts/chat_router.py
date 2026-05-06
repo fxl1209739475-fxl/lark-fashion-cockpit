@@ -160,12 +160,22 @@ async def route(text: str, user_role: str = "owner", on_event=None) -> dict:
             "_via": "keyword",
         }
         on_event({"type": "intent", **intent})
-        # 关键词路由的 params 可能不全（比如通知的 message），让 AI 补一下
-        if matched.get("params_schema"):
+        schema = matched.get("params_schema") or {}
+        # 关键词路由的 params 可能不全，让 AI 补一下
+        if schema:
             ai_intent = await classify_intent(text, user_role=user_role)
             if ai_intent.get("skill_id") == matched["id"]:
-                intent["params"] = ai_intent.get("params", {})
+                intent["params"] = ai_intent.get("params", {}) or {}
+        # 兜底：如果 schema 里要 question 但还是空，直接用用户原文
+        if "question" in schema and not (intent["params"].get("question") or "").strip():
+            intent["params"]["question"] = text
+        # 同理 message 字段（通知类）也兜底
+        if "message" in schema and not (intent["params"].get("message") or "").strip():
+            intent["params"]["message"] = text
         result = await _se.execute(matched["id"], intent.get("params", {}), on_event)
+        # 用户问题是"分析"类的，把 skill 输出整体当作回复推回（不需要再翻译，已经是自然语言）
+        if matched["id"] == "query.product_analysis" and result.get("ok"):
+            on_event({"type": "assistant_done", "text": result.get("stdout_tail", "")[:3000]})
         return {"intent": intent, "skill_result": result, "casual_reply": None}
 
     # 2. AI 分类

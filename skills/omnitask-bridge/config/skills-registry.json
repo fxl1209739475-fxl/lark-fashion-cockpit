@@ -58,6 +58,19 @@
       "long_running": false
     },
     {
+      "id": "query.product_analysis",
+      "label": "产品库 AI 分析",
+      "description": "基于 01_产品库 实时数据回答产品/经营分析问题（售罄率/库存/退货/补货优先级/季节分类）",
+      "category": "query",
+      "trigger_keywords": ["售罄", "退货率", "补货优先", "产品分析", "经营分析", "库存风险", "做产品库分析"],
+      "scopes_required": ["query.*"],
+      "params_schema": {
+        "question": "用户的具体分析问题（必填，从聊天文本里提取）"
+      },
+      "executor": ["python", "skills/omnitask-bridge/scripts/feishu_data.py", "--query", "product_analysis"],
+      "long_running": true
+    },
+    {
       "id": "task.create",
       "label": "建任务",
       "description": "在飞书任务里建一条任务，可指派给员工",

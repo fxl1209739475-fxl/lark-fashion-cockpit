@@ -3026,21 +3026,23 @@ tbody tr:hover {
   position: fixed;
   right: 28px;
   bottom: 28px;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+  font-size: 24px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
   z-index: 9999;
-  transition: transform 0.15s;
+  transition: transform 0.12s, box-shadow 0.12s;
 }
-.chat-fab:hover { transform: scale(1.05); }
+.chat-fab:hover { transform: scale(1.06); box-shadow: 0 8px 26px rgba(79, 70, 229, 0.5); }
+.chat-fab:active { cursor: grabbing; }
 .chat-fab-badge {
   position: absolute;
   top: -2px;
@@ -3246,3 +3248,39 @@ tbody tr:hover {
 @media (max-width: 640px) {
   .chat-panel { width: calc(100vw - 24px); right: 12px; bottom: 12px; height: 70vh; }
 }
+
+/* AI 分析区块改为引导聊天浮窗（合并入口） */
+.ai-analysis-redirect {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), rgba(124, 58, 237, 0.05));
+  border: 1px dashed rgba(99, 102, 241, 0.3);
+}
+.ai-analysis-redirect .ai-prompt-examples button {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #4f46e5;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.ai-analysis-redirect .ai-prompt-examples button:hover {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+.tag.info { background: rgba(99, 102, 241, 0.12); color: #4f46e5; }
+
+/* 收起按钮变文字按钮，更明显 */
+.chat-icon-btn.chat-close-btn {
+  width: auto;
+  padding: 0 10px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+.chat-icon-btn.chat-close-btn:hover { background: rgba(255, 255, 255, 0.36); }
+
+/* 修复：display: flex 会覆盖 [hidden] 的 display:none */
+.chat-panel[hidden] { display: none !important; }
+.chat-fab[hidden] { display: none !important; }

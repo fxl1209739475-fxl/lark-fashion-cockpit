@@ -157,17 +157,91 @@
   }
 
   // ---------- 交互 ----------
-  fab.addEventListener("click", () => {
+  fab.addEventListener("click", (e) => {
+    // 拖动后的 click 不触发展开
+    if (fab.dataset.justDragged === "1") {
+      delete fab.dataset.justDragged;
+      return;
+    }
     panel.hidden = false;
+    // 把 panel 摆到 fab 旁边
+    placePanelNearFab();
     fab.style.display = "none";
     unread = 0;
     badge.hidden = true;
     input.focus();
   });
-  closeBtn.addEventListener("click", () => {
+  function closePanel() {
     panel.hidden = true;
     fab.style.display = "flex";
+  }
+  closeBtn.addEventListener("click", closePanel);
+  closeBtn.onclick = closePanel;   // 双保险防各种 JS 异常导致 listener 没绑成功
+
+  // ESC 也能关闭
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !panel.hidden) closePanel();
   });
+
+  // 点 panel 外部 + fab 外部 关闭（聊天主区中间空白处不算外部）
+  document.addEventListener("mousedown", (e) => {
+    if (panel.hidden) return;
+    const insidePanel = panel.contains(e.target);
+    const onFab = fab.contains(e.target);
+    if (!insidePanel && !onFab) closePanel();
+  });
+
+  // ---------- 拖动小标 ----------
+  function loadFabPos() {
+    try {
+      const p = JSON.parse(localStorage.getItem("omnitask.fabPos") || "null");
+      if (p && Number.isFinite(p.right) && Number.isFinite(p.bottom)) {
+        fab.style.right = p.right + "px";
+        fab.style.bottom = p.bottom + "px";
+      }
+    } catch {}
+  }
+  function saveFabPos() {
+    const r = parseInt(getComputedStyle(fab).right, 10) || 28;
+    const b = parseInt(getComputedStyle(fab).bottom, 10) || 28;
+    localStorage.setItem("omnitask.fabPos", JSON.stringify({ right: r, bottom: b }));
+  }
+  function placePanelNearFab() {
+    const fr = parseInt(getComputedStyle(fab).right, 10) || 28;
+    const fb = parseInt(getComputedStyle(fab).bottom, 10) || 28;
+    panel.style.right = fr + "px";
+    panel.style.bottom = fb + "px";
+  }
+
+  let dragStart = null;
+  fab.addEventListener("mousedown", (e) => {
+    dragStart = { x: e.clientX, y: e.clientY,
+                   right: parseInt(getComputedStyle(fab).right, 10) || 28,
+                   bottom: parseInt(getComputedStyle(fab).bottom, 10) || 28,
+                   moved: false };
+    e.preventDefault();
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (!dragStart) return;
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragStart.moved = true;
+    let nr = dragStart.right - dx;
+    let nb = dragStart.bottom - dy;
+    nr = Math.max(8, Math.min(window.innerWidth - 80, nr));
+    nb = Math.max(8, Math.min(window.innerHeight - 80, nb));
+    fab.style.right = nr + "px";
+    fab.style.bottom = nb + "px";
+  });
+  document.addEventListener("mouseup", () => {
+    if (dragStart && dragStart.moved) {
+      fab.dataset.justDragged = "1";
+      saveFabPos();
+    }
+    dragStart = null;
+  });
+
+  loadFabPos();
   clearBtn.addEventListener("click", () => {
     stream.innerHTML = "";
   });
@@ -188,9 +262,21 @@
   document.querySelectorAll(".chat-chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       panel.hidden = false;
+      placePanelNearFab();
       fab.style.display = "none";
       send(chip.dataset.quick);
     });
+  });
+
+  // 拦截页面里 data-chat-prompt 的元素点击（产品库的"AI 分析"按钮转过来）
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-chat-prompt]");
+    if (!t) return;
+    e.preventDefault();
+    panel.hidden = false;
+    placePanelNearFab();
+    fab.style.display = "none";
+    send(t.dataset.chatPrompt);
   });
 
   // ---------- 启动 ----------
